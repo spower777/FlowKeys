@@ -2,15 +2,98 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import AudioControls from './AudioControls'
-import type { TypingMode } from '@/lib/types'
+import TextViewToggle from './TextViewToggle'
+import type { TypingMode, TextViewMode } from '@/lib/types'
 
 interface Props {
   trainingText: string
   typingMode: TypingMode
+  textViewMode: TextViewMode
+  onTextViewModeChange: (mode: TextViewMode) => void
   onFinish: (typed: string, startTime: number, endTime: number) => void
 }
 
-export default function TypingSession({ trainingText, typingMode, onFinish }: Props) {
+// ── sentence helper ──────────────────────────────────────────────────────────
+// Returns the char range [start, end) of the sentence containing `pos`,
+// plus progress counters. Trailing spaces are included so the cursor
+// transitions naturally into the next sentence.
+
+function sentenceAt(text: string, pos: number) {
+  const sents: Array<{ start: number; end: number }> = []
+  let start = 0
+  for (let i = 0; i < text.length; i++) {
+    if ('.!?…'.includes(text[i])) {
+      let next = i + 1
+      while (next < text.length && text[next] === ' ') next++
+      sents.push({ start, end: next })
+      start = next
+      i = next - 1
+    }
+  }
+  if (start < text.length) sents.push({ start, end: text.length })
+  if (sents.length === 0) return { range: { start: 0, end: text.length }, num: 1, total: 1 }
+
+  for (let i = 0; i < sents.length; i++) {
+    if (pos < sents[i].end) return { range: sents[i], num: i + 1, total: sents.length }
+  }
+  const last = sents[sents.length - 1]
+  return { range: last, num: sents.length, total: sents.length }
+}
+
+// ── word helper ──────────────────────────────────────────────────────────────
+// Returns the char range [start, end) of the word the cursor sits in/before,
+// a sliding context window, and word progress counters.
+
+function wordAt(text: string, pos: number) {
+  // Word boundaries around cursor
+  let wStart = pos
+  while (wStart > 0 && text[wStart - 1] !== ' ' && text[wStart - 1] !== '\n') wStart--
+  let wEnd = pos
+  while (wEnd < text.length && text[wEnd] !== ' ' && text[wEnd] !== '\n') wEnd++
+
+  // Slide window: 2 words before + current + 4 words after
+  let viewStart = wStart
+  let back = 0
+  let i = wStart - 1
+  while (i >= 0 && back < 2) {
+    while (i >= 0 && text[i] === ' ') i--
+    if (i < 0) break
+    while (i > 0 && text[i - 1] !== ' ') i--
+    viewStart = i
+    back++
+    i--
+  }
+
+  let viewEnd = wEnd
+  let fwd = 0
+  let j = wEnd
+  while (j < text.length && fwd < 4) {
+    while (j < text.length && text[j] === ' ') j++
+    if (j >= text.length) break
+    while (j < text.length && text[j] !== ' ') j++
+    fwd++
+    viewEnd = j
+  }
+
+  // Word progress
+  const totalWords = text.trim().split(/\s+/).filter(Boolean).length
+  const before = text.slice(0, pos).trim()
+  const wordNum = before === '' ? 1 : Math.min(before.split(/\s+/).filter(Boolean).length, totalWords)
+
+  return {
+    range: { start: wStart, end: wEnd },
+    view: { start: viewStart, end: viewEnd },
+    wordNum,
+    totalWords,
+    wordText: text.slice(wStart, wEnd),
+  }
+}
+
+// ── component ────────────────────────────────────────────────────────────────
+
+export default function TypingSession({
+  trainingText, typingMode, textViewMode, onTextViewModeChange, onFinish,
+}: Props) {
   const [typed, setTyped] = useState('')
   const [startTime, setStartTime] = useState<number | null>(null)
   const [elapsed, setElapsed] = useState(0)
@@ -26,6 +109,7 @@ export default function TypingSession({ trainingText, typingMode, onFinish }: Pr
 
   const isBlind = typingMode === 'blind'
   const isNoBackspace = typingMode === 'no_backspace'
+  const cursorPos = typed.length
 
   useEffect(() => {
     captureRef.current?.focus()
@@ -37,17 +121,12 @@ export default function TypingSession({ trainingText, typingMode, onFinish }: Pr
     }
   }, [])
 
-  // Re-focus capture div after Blind mode hides the text
-  useEffect(() => {
-    if (textHidden) captureRef.current?.focus()
-  }, [textHidden])
+  useEffect(() => { if (textHidden) captureRef.current?.focus() }, [textHidden])
 
   function startTimer() {
     const t = Date.now()
     setStartTime(t)
-    timerRef.current = setInterval(() => {
-      setElapsed(Math.floor((Date.now() - t) / 1000))
-    }, 1000)
+    timerRef.current = setInterval(() => setElapsed(Math.floor((Date.now() - t) / 1000)), 1000)
   }
 
   function showPasteToast() {
@@ -56,57 +135,29 @@ export default function TypingSession({ trainingText, typingMode, onFinish }: Pr
     pasteToastRef.current = setTimeout(() => setPasteBlocked(false), 2500)
   }
 
-  function showDropToast() {
-    setDropBlocked(true)
-    if (dropToastRef.current) clearTimeout(dropToastRef.current)
-    dropToastRef.current = setTimeout(() => setDropBlocked(false), 2500)
-  }
-
   function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
-    // Extra layer: block paste shortcuts even before onPaste fires
     if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
-      e.preventDefault()
-      showPasteToast()
-      return
+      e.preventDefault(); showPasteToast(); return
     }
-
-    // Keep focus inside (don't let Tab escape)
-    if (e.key === 'Tab') {
-      e.preventDefault()
-      return
-    }
-
-    if (isNoBackspace && e.key === 'Backspace') {
-      e.preventDefault()
-      return
-    }
-
+    if (e.key === 'Tab') { e.preventDefault(); return }
+    if (isNoBackspace && e.key === 'Backspace') { e.preventDefault(); return }
     if (e.key === 'Backspace') {
-      e.preventDefault()
-      setTyped(prev => prev.slice(0, -1))
-      return
+      e.preventDefault(); setTyped(prev => prev.slice(0, -1)); return
     }
-
-    // Accept only single printable characters — no Ctrl/Meta combos
     if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
-      e.preventDefault() // prevent page scroll on Space, etc.
-      if (!startTime) {
-        startTimer()
-        if (isBlind) setTextHidden(true)
-      }
+      e.preventDefault()
+      if (!startTime) { startTimer(); if (isBlind) setTextHidden(true) }
       setTyped(prev => prev + e.key)
     }
   }
 
-  // Belt-and-suspenders: onPaste prevents right-click → Paste and other paste paths
-  function handlePaste(e: React.ClipboardEvent) {
-    e.preventDefault()
-    showPasteToast()
-  }
+  function handlePaste(e: React.ClipboardEvent) { e.preventDefault(); showPasteToast() }
 
   function handleDrop(e: React.DragEvent) {
     e.preventDefault()
-    showDropToast()
+    setDropBlocked(true)
+    if (dropToastRef.current) clearTimeout(dropToastRef.current)
+    dropToastRef.current = setTimeout(() => setDropBlocked(false), 2500)
   }
 
   const handleFinish = useCallback(() => {
@@ -115,16 +166,89 @@ export default function TypingSession({ trainingText, typingMode, onFinish }: Pr
     onFinish(typed, startTime ?? Date.now(), Date.now())
   }, [typed, startTime, onFinish])
 
+  // ── per-character class ────────────────────────────────────────────────────
+  // wordRange is only used in word mode to dim/highlight untyped chars.
+
+  const wData = wordAt(trainingText, cursorPos)
+
+  function cls(absIdx: number, char: string): string {
+    const isTyped = absIdx < cursorPos
+    const isCurrent = absIdx === cursorPos
+
+    if (isCurrent) return 'border-b-2 border-blue-500 text-gray-900 dark:text-white'
+
+    if (isTyped) {
+      return typed[absIdx] === char
+        ? 'text-green-600 dark:text-green-400'
+        : 'text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20'
+    }
+
+    // Untyped — word mode adds dimensional emphasis
+    if (textViewMode === 'word') {
+      const inWord = absIdx >= wData.range.start && absIdx < wData.range.end
+      if (inWord) return 'text-gray-800 dark:text-gray-200 bg-blue-50 dark:bg-blue-900/20 rounded-sm'
+      if (absIdx < wData.range.start) return 'text-gray-500 dark:text-gray-600'
+      return 'text-gray-400 dark:text-gray-600'
+    }
+
+    return 'text-gray-400 dark:text-gray-500'
+  }
+
+  function renderRange(from: number, to: number) {
+    return trainingText.slice(from, to).split('').map((char, rel) => {
+      const abs = from + rel
+      return <span key={abs} className={cls(abs, char)}>{char}</span>
+    })
+  }
+
+  // ── what to show ──────────────────────────────────────────────────────────
+
+  const sData = sentenceAt(trainingText, cursorPos)
+  let textContent: React.ReactNode = null
+  let badge: string | null = null
+
+  if (!textHidden) {
+    if (textViewMode === 'sentence') {
+      badge = `${sData.num} / ${sData.total} zdanie`
+      textContent = renderRange(sData.range.start, sData.range.end)
+    } else if (textViewMode === 'word') {
+      badge = `${wData.wordNum} / ${wData.totalWords} słowo`
+      textContent = renderRange(wData.view.start, wData.view.end)
+    } else {
+      textContent = renderRange(0, trainingText.length)
+    }
+  }
+
+  // Blind mode hint: word → current word, sentence → first 2 words of sentence
+  let blindHint: string | null = null
+  if (textHidden && cursorPos > 0 && textViewMode !== 'full') {
+    if (textViewMode === 'word') {
+      blindHint = wData.wordText
+    } else {
+      const firstTwo = trainingText
+        .slice(sData.range.start, sData.range.end)
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .join(' ')
+      blindHint = firstTwo + '…'
+    }
+  }
+
+  // ── stats ─────────────────────────────────────────────────────────────────
+
   const progress = trainingText.length > 0
-    ? Math.min(100, Math.round((typed.length / trainingText.length) * 100))
+    ? Math.min(100, Math.round((cursorPos / trainingText.length) * 100))
     : 0
   const wpmLive = startTime && elapsed > 0
-    ? Math.round((typed.length / 5) / (elapsed / 60))
+    ? Math.round((cursorPos / 5) / (elapsed / 60))
     : 0
   const fmtTime = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
 
+  // ── render ────────────────────────────────────────────────────────────────
+
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {/* Mode badges */}
       {isNoBackspace && (
         <div className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-400/10 border border-amber-200 dark:border-amber-400/20 rounded-xl px-4 py-2.5 text-center">
@@ -139,25 +263,30 @@ export default function TypingSession({ trainingText, typingMode, onFinish }: Pr
 
       {/* Toasts */}
       {pasteBlocked && (
-        <div className="text-xs text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#2e2e2e] rounded-xl px-4 py-2.5 text-center">
+        <div className="text-xs text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#2e2e2e] rounded-xl px-4 py-2 text-center">
           Wklejanie wyłączone w rundzie treningowej.
         </div>
       )}
       {dropBlocked && (
-        <div className="text-xs text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#2e2e2e] rounded-xl px-4 py-2.5 text-center">
+        <div className="text-xs text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#2e2e2e] rounded-xl px-4 py-2 text-center">
           Przeciąganie tekstu jest wyłączone w rundzie treningowej.
         </div>
       )}
 
-      {/* Audio for Blind mode */}
+      {/* Audio */}
       {isBlind && <AudioControls text={trainingText} />}
 
-      {/*
-        Controlled typing engine.
-        A single <div tabIndex={0}> captures ALL keyboard input.
-        No textarea — no native paste/drop/autocorrect.
-        typedText grows only via onKeyDown, one character at a time.
-      */}
+      {/* View mode toggle + sentence/word progress */}
+      {!textHidden && (
+        <div className="flex items-center justify-between">
+          <TextViewToggle value={textViewMode} onChange={onTextViewModeChange} />
+          {badge && (
+            <span className="text-[10px] text-gray-400 dark:text-gray-600 tabular-nums">{badge}</span>
+          )}
+        </div>
+      )}
+
+      {/* Typing capture — the only keyboard input path */}
       <div
         ref={captureRef}
         tabIndex={0}
@@ -168,68 +297,44 @@ export default function TypingSession({ trainingText, typingMode, onFinish }: Pr
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         className={`relative bg-gray-100 dark:bg-[#141414] border rounded-2xl px-5 py-5 cursor-text outline-none transition-colors ${
-          focused
-            ? 'border-blue-400 dark:border-blue-500/40'
-            : 'border-gray-200 dark:border-[#242424]'
+          focused ? 'border-blue-400 dark:border-blue-500/40' : 'border-gray-200 dark:border-[#242424]'
         }`}
       >
         {textHidden ? (
-          /* Blind mode body — source text hidden, show keystroke count */
-          <div className="flex items-center justify-center h-20">
+          /* Blind mode body */
+          <div className="flex flex-col items-center justify-center h-20 gap-2">
             <p className="text-sm font-mono text-gray-400 dark:text-gray-600 select-none">
-              {typed.length > 0 ? `${typed.length} znaków…` : 'Słuchaj i pisz…'}
+              {cursorPos > 0 ? `${cursorPos} znaków…` : 'Słuchaj i pisz…'}
             </p>
+            {blindHint && (
+              <p className="text-xs text-purple-400/70 dark:text-purple-500/60 font-mono select-none tracking-wide">
+                → {blindHint}
+              </p>
+            )}
           </div>
         ) : (
-          /* Normal mode — source text with per-character colour feedback */
+          /* Source text display */
           <div className="text-sm leading-7 font-mono break-words whitespace-pre-wrap select-none">
-            {trainingText.split('').map((char, i) => {
-              const typed_i = typed[i]
-              const isTyped = i < typed.length
-              const isCurrent = i === typed.length
-              const isCorrect = isTyped && typed_i === char
-              const isWrong = isTyped && typed_i !== char
-
-              return (
-                <span
-                  key={i}
-                  className={
-                    isCurrent
-                      ? 'border-b-2 border-blue-500 text-gray-900 dark:text-white'
-                      : isCorrect
-                      ? 'text-green-600 dark:text-green-400'
-                      : isWrong
-                      ? 'text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20'
-                      : 'text-gray-400 dark:text-gray-500'
-                  }
-                >
-                  {char}
-                </span>
-              )
-            })}
-            {/* Blinking caret when all source text is covered */}
-            {typed.length >= trainingText.length && trainingText.length > 0 && (
+            {textContent}
+            {cursorPos >= trainingText.length && trainingText.length > 0 && (
               <span className="animate-pulse text-blue-500">▌</span>
             )}
           </div>
         )}
 
-        {/* "Click to type" overlay — only before first keystroke */}
-        {!focused && typed.length === 0 && (
+        {/* Click-to-focus overlay — only before first keystroke */}
+        {!focused && cursorPos === 0 && (
           <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-gray-50/80 dark:bg-black/50">
             <p className="text-xs text-gray-400 dark:text-gray-600 select-none">Kliknij, żeby pisać</p>
           </div>
         )}
       </div>
 
-      {/* Stats bar */}
+      {/* Stats */}
       <div className="flex items-center gap-4 text-xs text-gray-500">
         <span className="tabular-nums">{fmtTime(elapsed)}</span>
         <div className="flex-1 bg-gray-200 dark:bg-[#1a1a1a] rounded-full h-1">
-          <div
-            className="bg-blue-500 h-1 rounded-full transition-all duration-300"
-            style={{ width: `${progress}%` }}
-          />
+          <div className="bg-blue-500 h-1 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
         </div>
         <span>{progress}%</span>
         {wpmLive > 0 && <span className="tabular-nums">{wpmLive} wpm</span>}
@@ -237,7 +342,7 @@ export default function TypingSession({ trainingText, typingMode, onFinish }: Pr
 
       <button
         onClick={handleFinish}
-        disabled={typed.length === 0}
+        disabled={cursorPos === 0}
         className="w-full py-3 bg-gray-100 dark:bg-[#1e1e1e] hover:bg-gray-200 dark:hover:bg-[#282828] disabled:opacity-30 border border-gray-200 dark:border-[#2e2e2e] text-gray-700 dark:text-gray-300 text-sm font-medium rounded-xl transition"
       >
         Zakończ rundę

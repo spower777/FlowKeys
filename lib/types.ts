@@ -1,5 +1,6 @@
 export type TransformMode = '1to1' | 'clean' | 'story' | 'exercise' | 'polish_chars'
 export type TypingMode = 'normal' | 'blind' | 'no_backspace'
+export type TextViewMode = 'full' | 'sentence' | 'word'
 
 export interface CommonMistake {
   expected: string

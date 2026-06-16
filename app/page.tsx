@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Header from '@/components/Header'
 import TextInput from '@/components/TextInput'
 import VoiceInput from '@/components/VoiceInput'
@@ -10,7 +10,7 @@ import ResultsPanel from '@/components/ResultsPanel'
 import { analyzeTyping } from '@/lib/analyzeTyping'
 import { saveSession } from '@/lib/storage'
 import { EXAMPLE_TEXT } from '@/lib/transformPrompt'
-import type { TransformMode, TypingMode, TypingStats } from '@/lib/types'
+import type { TransformMode, TypingMode, TypingStats, TextViewMode } from '@/lib/types'
 
 type Step = 'home' | 'input' | 'transform' | 'preview' | 'typing' | 'results'
 type InputMethod = 'paste' | 'voice' | 'example'
@@ -27,6 +27,17 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
   const [transformError, setTransformError] = useState<string | null>(null)
   const [isMock, setIsMock] = useState(false)
+  const [textViewMode, setTextViewMode] = useState<TextViewMode>('sentence')
+
+  useEffect(() => {
+    const saved = localStorage.getItem('flowkeys_text_view_mode') as TextViewMode | null
+    if (saved === 'full' || saved === 'sentence' || saved === 'word') setTextViewMode(saved)
+  }, [])
+
+  function handleTextViewModeChange(mode: TextViewMode) {
+    setTextViewMode(mode)
+    localStorage.setItem('flowkeys_text_view_mode', mode)
+  }
 
   async function handleTransform() {
     if (transformMode === '1to1') {
@@ -235,6 +246,8 @@ export default function Home() {
             <TypingSession
               trainingText={trainingText}
               typingMode={typingMode}
+              textViewMode={textViewMode}
+              onTextViewModeChange={handleTextViewModeChange}
               onFinish={handleFinish}
             />
           </div>
