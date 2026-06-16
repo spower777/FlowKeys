@@ -15,22 +15,32 @@ export default function TypingSession({ trainingText, typingMode, onFinish }: Pr
   const [startTime, setStartTime] = useState<number | null>(null)
   const [elapsed, setElapsed] = useState(0)
   const [textHidden, setTextHidden] = useState(false)
+  const [focused, setFocused] = useState(false)
   const [pasteBlocked, setPasteBlocked] = useState(false)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const [dropBlocked, setDropBlocked] = useState(false)
+
+  const captureRef = useRef<HTMLDivElement>(null)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const pasteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const pasteToastRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const dropToastRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const isBlind = typingMode === 'blind'
   const isNoBackspace = typingMode === 'no_backspace'
 
   useEffect(() => {
-    textareaRef.current?.focus()
+    captureRef.current?.focus()
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
-      if (pasteTimerRef.current) clearTimeout(pasteTimerRef.current)
+      if (pasteToastRef.current) clearTimeout(pasteToastRef.current)
+      if (dropToastRef.current) clearTimeout(dropToastRef.current)
       window.speechSynthesis?.cancel()
     }
   }, [])
+
+  // Re-focus capture div after Blind mode hides the text
+  useEffect(() => {
+    if (textHidden) captureRef.current?.focus()
+  }, [textHidden])
 
   function startTimer() {
     const t = Date.now()
@@ -40,26 +50,63 @@ export default function TypingSession({ trainingText, typingMode, onFinish }: Pr
     }, 1000)
   }
 
-  function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    const val = e.target.value
-    if (!startTime) {
-      startTimer()
-      if (isBlind) setTextHidden(true)
-    }
-    setTyped(val)
+  function showPasteToast() {
+    setPasteBlocked(true)
+    if (pasteToastRef.current) clearTimeout(pasteToastRef.current)
+    pasteToastRef.current = setTimeout(() => setPasteBlocked(false), 2500)
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+  function showDropToast() {
+    setDropBlocked(true)
+    if (dropToastRef.current) clearTimeout(dropToastRef.current)
+    dropToastRef.current = setTimeout(() => setDropBlocked(false), 2500)
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    // Extra layer: block paste shortcuts even before onPaste fires
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
+      e.preventDefault()
+      showPasteToast()
+      return
+    }
+
+    // Keep focus inside (don't let Tab escape)
+    if (e.key === 'Tab') {
+      e.preventDefault()
+      return
+    }
+
     if (isNoBackspace && e.key === 'Backspace') {
       e.preventDefault()
+      return
+    }
+
+    if (e.key === 'Backspace') {
+      e.preventDefault()
+      setTyped(prev => prev.slice(0, -1))
+      return
+    }
+
+    // Accept only single printable characters — no Ctrl/Meta combos
+    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault() // prevent page scroll on Space, etc.
+      if (!startTime) {
+        startTimer()
+        if (isBlind) setTextHidden(true)
+      }
+      setTyped(prev => prev + e.key)
     }
   }
 
-  function handlePaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
+  // Belt-and-suspenders: onPaste prevents right-click → Paste and other paste paths
+  function handlePaste(e: React.ClipboardEvent) {
     e.preventDefault()
-    setPasteBlocked(true)
-    if (pasteTimerRef.current) clearTimeout(pasteTimerRef.current)
-    pasteTimerRef.current = setTimeout(() => setPasteBlocked(false), 2500)
+    showPasteToast()
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault()
+    showDropToast()
   }
 
   const handleFinish = useCallback(() => {
@@ -68,16 +115,17 @@ export default function TypingSession({ trainingText, typingMode, onFinish }: Pr
     onFinish(typed, startTime ?? Date.now(), Date.now())
   }, [typed, startTime, onFinish])
 
-  const progress = Math.min(100, Math.round((typed.length / trainingText.length) * 100))
+  const progress = trainingText.length > 0
+    ? Math.min(100, Math.round((typed.length / trainingText.length) * 100))
+    : 0
   const wpmLive = startTime && elapsed > 0
     ? Math.round((typed.length / 5) / (elapsed / 60))
     : 0
-
   const fmtTime = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
 
   return (
     <div className="space-y-5">
-      {/* Mode badge */}
+      {/* Mode badges */}
       {isNoBackspace && (
         <div className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-400/10 border border-amber-200 dark:border-amber-400/20 rounded-xl px-4 py-2.5 text-center">
           Backspace wyłączony. Nie poprawiaj. Jedź dalej.
@@ -89,25 +137,58 @@ export default function TypingSession({ trainingText, typingMode, onFinish }: Pr
         </div>
       )}
 
-      {/* Paste blocked notification */}
+      {/* Toasts */}
       {pasteBlocked && (
         <div className="text-xs text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#2e2e2e] rounded-xl px-4 py-2.5 text-center">
           Wklejanie wyłączone w rundzie treningowej.
+        </div>
+      )}
+      {dropBlocked && (
+        <div className="text-xs text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#2e2e2e] rounded-xl px-4 py-2.5 text-center">
+          Przeciąganie tekstu jest wyłączone w rundzie treningowej.
         </div>
       )}
 
       {/* Audio for Blind mode */}
       {isBlind && <AudioControls text={trainingText} />}
 
-      {/* Source text display */}
-      {!textHidden && (
-        <div className="bg-gray-100 dark:bg-[#141414] border border-gray-200 dark:border-[#242424] rounded-2xl px-5 py-5">
-          <div className="text-sm leading-7 font-mono break-words whitespace-pre-wrap">
+      {/*
+        Controlled typing engine.
+        A single <div tabIndex={0}> captures ALL keyboard input.
+        No textarea — no native paste/drop/autocorrect.
+        typedText grows only via onKeyDown, one character at a time.
+      */}
+      <div
+        ref={captureRef}
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        onPaste={handlePaste}
+        onDrop={handleDrop}
+        onDragOver={(e) => e.preventDefault()}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        className={`relative bg-gray-100 dark:bg-[#141414] border rounded-2xl px-5 py-5 cursor-text outline-none transition-colors ${
+          focused
+            ? 'border-blue-400 dark:border-blue-500/40'
+            : 'border-gray-200 dark:border-[#242424]'
+        }`}
+      >
+        {textHidden ? (
+          /* Blind mode body — source text hidden, show keystroke count */
+          <div className="flex items-center justify-center h-20">
+            <p className="text-sm font-mono text-gray-400 dark:text-gray-600 select-none">
+              {typed.length > 0 ? `${typed.length} znaków…` : 'Słuchaj i pisz…'}
+            </p>
+          </div>
+        ) : (
+          /* Normal mode — source text with per-character colour feedback */
+          <div className="text-sm leading-7 font-mono break-words whitespace-pre-wrap select-none">
             {trainingText.split('').map((char, i) => {
-              const isTypedPos = i < typed.length
+              const typed_i = typed[i]
+              const isTyped = i < typed.length
               const isCurrent = i === typed.length
-              const isCorrect = isTypedPos && typed[i] === char
-              const isWrong = isTypedPos && typed[i] !== char
+              const isCorrect = isTyped && typed_i === char
+              const isWrong = isTyped && typed_i !== char
 
               return (
                 <span
@@ -126,27 +207,24 @@ export default function TypingSession({ trainingText, typingMode, onFinish }: Pr
                 </span>
               )
             })}
+            {/* Blinking caret when all source text is covered */}
+            {typed.length >= trainingText.length && trainingText.length > 0 && (
+              <span className="animate-pulse text-blue-500">▌</span>
+            )}
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Typing area */}
-      <textarea
-        ref={textareaRef}
-        value={typed}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        onPaste={handlePaste}
-        placeholder="Zacznij pisać..."
-        className="w-full h-36 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-300 dark:border-[#2e2e2e] focus:border-blue-400 dark:focus:border-blue-500/40 rounded-2xl px-5 py-4 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-700 resize-none focus:outline-none text-sm leading-relaxed font-mono"
-        spellCheck={false}
-        autoCorrect="off"
-        autoCapitalize="off"
-      />
+        {/* "Click to type" overlay — only before first keystroke */}
+        {!focused && typed.length === 0 && (
+          <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-gray-50/80 dark:bg-black/50">
+            <p className="text-xs text-gray-400 dark:text-gray-600 select-none">Kliknij, żeby pisać</p>
+          </div>
+        )}
+      </div>
 
       {/* Stats bar */}
       <div className="flex items-center gap-4 text-xs text-gray-500">
-        <span>{fmtTime(elapsed)}</span>
+        <span className="tabular-nums">{fmtTime(elapsed)}</span>
         <div className="flex-1 bg-gray-200 dark:bg-[#1a1a1a] rounded-full h-1">
           <div
             className="bg-blue-500 h-1 rounded-full transition-all duration-300"
@@ -154,7 +232,7 @@ export default function TypingSession({ trainingText, typingMode, onFinish }: Pr
           />
         </div>
         <span>{progress}%</span>
-        {wpmLive > 0 && <span>{wpmLive} wpm</span>}
+        {wpmLive > 0 && <span className="tabular-nums">{wpmLive} wpm</span>}
       </div>
 
       <button
