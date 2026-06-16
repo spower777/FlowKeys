@@ -6,17 +6,11 @@ interface Props {
   onTranscript: (text: string) => void
 }
 
-type VoiceError =
-  | 'not-supported'
-  | 'no-permission'
-  | 'no-speech'
-  | null
-
 export default function VoiceInput({ onTranscript }: Props) {
   const [supported, setSupported] = useState<boolean | null>(null)
   const [recording, setRecording] = useState(false)
   const [transcript, setTranscript] = useState('')
-  const [error, setError] = useState<VoiceError>(null)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null)
 
@@ -26,7 +20,7 @@ export default function VoiceInput({ onTranscript }: Props) {
   }, [])
 
   function startRecording() {
-    setError(null)
+    setErrorMsg(null)
     setTranscript('')
 
     const w = window as unknown as Record<string, unknown>
@@ -34,12 +28,16 @@ export default function VoiceInput({ onTranscript }: Props) {
     const SR = (w['SpeechRecognition'] ?? w['webkitSpeechRecognition']) as any
     if (!SR) return
 
+    // Stop any previous session before starting a new one
+    recognitionRef.current?.abort()
+
     const recognition = new SR()
     recognition.lang = 'pl-PL'
     recognition.continuous = true
     recognition.interimResults = true
 
     let full = ''
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recognition.onresult = (e: any) => {
       let interim = ''
@@ -51,31 +49,37 @@ export default function VoiceInput({ onTranscript }: Props) {
         }
       }
       setTranscript(full + interim)
-      setError(null)
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recognition.onerror = (e: any) => {
+      // 'aborted' fires when we call abort() ourselves — not a real error
+      if (e.error === 'aborted') return
+
       setRecording(false)
+
       if (e.error === 'not-allowed' || e.error === 'permission-denied') {
-        setError('no-permission')
+        setErrorMsg('Brak dostępu do mikrofonu. Sprawdź uprawnienia przeglądarki i macOS.')
+      } else if (e.error === 'audio-capture') {
+        setErrorMsg('Mikrofon niedostępny. Sprawdź czy jest podłączony.')
       } else if (e.error === 'no-speech') {
-        setError('no-speech')
+        // Only show if we haven't captured anything yet
+        if (!full.trim()) {
+          setErrorMsg('Nie udało się rozpoznać mowy. Spróbuj jeszcze raz albo wklej tekst ręcznie.')
+        }
+      } else if (e.error === 'network') {
+        setErrorMsg('Błąd sieci. Rozpoznawanie mowy wymaga połączenia z internetem.')
       }
     }
 
+    // Keep onend minimal — onerror already handles all error cases
     recognition.onend = () => {
       setRecording(false)
-      // If recording stopped without getting any transcript, show no-speech hint
-      if (!full.trim()) {
-        setError(prev => prev ?? 'no-speech')
-      }
     }
 
     recognition.start()
     recognitionRef.current = recognition
     setRecording(true)
-    full = ''
   }
 
   function stopRecording() {
@@ -101,7 +105,7 @@ export default function VoiceInput({ onTranscript }: Props) {
 
   return (
     <div className="space-y-3">
-      <div className="flex gap-3">
+      <div className="flex gap-3 flex-wrap">
         {!recording ? (
           <button
             onClick={startRecording}
@@ -129,19 +133,14 @@ export default function VoiceInput({ onTranscript }: Props) {
         )}
       </div>
 
-      {/* Error messages — shown as UI feedback, not as transcript */}
-      {error === 'no-permission' && (
+      {/* Error as UI message, never as transcript text */}
+      {errorMsg && (
         <div className="text-sm text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-400/10 border border-amber-200 dark:border-amber-400/20 rounded-xl px-4 py-3">
-          Brak dostępu do mikrofonu. Sprawdź uprawnienia przeglądarki i macOS.
-        </div>
-      )}
-      {error === 'no-speech' && !transcript.trim() && (
-        <div className="text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2e2e2e] rounded-xl px-4 py-3">
-          Nie udało się rozpoznać mowy. Spróbuj jeszcze raz albo wklej tekst ręcznie.
+          {errorMsg}
         </div>
       )}
 
-      {/* Transcript preview */}
+      {/* Live transcript preview */}
       {transcript && (
         <div className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2e2e2e] rounded-2xl px-5 py-4 text-sm text-gray-700 dark:text-gray-300 leading-relaxed min-h-[80px]">
           {transcript}
