@@ -4,6 +4,8 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 
 interface Props {
   text: string
+  initialRate?: number
+  voiceMode?: 'all' | 'sentence'
 }
 
 const SPEEDS = [0.75, 1.0, 1.25, 1.5]
@@ -15,18 +17,18 @@ function splitSentences(text: string): string[] {
     .filter(Boolean)
 }
 
-export default function AudioControls({ text }: Props) {
+export default function AudioControls({ text, initialRate = 1.0, voiceMode = 'all' }: Props) {
   const [supported, setSupported] = useState<boolean | null>(null)
   const [noPolishVoice, setNoPolishVoice] = useState(false)
   const [sentences, setSentences] = useState<string[]>([])
   const [current, setCurrent] = useState(0)
   const [playing, setPlaying] = useState(false)
-  const [speed, setSpeed] = useState(1.0)
+  const [speed, setSpeed] = useState(initialRate)
 
   // Refs so callbacks always read fresh values without re-creating on every state change
   const sentencesRef = useRef<string[]>([])
-  const speedRef = useRef(1.0)
-  const autoAdvanceRef = useRef(true)
+  const speedRef = useRef(initialRate)
+  const autoAdvanceRef = useRef(voiceMode === 'all')
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null)
 
   useEffect(() => {

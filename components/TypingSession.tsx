@@ -11,6 +11,11 @@ interface Props {
   textViewMode: TextViewMode
   onTextViewModeChange: (mode: TextViewMode) => void
   onFinish: (typed: string, startTime: number, endTime: number) => void
+  blockPaste?: boolean
+  calmMode?: boolean
+  blindHint?: boolean
+  voiceRate?: number
+  voiceMode?: 'all' | 'sentence'
 }
 
 // ── sentence helper ──────────────────────────────────────────────────────────
@@ -93,6 +98,8 @@ function wordAt(text: string, pos: number) {
 
 export default function TypingSession({
   trainingText, typingMode, textViewMode, onTextViewModeChange, onFinish,
+  blockPaste = true, calmMode = false, blindHint = true,
+  voiceRate = 1, voiceMode = 'all',
 }: Props) {
   const [typed, setTyped] = useState('')
   const [startTime, setStartTime] = useState<number | null>(null)
@@ -136,7 +143,7 @@ export default function TypingSession({
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
-    if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
+    if (blockPaste && (e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
       e.preventDefault(); showPasteToast(); return
     }
     if (e.key === 'Tab') { e.preventDefault(); return }
@@ -151,7 +158,9 @@ export default function TypingSession({
     }
   }
 
-  function handlePaste(e: React.ClipboardEvent) { e.preventDefault(); showPasteToast() }
+  function handlePaste(e: React.ClipboardEvent) {
+    if (blockPaste) { e.preventDefault(); showPasteToast() }
+  }
 
   function handleDrop(e: React.DragEvent) {
     e.preventDefault()
@@ -181,18 +190,19 @@ export default function TypingSession({
     const isTyped = absIdx < cursorPos
     const isCurrent = absIdx === cursorPos
 
-    if (isCurrent) return 'border-b-2 border-blue-500 text-gray-900 dark:text-white'
+    if (isCurrent) return 'border-b-2 border-[var(--accent-500)] text-gray-900 dark:text-white'
 
     if (isTyped) {
-      return typed[absIdx] === char
-        ? 'text-green-600 dark:text-green-400'
+      if (typed[absIdx] === char) return 'text-green-600 dark:text-green-400'
+      return calmMode
+        ? 'text-amber-500 dark:text-amber-400'
         : 'text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20'
     }
 
     // Untyped — word mode adds dimensional emphasis
     if (textViewMode === 'word') {
       const inWord = absIdx >= wData.range.start && absIdx < wData.range.end
-      if (inWord) return 'text-gray-800 dark:text-gray-200 bg-blue-50 dark:bg-blue-900/20 rounded-sm'
+      if (inWord) return 'text-gray-800 dark:text-gray-200 bg-[var(--accent-50)] dark:bg-[var(--accent-600)]/10 rounded-sm'
       if (absIdx < wData.range.start) return 'text-gray-500 dark:text-gray-600'
       return 'text-gray-400 dark:text-gray-600'
     }
@@ -225,11 +235,11 @@ export default function TypingSession({
     }
   }
 
-  // Blind mode hint: word → current word, sentence → first 2 words of sentence
-  let blindHint: string | null = null
-  if (textHidden && cursorPos > 0 && textViewMode !== 'full') {
+  // Blind mode hint text: word → current word, sentence → first 2 words
+  let blindHintText: string | null = null
+  if (blindHint && textHidden && cursorPos > 0 && textViewMode !== 'full') {
     if (textViewMode === 'word') {
-      blindHint = wData.wordText
+      blindHintText = wData.wordText
     } else {
       const firstTwo = trainingText
         .slice(sData.range.start, sData.range.end)
@@ -237,7 +247,7 @@ export default function TypingSession({
         .split(/\s+/)
         .slice(0, 2)
         .join(' ')
-      blindHint = firstTwo + '…'
+      blindHintText = firstTwo + '…'
     }
   }
 
@@ -280,7 +290,7 @@ export default function TypingSession({
       )}
 
       {/* Audio */}
-      {isBlind && <AudioControls text={trainingText} />}
+      {isBlind && <AudioControls text={trainingText} initialRate={voiceRate} voiceMode={voiceMode} />}
 
       {/* View mode toggle + sentence/word progress */}
       {!textHidden && (
@@ -303,7 +313,7 @@ export default function TypingSession({
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         className={`relative bg-gray-100 dark:bg-[#141414] border rounded-2xl px-5 py-5 cursor-text outline-none transition-colors ${
-          focused ? 'border-blue-400 dark:border-blue-500/40' : 'border-gray-200 dark:border-[#242424]'
+          focused ? 'border-[var(--accent-400)] dark:border-[var(--accent-600)]/40' : 'border-gray-200 dark:border-[#242424]'
         }`}
       >
         {textHidden ? (
@@ -312,9 +322,9 @@ export default function TypingSession({
             <p className="text-sm font-mono text-gray-400 dark:text-gray-600 select-none">
               {cursorPos > 0 ? `${cursorPos} znaków…` : 'Słuchaj i pisz…'}
             </p>
-            {blindHint && (
+            {blindHintText && (
               <p className="text-xs text-purple-400/70 dark:text-purple-500/60 font-mono select-none tracking-wide">
-                → {blindHint}
+                → {blindHintText}
               </p>
             )}
           </div>
@@ -340,10 +350,14 @@ export default function TypingSession({
       <div className="flex items-center gap-4 text-xs text-gray-500">
         <span className="tabular-nums">{fmtTime(elapsed)}</span>
         <div className="flex-1 bg-gray-200 dark:bg-[#1a1a1a] rounded-full h-1">
-          <div className="bg-blue-500 h-1 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
+          <div className="bg-[var(--accent-600)] h-1 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
         </div>
         <span>{progress}%</span>
-        {wpmLive > 0 && <span className="tabular-nums">{wpmLive} wpm</span>}
+        {wpmLive > 0 && (
+          <span className={`tabular-nums ${calmMode ? 'text-gray-400 dark:text-gray-600' : ''}`}>
+            {wpmLive} wpm
+          </span>
+        )}
       </div>
 
       <button

@@ -7,10 +7,13 @@ import VoiceInput from '@/components/VoiceInput'
 import TransformOptions from '@/components/TransformOptions'
 import TypingSession from '@/components/TypingSession'
 import ResultsPanel from '@/components/ResultsPanel'
+import SettingsModal from '@/components/SettingsModal'
 import { analyzeTyping } from '@/lib/analyzeTyping'
 import { saveSession } from '@/lib/storage'
 import { EXAMPLE_TEXT } from '@/lib/transformPrompt'
-import type { TransformMode, TypingMode, TypingStats, TextViewMode } from '@/lib/types'
+import { loadSettings, saveSettings, applySettingsToDOM, DEFAULTS } from '@/lib/settings'
+import type { TransformMode, TypingMode, TypingStats } from '@/lib/types'
+import type { Settings } from '@/lib/settings'
 
 type Step = 'home' | 'input' | 'transform' | 'preview' | 'typing' | 'results'
 type InputMethod = 'paste' | 'voice' | 'example'
@@ -27,16 +30,31 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
   const [transformError, setTransformError] = useState<string | null>(null)
   const [isMock, setIsMock] = useState(false)
-  const [textViewMode, setTextViewMode] = useState<TextViewMode>('sentence')
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [settings, setSettings] = useState<Settings>(DEFAULTS)
 
   useEffect(() => {
-    const saved = localStorage.getItem('flowkeys_text_view_mode') as TextViewMode | null
-    if (saved === 'full' || saved === 'sentence' || saved === 'word') setTextViewMode(saved)
+    const s = loadSettings()
+    setSettings(s)
+    applySettingsToDOM(s)
+
+    // Keep theme in sync when system preference changes
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    const handler = () => {
+      const current = loadSettings()
+      if (current.theme === 'system') applySettingsToDOM(current)
+    }
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
   }, [])
 
-  function handleTextViewModeChange(mode: TextViewMode) {
-    setTextViewMode(mode)
-    localStorage.setItem('flowkeys_text_view_mode', mode)
+  function handleSettingsChange(partial: Partial<Settings>) {
+    setSettings(prev => {
+      const next = { ...prev, ...partial }
+      saveSettings(next)
+      applySettingsToDOM(next)
+      return next
+    })
   }
 
   async function handleTransform() {
@@ -108,7 +126,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-[#0d0d0d] text-gray-900 dark:text-gray-100">
       <div className="max-w-2xl mx-auto px-4 py-10 sm:py-16">
-        <Header onHomeClick={reset} />
+        <Header onHomeClick={reset} onSettingsClick={() => setSettingsOpen(true)} />
 
         {/* ── HOME ── */}
         {step === 'home' && (
@@ -246,8 +264,13 @@ export default function Home() {
             <TypingSession
               trainingText={trainingText}
               typingMode={typingMode}
-              textViewMode={textViewMode}
-              onTextViewModeChange={handleTextViewModeChange}
+              textViewMode={settings.textViewMode}
+              onTextViewModeChange={v => handleSettingsChange({ textViewMode: v })}
+              blockPaste={settings.blockPaste}
+              calmMode={settings.calmMode}
+              blindHint={settings.blindHint}
+              voiceRate={settings.voiceRate}
+              voiceMode={settings.voiceMode}
               onFinish={handleFinish}
             />
           </div>
@@ -266,6 +289,14 @@ export default function Home() {
           />
         )}
       </div>
+
+      {settingsOpen && (
+        <SettingsModal
+          settings={settings}
+          onClose={() => setSettingsOpen(false)}
+          onChange={handleSettingsChange}
+        />
+      )}
     </main>
   )
 }

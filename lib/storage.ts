@@ -25,3 +25,7 @@ export function getSessions(): TypingSessionRecord[] {
 export function getSession(id: string): TypingSessionRecord | null {
   return getSessions().find(s => s.id === id) ?? null
 }
+
+export function clearSessions(): void {
+  try { localStorage.removeItem(KEY) } catch { /* ignore */ }
+}

@@ -25,9 +25,10 @@ export default function TextViewToggle({ value, onChange }: Props) {
             title={o.title}
             className={`text-xs px-2.5 py-1 rounded-lg transition font-medium border ${
               value === o.mode
-                ? 'bg-blue-600 text-white border-blue-600'
+                ? 'text-white border-[var(--accent-600)]'
                 : 'bg-gray-100 dark:bg-[#1e1e1e] text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 border-gray-200 dark:border-[#2e2e2e]'
             }`}
+            style={value === o.mode ? { backgroundColor: 'var(--accent-600)' } : undefined}
           >
             {o.label}
           </button>
