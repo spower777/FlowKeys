@@ -68,7 +68,7 @@ export default function VoiceInput({ onTranscript }: Props) {
       } else if (e.error === 'no-speech') {
         if (!full.trim()) setErrorMsg('Nie udało się rozpoznać mowy. Spróbuj jeszcze raz albo wklej tekst ręcznie.')
       } else if (e.error === 'network') {
-        setErrorMsg('Błąd sieci. Rozpoznawanie mowy wymaga połączenia z internetem.')
+        setErrorMsg('Przeglądarka nie może połączyć się z serwerem rozpoznawania mowy. Brave i Firefox blokują tę usługę — użyj Chrome.')
       } else {
         setErrorMsg(`Błąd nagrywania (${e.error}). Spróbuj odświeżyć stronę.`)
       }

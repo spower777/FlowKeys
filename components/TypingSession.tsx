@@ -166,6 +166,12 @@ export default function TypingSession({
     onFinish(typed, startTime ?? Date.now(), Date.now())
   }, [typed, startTime, onFinish])
 
+  useEffect(() => {
+    if (trainingText.length > 0 && typed.length >= trainingText.length && startTime !== null) {
+      handleFinish()
+    }
+  }, [typed, trainingText, startTime, handleFinish])
+
   // ── per-character class ────────────────────────────────────────────────────
   // wordRange is only used in word mode to dim/highlight untyped chars.
 
