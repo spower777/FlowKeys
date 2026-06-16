@@ -24,10 +24,13 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="pl"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: `(function(){var t=localStorage.getItem('flowkeys_theme')||'system';var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.documentElement.classList.add('dark');})();` }} />
+      </head>
+      <body className="min-h-full flex flex-col bg-gray-50 dark:bg-[#0d0d0d] text-gray-900 dark:text-gray-100">{children}</body>
     </html>
   );
 }
