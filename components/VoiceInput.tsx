@@ -28,8 +28,14 @@ export default function VoiceInput({ onTranscript }: Props) {
     const SR = (w['SpeechRecognition'] ?? w['webkitSpeechRecognition']) as any
     if (!SR) return
 
-    // Stop any previous session before starting a new one
-    recognitionRef.current?.abort()
+    // Null out old handlers before aborting — prevents stale onend from
+    // firing setRecording(false) after the new session's setRecording(true).
+    if (recognitionRef.current) {
+      recognitionRef.current.onresult = null
+      recognitionRef.current.onerror = null
+      recognitionRef.current.onend = null
+      recognitionRef.current.abort()
+    }
 
     const recognition = new SR()
     recognition.lang = 'pl-PL'
@@ -53,32 +59,35 @@ export default function VoiceInput({ onTranscript }: Props) {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recognition.onerror = (e: any) => {
-      // 'aborted' fires when we call abort() ourselves — not a real error
       if (e.error === 'aborted') return
-
       setRecording(false)
-
       if (e.error === 'not-allowed' || e.error === 'permission-denied') {
         setErrorMsg('Brak dostępu do mikrofonu. Sprawdź uprawnienia przeglądarki i macOS.')
       } else if (e.error === 'audio-capture') {
         setErrorMsg('Mikrofon niedostępny. Sprawdź czy jest podłączony.')
       } else if (e.error === 'no-speech') {
-        // Only show if we haven't captured anything yet
-        if (!full.trim()) {
-          setErrorMsg('Nie udało się rozpoznać mowy. Spróbuj jeszcze raz albo wklej tekst ręcznie.')
-        }
+        if (!full.trim()) setErrorMsg('Nie udało się rozpoznać mowy. Spróbuj jeszcze raz albo wklej tekst ręcznie.')
       } else if (e.error === 'network') {
         setErrorMsg('Błąd sieci. Rozpoznawanie mowy wymaga połączenia z internetem.')
+      } else {
+        setErrorMsg(`Błąd nagrywania (${e.error}). Spróbuj odświeżyć stronę.`)
       }
     }
 
-    // Keep onend minimal — onerror already handles all error cases
-    recognition.onend = () => {
-      setRecording(false)
+    recognition.onend = () => { setRecording(false) }
+
+    // Set ref before start() so stopRecording() can reach the new instance
+    // even if start() fires onend synchronously on some browsers.
+    recognitionRef.current = recognition
+
+    try {
+      recognition.start()
+    } catch {
+      recognitionRef.current = null
+      setErrorMsg('Nie udało się uruchomić nagrywania. Odśwież stronę i spróbuj ponownie.')
+      return
     }
 
-    recognition.start()
-    recognitionRef.current = recognition
     setRecording(true)
   }
 
