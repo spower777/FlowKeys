@@ -33,7 +33,7 @@ export async function POST(request: Request) {
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: getUserPrompt(text, mode) },
       ],
-      max_tokens: 600,
+      max_tokens: 450,
       temperature: 0.7,
     })
     const result = completion.choices[0]?.message?.content?.trim() ?? text

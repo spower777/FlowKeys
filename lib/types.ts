@@ -12,6 +12,7 @@ export interface TypingStats {
   charsTyped: number
   wpm: number
   accuracy: number
+  completionPercent: number
   mistakesCount: number
   commonMistakes: CommonMistake[]
   difficultWords: string[]

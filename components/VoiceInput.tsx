@@ -6,10 +6,17 @@ interface Props {
   onTranscript: (text: string) => void
 }
 
+type VoiceError =
+  | 'not-supported'
+  | 'no-permission'
+  | 'no-speech'
+  | null
+
 export default function VoiceInput({ onTranscript }: Props) {
   const [supported, setSupported] = useState<boolean | null>(null)
   const [recording, setRecording] = useState(false)
   const [transcript, setTranscript] = useState('')
+  const [error, setError] = useState<VoiceError>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null)
 
@@ -19,6 +26,9 @@ export default function VoiceInput({ onTranscript }: Props) {
   }, [])
 
   function startRecording() {
+    setError(null)
+    setTranscript('')
+
     const w = window as unknown as Record<string, unknown>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const SR = (w['SpeechRecognition'] ?? w['webkitSpeechRecognition']) as any
@@ -41,14 +51,30 @@ export default function VoiceInput({ onTranscript }: Props) {
         }
       }
       setTranscript(full + interim)
+      setError(null)
     }
 
-    recognition.onerror = () => setRecording(false)
-    recognition.onend = () => setRecording(false)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recognition.onerror = (e: any) => {
+      setRecording(false)
+      if (e.error === 'not-allowed' || e.error === 'permission-denied') {
+        setError('no-permission')
+      } else if (e.error === 'no-speech') {
+        setError('no-speech')
+      }
+    }
+
+    recognition.onend = () => {
+      setRecording(false)
+      // If recording stopped without getting any transcript, show no-speech hint
+      if (!full.trim()) {
+        setError(prev => prev ?? 'no-speech')
+      }
+    }
+
     recognition.start()
     recognitionRef.current = recognition
     setRecording(true)
-    setTranscript('')
     full = ''
   }
 
@@ -58,16 +84,18 @@ export default function VoiceInput({ onTranscript }: Props) {
   }
 
   function useTranscript() {
-    onTranscript(transcript)
+    const t = transcript.trim()
+    if (!t) return
+    onTranscript(t)
   }
 
   if (supported === null) return null
 
   if (!supported) {
     return (
-      <p className="text-sm text-gray-500 bg-[#1a1a1a] border border-[#2e2e2e] rounded-2xl px-5 py-4">
-        Twoja przeglądarka nie obsługuje rozpoznawania mowy. Wklej tekst ręcznie.
-      </p>
+      <div className="text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2e2e2e] rounded-2xl px-5 py-4">
+        Rozpoznawanie mowy nie jest dostępne w tej przeglądarce. Najlepiej użyj Chrome albo wklej tekst ręcznie.
+      </div>
     )
   }
 
@@ -77,7 +105,7 @@ export default function VoiceInput({ onTranscript }: Props) {
         {!recording ? (
           <button
             onClick={startRecording}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#1a1a1a] hover:bg-[#242424] border border-[#2e2e2e] text-gray-300 text-sm font-medium rounded-xl transition"
+            className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 dark:bg-[#1a1a1a] hover:bg-gray-200 dark:hover:bg-[#242424] border border-gray-200 dark:border-[#2e2e2e] text-gray-700 dark:text-gray-300 text-sm font-medium rounded-xl transition"
           >
             <span className="w-2 h-2 rounded-full bg-red-500" />
             Start nagrywania
@@ -85,13 +113,13 @@ export default function VoiceInput({ onTranscript }: Props) {
         ) : (
           <button
             onClick={stopRecording}
-            className="flex items-center gap-2 px-4 py-2.5 bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 text-red-400 text-sm font-medium rounded-xl transition"
+            className="flex items-center gap-2 px-4 py-2.5 bg-red-50 dark:bg-red-600/20 hover:bg-red-100 dark:hover:bg-red-600/30 border border-red-200 dark:border-red-500/30 text-red-600 dark:text-red-400 text-sm font-medium rounded-xl transition"
           >
             <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
             Stop
           </button>
         )}
-        {transcript && !recording && (
+        {transcript.trim() && !recording && (
           <button
             onClick={useTranscript}
             className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-xl transition"
@@ -100,10 +128,24 @@ export default function VoiceInput({ onTranscript }: Props) {
           </button>
         )}
       </div>
+
+      {/* Error messages — shown as UI feedback, not as transcript */}
+      {error === 'no-permission' && (
+        <div className="text-sm text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-400/10 border border-amber-200 dark:border-amber-400/20 rounded-xl px-4 py-3">
+          Brak dostępu do mikrofonu. Sprawdź uprawnienia przeglądarki i macOS.
+        </div>
+      )}
+      {error === 'no-speech' && !transcript.trim() && (
+        <div className="text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2e2e2e] rounded-xl px-4 py-3">
+          Nie udało się rozpoznać mowy. Spróbuj jeszcze raz albo wklej tekst ręcznie.
+        </div>
+      )}
+
+      {/* Transcript preview */}
       {transcript && (
-        <div className="bg-[#1a1a1a] border border-[#2e2e2e] rounded-2xl px-5 py-4 text-sm text-gray-300 leading-relaxed min-h-[80px]">
+        <div className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2e2e2e] rounded-2xl px-5 py-4 text-sm text-gray-700 dark:text-gray-300 leading-relaxed min-h-[80px]">
           {transcript}
-          {recording && <span className="animate-pulse ml-1 text-gray-500">|</span>}
+          {recording && <span className="animate-pulse ml-1 text-gray-400 dark:text-gray-500">|</span>}
         </div>
       )}
     </div>

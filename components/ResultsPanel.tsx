@@ -1,6 +1,7 @@
 'use client'
 
 import type { TypingStats, TypingMode, TransformMode } from '@/lib/types'
+import { align } from '@/lib/analyzeTyping'
 
 const MODE_LABEL: Record<TransformMode, string> = {
   '1to1': '1:1', clean: 'Oczyść', story: 'Opowieść', exercise: 'Ćwiczenie', polish_chars: 'Trudne znaki',
@@ -21,6 +22,66 @@ function getDiagnosis(stats: TypingStats): string {
   return 'Runda zapisana.'
 }
 
+interface DiffCharProps {
+  trainingText: string
+  typedText: string
+}
+
+function DiffView({ trainingText, typedText }: DiffCharProps) {
+  const ops = align(trainingText, typedText)
+
+  const highDivergence = trainingText.length > 0 &&
+    ops.filter(o => o.op !== 'match').length / Math.min(trainingText.length, typedText.length || 1) > 0.6
+
+  return (
+    <div className="space-y-3">
+      {highDivergence && (
+        <p className="text-xs text-gray-500 dark:text-gray-600 italic">
+          Tekst mocno różni się od źródła — porównanie ma ograniczoną wartość.
+        </p>
+      )}
+      <div className="bg-gray-50 dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-xl px-4 py-3">
+        <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-2">Porównanie znak po znaku</p>
+        <p className="text-xs leading-7 font-mono break-words whitespace-pre-wrap">
+          {ops.map((op, i) => {
+            if (op.op === 'match') {
+              return (
+                <span key={i} className="text-gray-500 dark:text-gray-500">{op.ch}</span>
+              )
+            }
+            if (op.op === 'sub') {
+              return (
+                <span key={i} className="text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20" title={`wpisano: "${op.actual}"`}>
+                  {op.expected}
+                </span>
+              )
+            }
+            if (op.op === 'del') {
+              return (
+                <span key={i} className="text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20" title="pominięto">
+                  {op.expected}
+                </span>
+              )
+            }
+            // ins — extra char typed
+            return (
+              <span key={i} className="text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20" title="dodatkowy znak">
+                {op.actual}
+              </span>
+            )
+          })}
+        </p>
+      </div>
+      <div className="flex flex-wrap gap-3 text-[10px] text-gray-500">
+        <span><span className="text-gray-500 dark:text-gray-400">■</span> poprawnie</span>
+        <span><span className="text-red-500">■</span> zamiana</span>
+        <span><span className="text-amber-500">■</span> pominięcie</span>
+        <span><span className="text-blue-500">■</span> dodatkowy znak</span>
+      </div>
+    </div>
+  )
+}
+
 interface Props {
   stats: TypingStats
   trainingText: string
@@ -34,10 +95,20 @@ interface Props {
 export default function ResultsPanel({ stats, trainingText, typedText, transformMode, typingMode, onNewRound, onRepeat }: Props) {
   const acc = stats.accuracy
   const accColor = acc >= 95 ? 'text-green-600 dark:text-green-400' : acc >= 80 ? 'text-amber-600 dark:text-amber-400' : 'text-red-500 dark:text-red-400'
+  const incomplete = stats.completionPercent < 90
 
   return (
     <div className="space-y-6">
       <p className="text-center text-gray-400 dark:text-gray-500 text-sm italic">To była runda. Nie wyrok.</p>
+
+      {/* Incomplete round notice */}
+      {incomplete && (
+        <div className="bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] rounded-xl px-4 py-3">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Runda niedokończona — wynik dokładności dotyczy przepisanego fragmentu.
+          </p>
+        </div>
+      )}
 
       {/* Diagnosis */}
       <div className="bg-blue-50 dark:bg-blue-500/8 border border-blue-200 dark:border-blue-500/20 rounded-xl px-4 py-3">
@@ -46,17 +117,26 @@ export default function ResultsPanel({ stats, trainingText, typedText, transform
 
       {/* Main stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {[
-          { label: 'WPM', value: stats.wpm, color: 'text-blue-600 dark:text-blue-400' },
-          { label: 'Dokładność', value: `${acc}%`, color: accColor },
-          { label: 'Słowa', value: stats.wordsTyped, color: 'text-gray-700 dark:text-gray-300' },
-          { label: 'Do poprawy', value: stats.mistakesCount, color: stats.mistakesCount > 0 ? 'text-red-500 dark:text-red-400' : 'text-green-600 dark:text-green-400' },
-        ].map(s => (
-          <div key={s.label} className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] rounded-2xl px-4 py-4 text-center">
-            <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
-            <p className="text-xs text-gray-500 mt-1">{s.label}</p>
-          </div>
-        ))}
+        <div className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] rounded-2xl px-4 py-4 text-center">
+          <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.wpm}</p>
+          <p className="text-xs text-gray-500 mt-1">WPM</p>
+        </div>
+        <div className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] rounded-2xl px-4 py-4 text-center">
+          <p className={`text-2xl font-bold ${accColor}`}>{acc}%</p>
+          <p className="text-xs text-gray-500 mt-1">Dokładność</p>
+        </div>
+        <div className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] rounded-2xl px-4 py-4 text-center">
+          <p className={`text-2xl font-bold ${incomplete ? 'text-amber-600 dark:text-amber-400' : 'text-gray-700 dark:text-gray-300'}`}>
+            {stats.completionPercent}%
+          </p>
+          <p className="text-xs text-gray-500 mt-1">Ukończenie</p>
+        </div>
+        <div className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] rounded-2xl px-4 py-4 text-center">
+          <p className={`text-2xl font-bold ${stats.mistakesCount > 0 ? 'text-red-500 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
+            {stats.mistakesCount}
+          </p>
+          <p className="text-xs text-gray-500 mt-1">Do poprawy</p>
+        </div>
       </div>
 
       {/* Badges */}
@@ -116,20 +196,13 @@ export default function ResultsPanel({ stats, trainingText, typedText, transform
         </div>
       )}
 
-      {/* Text comparison */}
+      {/* Text comparison — colored diff */}
       <details className="group">
         <summary className="text-xs text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 cursor-pointer select-none transition">
           Porównaj teksty ↓
         </summary>
-        <div className="mt-3 space-y-3">
-          <div className="bg-gray-50 dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-xl px-4 py-3">
-            <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-2">Oryginał</p>
-            <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-wrap font-mono">{trainingText}</p>
-          </div>
-          <div className="bg-gray-50 dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-xl px-4 py-3">
-            <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-2">Twój tekst</p>
-            <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-wrap font-mono">{typedText}</p>
-          </div>
+        <div className="mt-3">
+          <DiffView trainingText={trainingText} typedText={typedText} />
         </div>
       </details>
 

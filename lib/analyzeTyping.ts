@@ -3,13 +3,13 @@ import type { TypingStats, CommonMistake } from './types'
 const POLISH_CHARS = new Set('ąćęłńóśźżĄĆĘŁŃÓŚŹŻ')
 const MAX_ALIGN = 600
 
-type AlignOp =
+export type AlignOp =
   | { op: 'match'; ch: string }
   | { op: 'sub'; expected: string; actual: string }
   | { op: 'ins'; actual: string }
   | { op: 'del'; expected: string }
 
-function align(source: string, typed: string): AlignOp[] {
+export function align(source: string, typed: string): AlignOp[] {
   const s = source.slice(0, MAX_ALIGN)
   const t = typed.slice(0, MAX_ALIGN)
   const n = s.length
@@ -61,6 +61,8 @@ export function analyzeTyping(
   const ops = align(sourceText, typedText)
 
   let matches = 0
+  let subCount = 0
+  let insCount = 0
   let polishCharsMissed = 0
   const mistakeMap = new Map<string, Map<string, number>>()
 
@@ -68,11 +70,15 @@ export function analyzeTyping(
     if (op.op === 'match') {
       matches++
     } else if (op.op === 'sub') {
+      subCount++
       if (POLISH_CHARS.has(op.expected)) polishCharsMissed++
       if (!mistakeMap.has(op.expected)) mistakeMap.set(op.expected, new Map())
       const m = mistakeMap.get(op.expected)!
       m.set(op.actual, (m.get(op.actual) ?? 0) + 1)
-    } else if (op.op === 'del') {
+    } else if (op.op === 'ins') {
+      insCount++
+    } else {
+      // del — skipped source char, not an active typing mistake
       if (POLISH_CHARS.has(op.expected)) polishCharsMissed++
     }
   }
@@ -80,10 +86,22 @@ export function analyzeTyping(
   const charsTyped = typedText.length
   const wordsTyped = typedText.trim() === '' ? 0 : typedText.trim().split(/\s+/).length
   const wpm = Math.round(charsTyped / 5 / elapsedMin)
-  const accuracy = sourceText.length > 0
-    ? Math.round((matches / Math.min(sourceText.length, MAX_ALIGN)) * 100)
+
+  // accuracy: of all chars the user actively typed, what fraction was correct
+  const attemptedTyped = matches + subCount + insCount
+  const accuracy = attemptedTyped > 0
+    ? Math.round((matches / attemptedTyped) * 100)
     : 100
-  const mistakesCount = ops.filter(o => o.op !== 'match').length
+
+  // completion: how many source chars did the user actually attempt
+  const coveredSource = matches + subCount
+  const sourceLen = Math.min(sourceText.length, MAX_ALIGN)
+  const completionPercent = sourceLen > 0
+    ? Math.min(100, Math.round((coveredSource / sourceLen) * 100))
+    : 100
+
+  // mistakesCount: only active mistakes (sub + ins), NOT untyped source chars (del)
+  const mistakesCount = subCount + insCount
 
   const commonMistakes: CommonMistake[] = []
   for (const [expected, actualMap] of mistakeMap) {
@@ -118,6 +136,7 @@ export function analyzeTyping(
     charsTyped,
     wpm,
     accuracy,
+    completionPercent,
     mistakesCount,
     commonMistakes: commonMistakes.slice(0, 8),
     difficultWords: [...new Set(difficultWords)].slice(0, 6),

@@ -15,8 +15,10 @@ export default function TypingSession({ trainingText, typingMode, onFinish }: Pr
   const [startTime, setStartTime] = useState<number | null>(null)
   const [elapsed, setElapsed] = useState(0)
   const [textHidden, setTextHidden] = useState(false)
+  const [pasteBlocked, setPasteBlocked] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const pasteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const isBlind = typingMode === 'blind'
   const isNoBackspace = typingMode === 'no_backspace'
@@ -25,6 +27,7 @@ export default function TypingSession({ trainingText, typingMode, onFinish }: Pr
     textareaRef.current?.focus()
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
+      if (pasteTimerRef.current) clearTimeout(pasteTimerRef.current)
       window.speechSynthesis?.cancel()
     }
   }, [])
@@ -52,6 +55,13 @@ export default function TypingSession({ trainingText, typingMode, onFinish }: Pr
     }
   }
 
+  function handlePaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
+    e.preventDefault()
+    setPasteBlocked(true)
+    if (pasteTimerRef.current) clearTimeout(pasteTimerRef.current)
+    pasteTimerRef.current = setTimeout(() => setPasteBlocked(false), 2500)
+  }
+
   const handleFinish = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current)
     window.speechSynthesis?.cancel()
@@ -70,12 +80,19 @@ export default function TypingSession({ trainingText, typingMode, onFinish }: Pr
       {/* Mode badge */}
       {isNoBackspace && (
         <div className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-400/10 border border-amber-200 dark:border-amber-400/20 rounded-xl px-4 py-2.5 text-center">
-          Backspace wyłączony. Jedziemy dalej.
+          Backspace wyłączony. Nie poprawiaj. Jedź dalej.
         </div>
       )}
       {isBlind && (
         <div className="text-xs text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-400/10 border border-purple-200 dark:border-purple-400/20 rounded-xl px-4 py-2.5 text-center">
           Tekst znika. Piszesz. Analiza przyjdzie później.
+        </div>
+      )}
+
+      {/* Paste blocked notification */}
+      {pasteBlocked && (
+        <div className="text-xs text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#2e2e2e] rounded-xl px-4 py-2.5 text-center">
+          Wklejanie wyłączone w rundzie treningowej.
         </div>
       )}
 
@@ -119,6 +136,7 @@ export default function TypingSession({ trainingText, typingMode, onFinish }: Pr
         value={typed}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
+        onPaste={handlePaste}
         placeholder="Zacznij pisać..."
         className="w-full h-36 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-300 dark:border-[#2e2e2e] focus:border-blue-400 dark:focus:border-blue-500/40 rounded-2xl px-5 py-4 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-700 resize-none focus:outline-none text-sm leading-relaxed font-mono"
         spellCheck={false}
