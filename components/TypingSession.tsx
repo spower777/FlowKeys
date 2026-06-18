@@ -5,6 +5,7 @@ import AudioControls from './AudioControls'
 import TextViewToggle from './TextViewToggle'
 import VirtualKeyboard from './VirtualKeyboard'
 import { playKeySound } from '@/lib/keyboardSounds'
+import { normalizeDashes } from '@/lib/analyzeTyping'
 import type { TypingMode, TextViewMode, ReplayEvent } from '@/lib/types'
 
 interface Props {
@@ -102,7 +103,7 @@ function wordAt(text: string, pos: number) {
 // ── component ────────────────────────────────────────────────────────────────
 
 export default function TypingSession({
-  trainingText, typingMode, textViewMode, onTextViewModeChange, onFinish,
+  trainingText: trainingText_raw, typingMode, textViewMode, onTextViewModeChange, onFinish,
   showKeyboard = false, showFingers = false, keyboardSounds = false,
   blockPaste = true, calmMode = false, blindHint = true,
   voiceRate = 1, voiceMode = 'all',
@@ -125,6 +126,7 @@ export default function TypingSession({
   const isBlind = typingMode === 'blind'
   const isNoBackspace = typingMode === 'no_backspace'
   const cursorPos = typed.length
+  const trainingText = normalizeDashes(trainingText_raw)
 
   useEffect(() => {
     captureRef.current?.focus()

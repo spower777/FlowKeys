@@ -4,6 +4,12 @@ import { charToFinger } from './fingerMap'
 const POLISH_CHARS = new Set('ąćęłńóśźżĄĆĘŁŃÓŚŹŻ')
 const MAX_ALIGN = 600
 
+// Normalize typographic dashes to hyphen-minus so "—" and "–" never cause
+// false errors when the user presses the regular "-" key.
+export function normalizeDashes(s: string): string {
+  return s.replace(/[–—]/g, '-')
+}
+
 export type AlignOp =
   | { op: 'match'; ch: string }
   | { op: 'sub'; expected: string; actual: string }
@@ -60,7 +66,7 @@ export function analyzeTyping(
   backspaceCount = 0
 ): TypingStats {
   const elapsedMin = Math.max((endTime - startTime) / 60000, 0.01)
-  const ops = align(sourceText, typedText)
+  const ops = align(normalizeDashes(sourceText), normalizeDashes(typedText))
 
   let matches = 0
   let subCount = 0
@@ -99,10 +105,13 @@ export function analyzeTyping(
   const wordsTyped = typedText.trim() === '' ? 0 : typedText.trim().split(/\s+/).length
   const wpm = Math.round(charsTyped / 5 / elapsedMin)
 
-  // accuracy: of all chars the user actively typed, what fraction was correct
+  // accuracy: of all chars the user actively typed, what fraction was correct.
+  // Reserve 100% for truly perfect runs — never round up to 100 when errors exist.
   const attemptedTyped = matches + subCount + insCount
   const accuracy = attemptedTyped > 0
-    ? Math.round((matches / attemptedTyped) * 100)
+    ? (matches === attemptedTyped
+        ? 100
+        : Math.min(99, Math.round((matches / attemptedTyped) * 100)))
     : 100
 
   // completion: how many source chars did the user actually attempt
