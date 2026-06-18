@@ -3,6 +3,7 @@ import type { FlowBadge } from '@/data/badges'
 import type { LessonMode } from '@/data/lessons'
 import { lessons } from '@/data/lessons'
 import { getSessions } from './storage'
+import { loadSettings } from './settings'
 
 const LP_KEY = 'flowkeys_lesson_progress'
 const BADGES_KEY = 'flowkeys_badges'
@@ -32,6 +33,13 @@ export function getAllLessonProgress(): Record<number, LessonProgress> {
 }
 
 export function getLessonStatus(lessonId: number, allProgress?: Record<number, LessonProgress>): LessonStatus {
+  if (loadSettings().devUnlockAll) {
+    const p = (allProgress ?? getAllLessonProgress())[lessonId]
+    if (p?.mastered) return 'mastered'
+    if (p?.completed) return 'completed'
+    return 'available'
+  }
+
   const progress = allProgress ?? getAllLessonProgress()
   const p = progress[lessonId]
 

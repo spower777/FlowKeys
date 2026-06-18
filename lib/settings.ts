@@ -19,6 +19,7 @@ export interface Settings {
   voiceRate: VoiceRate
   voiceMode: VoiceMode
   blindHint: boolean
+  devUnlockAll: boolean
 }
 
 export const DEFAULTS: Settings = {
@@ -34,6 +35,7 @@ export const DEFAULTS: Settings = {
   voiceRate: 1,
   voiceMode: 'all',
   blindHint: true,
+  devUnlockAll: false,
 }
 
 const KEY = 'flowkeys_settings'
