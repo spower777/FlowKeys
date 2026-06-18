@@ -288,4 +288,522 @@ export const lessons: FlowLesson[] = [
     difficulty: 3, mode: 'blindFlow',
     text: 'Ślepy strumień płynie inaczej niż ten, który widzę. Nie widzę każdego kamienia pod wodą, ale czuję kierunek i wiem, kiedy rytm jest prawdziwy. Uczę się pisać z obrazem w umyśle, nie z oczami na ekranie. Tekst znika, ale palce wiedzą, gdzie iść. Wystarczy ufać.',
   },
+
+  // ── Rozdział 4 · Nowy Rytm ───────────────────────────────────────────────────
+  {
+    id: 51, chapterId: 4, pack: 'start', title: 'Nie Muszę Się Spieszyć',
+    difficulty: 1, mode: 'normal',
+    text: 'Nie muszę się spieszyć, żeby iść do przodu. Każdy spokojny ruch ma znaczenie. Palce wracają na swoje miejsce, a ja wracam do siebie.',
+  },
+  {
+    id: 52, chapterId: 4, pack: 'start', title: 'Pierwszy Rytm',
+    difficulty: 1, mode: 'normal',
+    text: 'Najpierw rytm, potem szybkość. Klawiatura nie jest przeciwnikiem. Jest tylko mostem między myślą a światem.',
+  },
+  {
+    id: 53, chapterId: 4, pack: 'motivation', title: 'Dobra Runda',
+    difficulty: 1, mode: 'normal',
+    text: 'To była runda. Nie wyrok. Jeśli popełniłem błąd, mam informację. Jeśli pisałem spokojnie, mam zwycięstwo.',
+  },
+  {
+    id: 54, chapterId: 4, pack: 'affirmations', title: 'Kocham Siebie',
+    difficulty: 1, mode: 'normal',
+    text: 'Kocham siebie nie dlatego, że jestem idealny. Kocham siebie dlatego, że wracam, próbuję i uczę się być po swojej stronie.',
+  },
+  {
+    id: 55, chapterId: 4, pack: 'affirmations', title: 'Szanuję Siebie',
+    difficulty: 1, mode: 'normal',
+    text: 'Szanuję siebie. Mój wysiłek ma znaczenie. Nie muszę zasługiwać na spokój perfekcją. Mogę zacząć od jednego dobrego oddechu.',
+  },
+  {
+    id: 56, chapterId: 4, pack: 'motivation', title: 'Dajesz Radę',
+    difficulty: 1, mode: 'normal',
+    text: 'Dajesz radę. Nawet jeśli dzisiaj idzie wolniej, nadal idzie. Postęp czasem wygląda jak ciche wrócenie do ćwiczenia.',
+  },
+  {
+    id: 57, chapterId: 4, pack: 'mindfulness', title: 'Nie Ma Paniki',
+    difficulty: 1, mode: 'normal',
+    text: 'Błąd nie jest alarmem. Błąd jest śladem. Mogę go zobaczyć, odetchnąć i pisać dalej bez robienia z klawiatury miejsca katastrofy.',
+  },
+  {
+    id: 58, chapterId: 4, pack: 'motivation', title: 'Małe Kroki',
+    difficulty: 1, mode: 'normal',
+    text: 'Małe kroki budują dużą zmianę. Jedna spokojna runda dzisiaj może być początkiem nawyku, który jutro będzie pracował za mnie.',
+  },
+  {
+    id: 59, chapterId: 4, pack: 'start', title: 'Wróć Do Rzędu',
+    difficulty: 1, mode: 'normal',
+    text: 'Palce wracają na rząd domowy. To nie jest kara, tylko baza. Z tej bazy mogę ruszyć w każdą stronę i nie zgubić siebie.',
+  },
+  {
+    id: 60, chapterId: 4, pack: 'mindfulness', title: 'Oddycham',
+    difficulty: 1, mode: 'normal',
+    text: 'Oddycham spokojnie. Piszę wolniej. Gdy zwalniam, widzę więcej. Gdy widzę więcej, mniej walczę ze sobą.',
+  },
+  {
+    id: 61, chapterId: 4, pack: 'affirmations', title: 'Nie Muszę Udowadniać',
+    difficulty: 1, mode: 'normal',
+    text: 'Nie muszę nikomu udowadniać własnej wartości. Mogę ćwiczyć po cichu, bez teatru, bez presji i bez publicznego pojedynku z Enterem.',
+  },
+  {
+    id: 62, chapterId: 4, pack: 'motivation', title: 'Dzisiaj Wystarczy',
+    difficulty: 1, mode: 'normal',
+    text: 'Dzisiaj wystarczy jedna dobra runda. Nie wszystko naraz. Nie wojnę, tylko trening. Nie panika, tylko powrót.',
+  },
+  {
+    id: 63, chapterId: 4, pack: 'affirmations', title: 'Jestem Po Swojej Stronie',
+    difficulty: 1, mode: 'normal',
+    text: 'Jestem po swojej stronie. Nawet kiedy coś mi nie wychodzi, nie muszę się opuszczać. Mogę poprawić kierunek bez bicia siebie kijem.',
+  },
+  {
+    id: 64, chapterId: 4, pack: 'motivation', title: 'Cichy Progres',
+    difficulty: 1, mode: 'normal',
+    text: 'Progres nie zawsze krzyczy. Czasem siedzi cicho, robi swoje i po miesiącu wygląda jak cud, choć był tylko sumą małych powrotów.',
+  },
+  {
+    id: 65, chapterId: 4, pack: 'mindfulness', title: 'Spokojna Dłoń',
+    difficulty: 1, mode: 'normal',
+    text: 'Spokojna dłoń pamięta więcej niż spięta głowa. Nie muszę naciskać mocniej. Wystarczy, że będę obecny.',
+  },
+
+  // ── Rozdział 5 · Głębszy Rytm ────────────────────────────────────────────────
+  {
+    id: 66, chapterId: 5, pack: 'motivation', title: 'Nigdy Nie Było Lepiej',
+    difficulty: 2, mode: 'normal',
+    text: 'Nigdy nie było lepiej, bo teraz widzę rzeczy, których wcześniej nie umiałem zobaczyć. Nawet chaos może stać się materiałem do nauki.',
+  },
+  {
+    id: 67, chapterId: 5, pack: 'affirmations', title: 'Ufam Procesowi',
+    difficulty: 2, mode: 'normal',
+    text: 'Ufam procesowi. Nie muszę znać całej drogi, żeby zrobić następny krok. Wystarczy jeden ruch, jedna decyzja i jedna spokojna runda.',
+  },
+  {
+    id: 68, chapterId: 5, pack: 'mindfulness', title: 'Mój Umysł Może Zwalniać',
+    difficulty: 2, mode: 'normal',
+    text: 'Mój umysł może zwalniać. Nie każda myśl musi od razu zostać złapana. Czasem najlepsze rzeczy przychodzą, gdy przestaję za nimi biec.',
+  },
+  {
+    id: 69, chapterId: 5, pack: 'start', title: 'Piszę Jak Człowiek',
+    difficulty: 2, mode: 'normal',
+    text: 'Piszę jak człowiek, nie jak maszyna do produkcji wyniku. Wynik jest skutkiem ubocznym. Najważniejsze jest to, że wracam do rytmu.',
+  },
+  {
+    id: 70, chapterId: 5, pack: 'affirmations', title: 'Jestem Wystarczający',
+    difficulty: 2, mode: 'normal',
+    text: 'Jestem wystarczający już teraz. Mogę się rozwijać bez pogardy do siebie. To dziwne dla mózgu, wiem, ale może się przyzwyczai.',
+  },
+  {
+    id: 71, chapterId: 5, pack: 'mindfulness', title: 'Zamieniam Chaos W Rytm',
+    difficulty: 2, mode: 'normal',
+    text: 'Zamieniam chaos w rytm. Nie przez siłę, tylko przez powrót. Jedno słowo, jeden oddech, jeden znak. Tak robi się porządek.',
+  },
+  {
+    id: 72, chapterId: 5, pack: 'affirmations', title: 'Moje Tempo',
+    difficulty: 2, mode: 'normal',
+    text: 'Moje tempo jest moje. Mogę przyspieszać, kiedy jestem gotowy, i zwalniać, kiedy potrzebuję precyzji. To nie ucieczka, to mądrość.',
+  },
+  {
+    id: 73, chapterId: 5, pack: 'noBackspace', title: 'Bez Cofania',
+    difficulty: 2, mode: 'noBackspace',
+    text: 'Nie cofam natychmiast. Daję sobie zobaczyć prawdziwy ślad ruchu. Błąd nie znika, ale przestaje mną rządzić.',
+  },
+  {
+    id: 74, chapterId: 5, pack: 'affirmations', title: 'Jestem Najlepszym Wydarzeniem',
+    difficulty: 2, mode: 'normal',
+    text: 'Jestem najlepszym, co mogło mi się przytrafić, bo ze sobą zostaję najdłużej. Warto więc mówić do siebie jak do kogoś ważnego.',
+  },
+  {
+    id: 75, chapterId: 5, pack: 'visualization', title: 'Przyszłość Już Ćwiczy',
+    difficulty: 2, mode: 'normal',
+    text: 'Moja przyszłość zaczyna się w tej rundzie. Nie w wielkim przemówieniu, nie w fajerwerkach, tylko w cichym powtórzeniu dobrego ruchu.',
+  },
+  {
+    id: 76, chapterId: 5, pack: 'mindfulness', title: 'Dłoń Wie',
+    difficulty: 2, mode: 'normal',
+    text: 'Dłoń wie więcej, gdy głowa nie krzyczy. Pozwalam palcom pamiętać. Pozwalam ciału uczyć się bez ciągłego egzaminu.',
+  },
+  {
+    id: 77, chapterId: 5, pack: 'motivation', title: 'Nie Jestem Spóźniony',
+    difficulty: 2, mode: 'normal',
+    text: 'Nie jestem spóźniony do własnego życia. Zaczynam tam, gdzie jestem. To miejsce może być niedoskonałe, ale jest prawdziwe.',
+  },
+  {
+    id: 78, chapterId: 5, pack: 'mindfulness', title: 'Czysta Obecność',
+    difficulty: 2, mode: 'normal',
+    text: 'W tej chwili nie muszę rozwiązywać całego życia. Mam tekst, oddech i palce. To wystarczy, żeby wrócić do obecności.',
+  },
+  {
+    id: 79, chapterId: 5, pack: 'start', title: 'Nie Walczę Z Tekstem',
+    difficulty: 2, mode: 'normal',
+    text: 'Nie walczę z tekstem. Czytam, oddycham i piszę. Jeśli pomylę znak, świat nadal obraca się dalej, zuchwała planeta jedna.',
+  },
+  {
+    id: 80, chapterId: 5, pack: 'mindfulness', title: 'Wewnętrzny Porządek',
+    difficulty: 2, mode: 'normal',
+    text: 'Porządek zaczyna się od małych rzeczy. Od dłoni. Od oddechu. Od tego, że nie uciekam, gdy robi się trochę niewygodnie.',
+  },
+
+  // ── Rozdział 6 · Polskie Ogonki ─────────────────────────────────────────────
+  {
+    id: 81, chapterId: 6, pack: 'polishSigns', title: 'Zażółć Spokojnie',
+    difficulty: 3, mode: 'hardSigns',
+    text: 'Zażółć gęślą jaźń. To nie jest zdanie, to polski smok ortograficzny. Podchodzę spokojnie, znak po znaku, bez heroizmu.',
+  },
+  {
+    id: 82, chapterId: 6, pack: 'polishSigns', title: 'Źródło Cierpliwości',
+    difficulty: 3, mode: 'hardSigns',
+    text: 'Źródło cierpliwości jest bliżej, niż sądzę. Ćwiczę ą, ę, ć, ł, ń, ó, ś, ź i ż bez napinania dłoni.',
+  },
+  {
+    id: 83, chapterId: 6, pack: 'polishSigns', title: 'Łagodność',
+    difficulty: 3, mode: 'hardSigns',
+    text: 'Łagodność nie oznacza słabości. Czasem oznacza, że nie muszę walić w klawisze jak człowiek próbujący obudzić drukarkę.',
+  },
+  {
+    id: 84, chapterId: 6, pack: 'polishSigns', title: 'Ścieżka Przez Znaki',
+    difficulty: 3, mode: 'hardSigns',
+    text: 'Ścieżka przez polskie znaki jest wąska, ale można ją przejść. Wystarczy mniej pośpiechu, więcej uwagi i trochę pokory dla ogonków.',
+  },
+  {
+    id: 85, chapterId: 6, pack: 'polishSigns', title: 'Ćwiczę Bez Złości',
+    difficulty: 3, mode: 'hardSigns',
+    text: 'Ćwiczę bez złości. Jeśli zgubię ś, ź albo ć, nie robię dramatu. Wracam do ruchu i uczę palce nowej mapy.',
+  },
+  {
+    id: 86, chapterId: 6, pack: 'polishSigns', title: 'Żółty Liść',
+    difficulty: 3, mode: 'hardSigns',
+    text: 'Żółty liść spadł na ziemię bez pośpiechu. Nikt go nie poganiał, więc zrobił to idealnie. Moje palce też mogą zwolnić.',
+  },
+  {
+    id: 87, chapterId: 6, pack: 'polishSigns', title: 'Łąka Po Deszczu',
+    difficulty: 3, mode: 'hardSigns',
+    text: 'Łąka po deszczu pachniała spokojem. Szły przez nią myśli, które nie musiały już niczego udowadniać.',
+  },
+  {
+    id: 88, chapterId: 6, pack: 'polishSigns', title: 'Nie Gubię Ogonków',
+    difficulty: 3, mode: 'hardSigns',
+    text: 'Nie gubię ogonków, bo ogonki też są częścią sensu. Polska litera bez ogonka wygląda czasem jak człowiek bez kawy.',
+  },
+  {
+    id: 89, chapterId: 6, pack: 'polishSigns', title: 'Czułość Do Detalu',
+    difficulty: 3, mode: 'hardSigns',
+    text: 'Czułość do detalu uczy mnie cierpliwości. Jeden znak może zmienić słowo, a jeden spokojny oddech może zmienić rundę.',
+  },
+  {
+    id: 90, chapterId: 6, pack: 'polishSigns', title: 'Mały Ogonek, Duża Różnica',
+    difficulty: 3, mode: 'hardSigns',
+    text: 'Mały ogonek robi dużą różnicę. Tak samo mały nawyk. Tak samo jedna decyzja, żeby nie panikować przy błędzie.',
+  },
+
+  // ── Rozdział 7 · Blind Flow ──────────────────────────────────────────────────
+  {
+    id: 91, chapterId: 7, pack: 'blindFlow', title: 'Piszę Z Pamięci',
+    difficulty: 3, mode: 'blindFlow',
+    text: 'Piszę z pamięci. Nie widzę wszystkiego, ale czuję kierunek. To ćwiczenie nie sprawdza tylko palców. Sprawdza zaufanie.',
+  },
+  {
+    id: 92, chapterId: 7, pack: 'blindFlow', title: 'Mniej Oczu',
+    difficulty: 3, mode: 'blindFlow',
+    text: 'Kiedy mniej patrzę, mniej kontroluję. Kiedy mniej kontroluję, zaczynam słyszeć rytm. Blind Flow to nie ciemność, tylko inny rodzaj uwagi.',
+  },
+  {
+    id: 93, chapterId: 7, pack: 'blindFlow', title: 'Wewnętrzna Klawiatura',
+    difficulty: 3, mode: 'blindFlow',
+    text: 'Wewnętrzna klawiatura buduje się powoli. Najpierw jest zgadywanie, potem rytm, a potem nagle palce wiedzą, gdzie wrócić.',
+  },
+  {
+    id: 94, chapterId: 7, pack: 'blindFlow', title: 'Nie Widzę, Ale Idę',
+    difficulty: 3, mode: 'blindFlow',
+    text: 'Nie widzę całego tekstu, ale idę dalej. To dobra lekcja dla pisania i całego życia, niestety życie też ma kiepski interfejs.',
+  },
+  {
+    id: 95, chapterId: 7, pack: 'blindFlow', title: 'Cisza Ekranu',
+    difficulty: 3, mode: 'blindFlow',
+    text: 'Ekran milczy, więc słyszę siebie. Palce przestają pytać o pozwolenie. Zaczynają szukać rytmu w pamięci.',
+  },
+  {
+    id: 96, chapterId: 7, pack: 'blindFlow', title: 'Bez Podglądania',
+    difficulty: 3, mode: 'blindFlow',
+    text: 'Bez podglądania widać więcej. Widać napięcie, pośpiech i miejsca, w których głowa próbuje przejąć stery jak spanikowany kapitan.',
+  },
+  {
+    id: 97, chapterId: 7, pack: 'blindFlow', title: 'Pamiętam Zdanie',
+    difficulty: 3, mode: 'blindFlow',
+    text: 'Pamiętam zdanie nie jako obraz, ale jako rytm. Słowa wracają przez dłonie. Nie muszę ich gonić, wystarczy je zaprosić.',
+  },
+  {
+    id: 98, chapterId: 7, pack: 'blindFlow', title: 'Ciemność Pomaga',
+    difficulty: 3, mode: 'blindFlow',
+    text: 'Ciemność pomaga, gdy oczy robią za komisję śledczą. Zamykam kontrolę, otwieram rytm i pozwalam dłoniom pracować.',
+  },
+  {
+    id: 99, chapterId: 7, pack: 'blindFlow', title: 'Piszę Dalej',
+    difficulty: 3, mode: 'blindFlow',
+    text: 'Piszę dalej, nawet jeśli nie jestem pewien. Niepewność nie musi mnie zatrzymać. Może być tylko częścią drogi.',
+  },
+  {
+    id: 100, chapterId: 7, pack: 'blindFlow', title: 'Ufam Dłoniom',
+    difficulty: 3, mode: 'blindFlow',
+    text: 'Ufam dłoniom. Ufam rytmowi. Ufam temu, że ciało może nauczyć się rzeczy, których głowa nie musi ciągle nadzorować.',
+  },
+
+  // ── Rozdział 8 · Wizualizacja ────────────────────────────────────────────────
+  {
+    id: 101, chapterId: 8, pack: 'visualization', title: 'Żyję Jak Spełniony',
+    difficulty: 3, mode: 'normal',
+    text: 'Żyję tak, jakby moje dobre życie już zaczęło się dzisiaj. Nie czekam na idealny moment. Wchodzę w stan człowieka, który wraca do siebie.',
+  },
+  {
+    id: 102, chapterId: 8, pack: 'visualization', title: 'Neville Bez Peleryny',
+    difficulty: 3, mode: 'normal',
+    text: 'Wyobrażam sobie koniec, ale nie uciekam od działania. Czuję spełnienie i robię mały krok. Mistyka mistyką, ale palce też mają robotę.',
+  },
+  {
+    id: 103, chapterId: 8, pack: 'visualization', title: 'Stan Spełnienia',
+    difficulty: 3, mode: 'normal',
+    text: 'Wchodzę w stan spełnienia. Nie jako udawanie, ale jako ćwiczenie wyboru. Moje ciało uczy się nowego sposobu bycia.',
+  },
+  {
+    id: 104, chapterId: 8, pack: 'visualization', title: 'Obraz Przyszłości',
+    difficulty: 3, mode: 'normal',
+    text: 'Widzę siebie spokojnego, silnego i obecnego. Nie idealnego. Prawdziwego. Takiego, który nie ucieka od życia ani od klawiatury.',
+  },
+  {
+    id: 105, chapterId: 8, pack: 'visualization', title: 'Już Jestem W Drodze',
+    difficulty: 3, mode: 'normal',
+    text: 'Już jestem w drodze. Nie muszę czekać, aż poczuję się gotowy. Gotowość często przychodzi dopiero po pierwszym ruchu.',
+  },
+  {
+    id: 106, chapterId: 8, pack: 'visualization', title: 'Czuję To Teraz',
+    difficulty: 3, mode: 'normal',
+    text: 'Czuję wdzięczność teraz, nie dopiero po wszystkim. To zmienia napięcie w ciele i sposób, w jaki patrzę na własny dzień.',
+  },
+  {
+    id: 107, chapterId: 8, pack: 'visualization', title: 'Dobre Życie',
+    difficulty: 3, mode: 'normal',
+    text: 'Dobre życie nie musi wejść z fanfarami. Może zacząć się od tego, że dziś nie zdradzam siebie w małych decyzjach.',
+  },
+  {
+    id: 108, chapterId: 8, pack: 'visualization', title: 'Nowa Tożsamość',
+    difficulty: 3, mode: 'normal',
+    text: 'Staję się człowiekiem, który ćwiczy spokojnie. Człowiekiem, który kończy rundę. Człowiekiem, który nie robi z błędu religii.',
+  },
+  {
+    id: 109, chapterId: 8, pack: 'visualization', title: 'To Już Pracuje',
+    difficulty: 3, mode: 'normal',
+    text: 'To już pracuje we mnie. Nawyk rośnie po cichu. Nie muszę widzieć korzeni, żeby wiedzieć, że coś zaczyna się układać.',
+  },
+  {
+    id: 110, chapterId: 8, pack: 'visualization', title: 'Przyszły Ja',
+    difficulty: 3, mode: 'normal',
+    text: 'Przyszły ja nie jest obcym człowiekiem. To ja po wielu małych powrotach. Każda runda jest wiadomością wysłaną do niego.',
+  },
+
+  // ── Rozdział 9 · Duchowość ───────────────────────────────────────────────────
+  {
+    id: 111, chapterId: 9, pack: 'spirituality', title: 'Jezus Cię Kocha',
+    difficulty: 2, mode: 'normal',
+    text: 'Jezus cię kocha. Nie jako hasło na kubku, tylko jako przypomnienie, że nie jesteś sam w miejscu, którego nie umiesz jeszcze nazwać.',
+  },
+  {
+    id: 112, chapterId: 9, pack: 'spirituality', title: 'Pokój W Ciszy',
+    difficulty: 2, mode: 'normal',
+    text: 'W ciszy też może być obecność. Nie każda odpowiedź przychodzi jako zdanie. Czasem przychodzi jako pokój, który zostaje chwilę dłużej.',
+  },
+  {
+    id: 113, chapterId: 9, pack: 'spirituality', title: 'Nie Jestem Sam',
+    difficulty: 2, mode: 'normal',
+    text: 'Nie jestem sam. Nawet gdy dzień jest ciężki, mogę oprzeć się o coś większego niż mój aktualny lęk.',
+  },
+  {
+    id: 114, chapterId: 9, pack: 'spirituality', title: 'Łaska Nie Krzyczy',
+    difficulty: 3, mode: 'normal',
+    text: 'Łaska nie zawsze krzyczy. Czasem działa cicho, jak światło pod drzwiami. Wystarczy zauważyć, że jeszcze jest droga.',
+  },
+  {
+    id: 115, chapterId: 9, pack: 'spirituality', title: 'Modlitwa Bez Słów',
+    difficulty: 3, mode: 'normal',
+    text: 'Czasem modlitwa nie ma słów. Jest tylko oddech, zmęczenie i pragnienie, żeby wrócić do dobra. To też może wystarczyć.',
+  },
+  {
+    id: 116, chapterId: 9, pack: 'spirituality', title: 'Bóg Nie Jest Excelem',
+    difficulty: 3, mode: 'normal',
+    text: 'Bóg nie jest Excelem, który liczy moje błędy w komórkach. Mogę wracać bez udawania, że zawsze wiem, co robię.',
+  },
+  {
+    id: 117, chapterId: 9, pack: 'spirituality', title: 'Światło W Małym Ruchu',
+    difficulty: 3, mode: 'normal',
+    text: 'Światło czasem pojawia się w małym ruchu. W tym, że nie rezygnuję. W tym, że robię jedną dobrą rzecz mimo zmęczenia.',
+  },
+  {
+    id: 118, chapterId: 9, pack: 'spirituality', title: 'Nie Muszę Być Gotowy',
+    difficulty: 3, mode: 'normal',
+    text: 'Nie muszę być gotowy, żeby zostać poprowadzony. Czasem wystarczy powiedzieć: jestem tutaj, nie wiem jak, ale chcę iść dalej.',
+  },
+  {
+    id: 119, chapterId: 9, pack: 'spirituality', title: 'Wdzięczność',
+    difficulty: 3, mode: 'normal',
+    text: 'Wdzięczność nie kasuje problemów. Ona tylko przypomina, że problemy nie są całą prawdą. To już dużo.',
+  },
+  {
+    id: 120, chapterId: 9, pack: 'spirituality', title: 'Ciche Prowadzenie',
+    difficulty: 3, mode: 'normal',
+    text: 'Ciche prowadzenie nie zawsze wygląda jak znak z nieba. Czasem wygląda jak decyzja, żeby nie wracać do starego chaosu.',
+  },
+
+  // ── Rozdział 10 · Relacje ────────────────────────────────────────────────────
+  {
+    id: 121, chapterId: 10, pack: 'relationships', title: 'Ojciec Też Wraca',
+    difficulty: 3, mode: 'normal',
+    text: 'Ojciec też się uczy. Nie zawsze wiedziałem, jak być obecny, ale mogę wracać. Miłość nie jest perfekcją. Miłość jest powrotem.',
+  },
+  {
+    id: 122, chapterId: 10, pack: 'relationships', title: 'Dziecko Patrzy',
+    difficulty: 3, mode: 'normal',
+    text: 'Dziecko patrzy nie tylko na moje słowa, ale na mój rytm. Jeśli uczę się spokoju, pokazuję więcej niż jedną lekcję.',
+  },
+  {
+    id: 123, chapterId: 10, pack: 'relationships', title: 'Nie Naprawię Wszystkiego Naraz',
+    difficulty: 3, mode: 'normal',
+    text: 'Nie naprawię wszystkiego naraz. Mogę jednak być dziś trochę bardziej obecny niż wczoraj. To nie jest mało.',
+  },
+  {
+    id: 124, chapterId: 10, pack: 'relationships', title: 'Dobrze, Że Jesteś',
+    difficulty: 2, mode: 'normal',
+    text: 'Dobrze, że jesteś. Twoja obecność ma znaczenie, nawet gdy nie masz gotowej odpowiedzi. Czasem wystarczy zostać.',
+  },
+  {
+    id: 125, chapterId: 10, pack: 'relationships', title: 'Miłość W Praktyce',
+    difficulty: 3, mode: 'normal',
+    text: 'Miłość w praktyce rzadko wygląda jak film. Częściej wygląda jak cierpliwość, rozmowa, herbata i nieuciekanie, gdy robi się trudno.',
+  },
+  {
+    id: 126, chapterId: 10, pack: 'relationships', title: 'Słucham',
+    difficulty: 2, mode: 'normal',
+    text: 'Słucham uważniej. Nie po to, żeby wygrać rozmowę, ale żeby naprawdę usłyszeć człowieka po drugiej stronie.',
+  },
+  {
+    id: 127, chapterId: 10, pack: 'relationships', title: 'Nie Muszę Mieć Racji',
+    difficulty: 3, mode: 'normal',
+    text: 'Nie muszę zawsze mieć racji. Mogę mieć kontakt. A kontakt jest często cenniejszy niż triumfalne stanie na ruinach dyskusji.',
+  },
+  {
+    id: 128, chapterId: 10, pack: 'relationships', title: 'Bliskość',
+    difficulty: 3, mode: 'normal',
+    text: 'Bliskość nie powstaje z wielkich deklaracji. Powstaje z małych chwil, w których ktoś czuje, że nie musi udawać.',
+  },
+  {
+    id: 129, chapterId: 10, pack: 'relationships', title: 'Mniej Obrony',
+    difficulty: 3, mode: 'normal',
+    text: 'Mniej się bronię, więcej słucham. To trudne, bo ego lubi nosić hełm. Ale czasem można go zdjąć i nadal przeżyć.',
+  },
+  {
+    id: 130, chapterId: 10, pack: 'relationships', title: 'Dobre Słowo',
+    difficulty: 2, mode: 'normal',
+    text: 'Dobre słowo może zostać w człowieku na długo. Nie zawsze wiem, które słowo nim będzie, więc mówię ostrożniej.',
+  },
+
+  // ── Rozdział 11 · Opowieści ──────────────────────────────────────────────────
+  {
+    id: 131, chapterId: 11, pack: 'stories', title: 'Kartka Od Mamy',
+    difficulty: 3, mode: 'normal',
+    text: 'Wróciłem późno do domu. Na stole czekała kartka od mamy i garnek zupy. Czasem miłość nie robi hałasu, tylko zostawia ciepło.',
+  },
+  {
+    id: 132, chapterId: 11, pack: 'stories', title: 'Pies Przy Kaloryferze',
+    difficulty: 3, mode: 'normal',
+    text: 'Pies spał zwinięty przy kaloryferze i nawet nie wstał mnie przywitać. Uznałem to za szczyt zaufania albo bezczelności.',
+  },
+  {
+    id: 133, chapterId: 11, pack: 'stories', title: 'Bieg Po Zmroku',
+    difficulty: 3, mode: 'normal',
+    text: 'Wybiegłem po zmroku, gdy miasto zaczynało milknąć. Po kilku minutach oddech znalazł rytm, a głowa przestała udawać centrum wszechświata.',
+  },
+  {
+    id: 134, chapterId: 11, pack: 'stories', title: 'Stara Klawiatura',
+    difficulty: 3, mode: 'normal',
+    text: 'Stara klawiatura miała własny charakter. Niektóre klawisze działały jakby po negocjacjach, inne jakby miały osobisty żal do użytkownika.',
+  },
+  {
+    id: 135, chapterId: 11, pack: 'stories', title: 'Deszcz Na Szybie',
+    difficulty: 3, mode: 'normal',
+    text: 'Deszcz stukał o szybę, a ja pisałem wolniej niż zwykle. Nie dlatego, że nie umiałem. Dlatego, że pierwszy raz nie musiałem uciekać.',
+  },
+  {
+    id: 136, chapterId: 11, pack: 'stories', title: 'Nocna Iteracja',
+    difficulty: 3, mode: 'normal',
+    text: 'O drugiej w nocy poprawiałem kolor przycisku, jakby od tego zależał los cywilizacji. Rano okazało się, że najbardziej potrzebowałem snu.',
+  },
+  {
+    id: 137, chapterId: 11, pack: 'stories', title: 'Mały Pokój',
+    difficulty: 3, mode: 'normal',
+    text: 'Pokój był mały, ale spokojny. Na biurku stał kubek, obok leżały notatki, a w środku dnia pojawiło się coś podobnego do nadziei.',
+  },
+  {
+    id: 138, chapterId: 11, pack: 'stories', title: 'Powrót Z Pracy',
+    difficulty: 3, mode: 'normal',
+    text: 'Wróciłem z pracy zmęczony, ale nie całkiem pusty. Czasem wystarczy prosta rzecz: cisza, zupa i świadomość, że dzień już się kończy.',
+  },
+  {
+    id: 139, chapterId: 11, pack: 'stories', title: 'Runda Po Biegu',
+    difficulty: 3, mode: 'normal',
+    text: 'Po biegu palce pisały inaczej. Ciało było zmęczone, ale spokojniejsze. Jakby napięcie zostało gdzieś między latarniami.',
+  },
+  {
+    id: 140, chapterId: 11, pack: 'stories', title: 'Zwykły Wieczór',
+    difficulty: 3, mode: 'normal',
+    text: 'Zwykły wieczór może być początkiem zmiany. Nie musi wyglądać imponująco. Wystarczy, że nie oddam go bezmyślnie staremu chaosowi.',
+  },
+
+  // ── Rozdział 12 · Mistrzostwo ────────────────────────────────────────────────
+  {
+    id: 141, chapterId: 12, pack: 'mastery', title: 'Mistrz Nie Krzyczy',
+    difficulty: 4, mode: 'normal',
+    text: 'Mistrz nie musi krzyczeć, że jest mistrzem. Po prostu wraca do podstaw, kiedy inni szukają magicznego skrótu z brokatem.',
+  },
+  {
+    id: 142, chapterId: 12, pack: 'mastery', title: 'Dokładność Przed Prędkością',
+    difficulty: 4, mode: 'normal',
+    text: 'Dokładność przed prędkością. Najpierw czysta droga, potem tempo. Szybkość bez kontroli to tylko efektowna forma potykania się.',
+  },
+  {
+    id: 143, chapterId: 12, pack: 'mastery', title: 'Stabilność',
+    difficulty: 4, mode: 'normal',
+    text: 'Stabilność jest większym osiągnięciem niż jednorazowy rekord. Rekord robi hałas. Stabilność zmienia człowieka po cichu.',
+  },
+  {
+    id: 144, chapterId: 12, pack: 'mastery', title: 'Nie Gonię Wyniku',
+    difficulty: 4, mode: 'normal',
+    text: 'Nie gonię wyniku. Buduję warunki, w których wynik sam zaczyna rosnąć. To nudniejsze, więc oczywiście skuteczniejsze.',
+  },
+  {
+    id: 145, chapterId: 12, pack: 'mastery', title: 'Mniej Dramatycznie',
+    difficulty: 4, mode: 'normal',
+    text: 'Mniej dramatycznie, bardziej regularnie. Tak powstaje postęp. Niestety bez fanfar, smoków i muzyki trailerowej.',
+  },
+  {
+    id: 146, chapterId: 12, pack: 'mastery', title: 'Spokojna Moc',
+    difficulty: 4, mode: 'normal',
+    text: 'Spokojna moc nie wygląda jak napięcie. Wygląda jak człowiek, który robi swoje, nawet gdy nikt nie klaszcze.',
+  },
+  {
+    id: 147, chapterId: 12, pack: 'mastery', title: 'Rzemiosło',
+    difficulty: 4, mode: 'normal',
+    text: 'Rzemiosło zaczyna się tam, gdzie kończy się zachwyt nad nowością. Wracam, powtarzam, poprawiam i pozwalam, żeby jakość rosła.',
+  },
+  {
+    id: 148, chapterId: 12, pack: 'mastery', title: 'Pełna Obecność',
+    difficulty: 4, mode: 'normal',
+    text: 'Pełna obecność to nie napięta kontrola. To spokojne widzenie tego, co jest. Tekstu, dłoni, błędu, oddechu i następnego znaku.',
+  },
+  {
+    id: 149, chapterId: 12, pack: 'mastery', title: 'Nie Uciekam',
+    difficulty: 4, mode: 'normal',
+    text: 'Nie uciekam od trudniejszej rundy. Nie muszę jej wygrać spektakularnie. Wystarczy, że przejdę przez nią uczciwie.',
+  },
+  {
+    id: 150, chapterId: 12, pack: 'mastery', title: '777 Flow',
+    difficulty: 5, mode: 'normal',
+    text: 'Na końcu nie chodzi o 777 lekcji. Chodzi o człowieka, który nauczył się wracać. Do rytmu, do spokoju, do siebie i do następnego znaku.',
+  },
 ]
