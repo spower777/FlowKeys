@@ -1,7 +1,7 @@
 export type LessonPack =
   | 'start' | 'motivation' | 'affirmations' | 'polishSigns' | 'mindfulness'
   | 'relationships' | 'spirituality' | 'visualization' | 'stories' | 'mastery'
-  | 'blindFlow' | 'noBackspace' | 'jadePath'
+  | 'blindFlow' | 'noBackspace' | 'jadePath' | 'gaming'
 
 export type LessonMode = 'normal' | 'blindFlow' | 'noBackspace' | 'hardSigns'
 
@@ -25,6 +25,7 @@ export const PACK_LABEL: Record<LessonPack, string> = {
   spirituality: 'Duchowość', visualization: 'Wizualizacja', stories: 'Opowieści',
   mastery: 'Mistrzostwo', blindFlow: 'Blind Flow', noBackspace: 'No Backspace',
   jadePath: 'Jadeitowa Droga',
+  gaming: 'Gaming',
 }
 
 export const MODE_LABEL: Record<LessonMode, string> = {
@@ -1012,5 +1013,107 @@ export const lessons: FlowLesson[] = [
     id: 190, chapterId: 15, pack: 'jadePath', title: 'Złoty Smok',
     difficulty: 5, mode: 'normal',
     text: 'Złoty smok nie pilnował skarbu. Pilnował wejścia do miejsca, w którym człowiek przestaje udawać, że brak cierpliwości jest charakterem.',
+  },
+
+  // ── Rozdział 16 · Gaming Flow ────────────────────────────────────────────────
+  {
+    id: 191, chapterId: 16, pack: 'gaming', title: 'Pierwsza Baza',
+    difficulty: 1, mode: 'normal',
+    text: 'Buduję swoją bazę spokojnie. Najpierw fundament, potem ściany. Nie muszę mieć wszystkiego od razu.',
+  },
+  {
+    id: 192, chapterId: 16, pack: 'gaming', title: 'Respawn',
+    difficulty: 1, mode: 'normal',
+    text: 'Każdy błąd to respawn, nie koniec gry. Wracam do rundy, poprawiam rytm i gram dalej.',
+  },
+  {
+    id: 193, chapterId: 16, pack: 'gaming', title: 'Loot Cierpliwości',
+    difficulty: 1, mode: 'normal',
+    text: 'Najlepszy loot nie zawsze świeci od razu. Czasem jest nim spokój, dokładność i jedna dobra decyzja.',
+  },
+  {
+    id: 194, chapterId: 16, pack: 'gaming', title: 'Tryb Kreatywny',
+    difficulty: 2, mode: 'normal',
+    text: 'W trybie kreatywnym nie chodzi o pośpiech. Chodzi o pomysł, rytm i odwagę, żeby zbudować coś po swojemu.',
+  },
+  {
+    id: 195, chapterId: 16, pack: 'gaming', title: 'Strefa Się Zamyka',
+    difficulty: 2, mode: 'normal',
+    text: 'Strefa się zamyka, ale ja nie panikuję. Wybieram kierunek, oddycham spokojnie i robię następny ruch.',
+  },
+  {
+    id: 196, chapterId: 16, pack: 'gaming', title: 'Checkpoint',
+    difficulty: 2, mode: 'normal',
+    text: 'Ten moment to checkpoint. Nie muszę zaczynać życia od zera. Wystarczy, że zrobię kolejny krok.',
+  },
+  {
+    id: 197, chapterId: 16, pack: 'gaming', title: 'Drużyna',
+    difficulty: 2, mode: 'normal',
+    text: 'Dobra drużyna nie krzyczy po pierwszym błędzie. Dobra drużyna mówi: spokojnie, gramy dalej.',
+  },
+  {
+    id: 198, chapterId: 16, pack: 'gaming', title: 'Nie Spamuj Klawiszy',
+    difficulty: 2, mode: 'noBackspace',
+    text: 'Nie spamuję klawiszy. Jeden ruch, jeden znak, jeden oddech. Szybkość przyjdzie, gdy ręce przestaną panikować.',
+  },
+  {
+    id: 199, chapterId: 16, pack: 'gaming', title: 'Boss Walki',
+    difficulty: 3, mode: 'normal',
+    text: 'Każdy ma swojego bossa. Dla jednego to strach, dla drugiego chaos, dla mnie dzisiaj to klawiatura.',
+  },
+  {
+    id: 200, chapterId: 16, pack: 'gaming', title: 'Buduję Wyżej',
+    difficulty: 3, mode: 'normal',
+    text: 'Buduję wyżej, ale nie zapominam o fundamencie. Rząd domowy to moja baza. Tam wracają palce.',
+  },
+  {
+    id: 201, chapterId: 16, pack: 'gaming', title: 'Mapa',
+    difficulty: 3, mode: 'normal',
+    text: 'Nie muszę widzieć całej mapy. Wystarczy najbliższy punkt, jeden dobry ruch i trochę odwagi.',
+  },
+  {
+    id: 202, chapterId: 16, pack: 'gaming', title: 'Tryb Skupienia',
+    difficulty: 3, mode: 'blindFlow',
+    text: 'Ekran znika, ale mapa zostaje w głowie. Piszę z pamięci, spokojnie, jakbym znał drogę od dawna.',
+  },
+  {
+    id: 203, chapterId: 16, pack: 'gaming', title: 'Bez Cofania',
+    difficulty: 3, mode: 'noBackspace',
+    text: 'Nie cofam każdego ruchu. Czasem trzeba zobaczyć całą trasę, zanim oceni się jeden krzywy skok.',
+  },
+  {
+    id: 204, chapterId: 16, pack: 'gaming', title: 'Rzadki Skin',
+    difficulty: 2, mode: 'normal',
+    text: 'Najrzadszy skin to człowiek, który nie udaje. Spokojny, cierpliwy i trochę bardziej sobą każdego dnia.',
+  },
+  {
+    id: 205, chapterId: 16, pack: 'gaming', title: 'Crafting Spokoju',
+    difficulty: 3, mode: 'normal',
+    text: 'Craftuję spokój z małych rzeczy: oddechu, rytmu, cierpliwości i decyzji, żeby nie rzucać rundy po błędzie.',
+  },
+  {
+    id: 206, chapterId: 16, pack: 'gaming', title: 'Ostatnie Serce',
+    difficulty: 3, mode: 'normal',
+    text: 'Zostało ostatnie serce, ale to nie znaczy, że gra jest przegrana. Czasem wtedy człowiek gra najlepiej.',
+  },
+  {
+    id: 207, chapterId: 16, pack: 'gaming', title: 'Nie Rushuj',
+    difficulty: 2, mode: 'normal',
+    text: 'Nie rushuję bez planu. Najpierw patrzę, potem ruszam. Klawiatura też lubi gracza, który myśli.',
+  },
+  {
+    id: 208, chapterId: 16, pack: 'gaming', title: 'Level Up',
+    difficulty: 2, mode: 'normal',
+    text: 'Level up nie zawsze robi hałas. Czasem wygląda jak zwykła runda, w której zrobiłem o jeden błąd mniej.',
+  },
+  {
+    id: 209, chapterId: 16, pack: 'gaming', title: 'Tryb Przetrwania',
+    difficulty: 3, mode: 'normal',
+    text: 'Tryb przetrwania uczy prostych rzeczy: nie panikuj, zbieraj zasoby, wracaj do bazy i nie bij własnej klawiatury.',
+  },
+  {
+    id: 210, chapterId: 16, pack: 'gaming', title: 'Legenda Serwera',
+    difficulty: 4, mode: 'normal',
+    text: 'Legenda serwera nie wygrywa dlatego, że nigdy nie przegrywa. Wygrywa, bo po każdej porażce wraca mądrzejsza.',
   },
 ]
