@@ -13,6 +13,7 @@ export interface Settings {
   textViewMode: TextViewMode
   showFingers: boolean
   showKeyboard: boolean
+  keyboardSounds: boolean
   blockPaste: boolean
   calmMode: boolean
   voiceRate: VoiceRate
@@ -27,6 +28,7 @@ export const DEFAULTS: Settings = {
   textViewMode: 'sentence',
   showFingers: false,
   showKeyboard: false,
+  keyboardSounds: false,
   blockPaste: true,
   calmMode: false,
   voiceRate: 1,

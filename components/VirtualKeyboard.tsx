@@ -2,78 +2,132 @@
 
 import { FINGER, POLISH_BASE, FINGER_COLORS, FINGER_LABELS } from '@/lib/fingerMap'
 
-// Standard QWERTY rows (lowercase)
-const ROWS = [
-  ['1','2','3','4','5','6','7','8','9','0'],
-  ['q','w','e','r','t','y','u','i','o','p'],
-  ['a','s','d','f','g','h','j','k','l'],
-  ['z','x','c','v','b','n','m'],
+// ── Row definitions ───────────────────────────────────────────────────────────
+
+type SpecialKey = { id: string; label: string; w: string }
+type KeySpec = string | SpecialKey
+
+const ROWS: KeySpec[][] = [
+  [
+    '1','2','3','4','5','6','7','8','9','0',
+    { id: 'Backspace', label: '⌫', w: 'w-[52px]' },
+  ],
+  [
+    { id: 'Tab', label: '⇥ Tab', w: 'w-[52px]' },
+    'q','w','e','r','t','y','u','i','o','p',
+  ],
+  [
+    { id: 'Caps', label: '⇪', w: 'w-[52px]' },
+    'a','s','d','f','g','h','j','k','l',
+    { id: 'Enter', label: '↵ Enter', w: 'w-[58px]' },
+  ],
+  [
+    { id: 'ShiftL', label: '⇧ Shift', w: 'w-[70px]' },
+    'z','x','c','v','b','n','m',
+    { id: 'ShiftR', label: '⇧', w: 'w-[52px]' },
+  ],
 ]
 
-const BASE_CLS = 'bg-white dark:bg-[#1e1e1e] text-gray-700 dark:text-gray-300'
-const ACTIVE_CLS = 'bg-[var(--accent-500)] text-white scale-110 shadow-lg z-10'
-const ALT_BADGE = 'absolute -top-1 -right-1 text-[7px] bg-violet-500 text-white rounded px-0.5 leading-tight font-bold'
-const SHIFT_BADGE = 'absolute -top-1 -right-1 text-[7px] bg-blue-500 text-white rounded px-0.5 leading-tight font-bold'
+// ── Styles ────────────────────────────────────────────────────────────────────
+
+const KEY_BASE = 'relative flex items-center justify-center h-9 rounded-md text-[10px] font-mono font-medium transition-all duration-75 border select-none'
+const STD_W = 'w-9'
+
+const KEY_CHAR = `${KEY_BASE} ${STD_W} bg-white dark:bg-[#282828] border-gray-200 dark:border-[#161616] text-gray-700 dark:text-gray-300 shadow-[0_2px_0_rgba(0,0,0,0.12)] dark:shadow-[0_2px_0_rgba(0,0,0,0.55)]`
+const KEY_MOD  = `${KEY_BASE} bg-gray-100 dark:bg-[#1e1e1e] border-gray-200 dark:border-[#161616] text-gray-500 dark:text-gray-600 shadow-[0_2px_0_rgba(0,0,0,0.08)] dark:shadow-[0_2px_0_rgba(0,0,0,0.5)]`
+const KEY_ACT  = `${KEY_BASE} bg-[var(--accent-500)] border-[var(--accent-600)] text-white shadow-[0_2px_0_var(--accent-600)] scale-105 z-10`
+
+const ALT_BADGE   = 'absolute -top-1 -right-1 text-[6px] bg-violet-500 text-white rounded px-0.5 leading-tight font-bold'
+
+// ── Props ─────────────────────────────────────────────────────────────────────
 
 interface Props {
   nextChar: string
   showFingers: boolean
-  pressedKey?: string  // replay mode: highlight last pressed key
+  pressedKey?: string
 }
 
+// ── Component ─────────────────────────────────────────────────────────────────
+
 export default function VirtualKeyboard({ nextChar, showFingers, pressedKey }: Props) {
-  const charToResolve = pressedKey ?? nextChar
-  const lc = charToResolve.toLowerCase()
-  const isPolish = lc in POLISH_BASE || charToResolve in POLISH_BASE
-  const isUppercase = charToResolve !== lc && !isPolish && charToResolve.length === 1
-  const isPolishUpper = charToResolve !== lc && isPolish
+  const ch = pressedKey ?? nextChar
+
+  const isBackspace = ch === 'Backspace'
+  const isEnter     = ch === '\n' || ch === 'Enter'
+  const isSpace     = ch === ' '
+  const lc          = ch.toLowerCase()
+  const isPolish    = !isBackspace && !isEnter && !isSpace && (lc in POLISH_BASE || ch in POLISH_BASE)
+  const isUppercase = !isBackspace && !isEnter && !isSpace && !isPolish && ch !== lc && ch.length === 1
+  const isPolishUp  = isPolish && ch !== lc
+  const isShift     = (isUppercase || isPolishUp) && !pressedKey
 
   const baseKey = isPolish
-    ? POLISH_BASE[charToResolve] ?? ''
-    : charToResolve === ' ' ? ' ' : lc
+    ? (POLISH_BASE[ch] ?? POLISH_BASE[lc] ?? '')
+    : isBackspace ? 'Backspace'
+    : isEnter     ? 'Enter'
+    : isSpace     ? ' '
+    : lc
 
   const showAlt = isPolish && !pressedKey
-  const showShift = (isUppercase || isPolishUpper) && !pressedKey
 
-  function keyClass(k: string): string {
-    const isActive = k === baseKey
-    if (isActive) return ACTIVE_CLS
-    if (showFingers && FINGER[k]) return FINGER_COLORS[FINGER[k]] ?? BASE_CLS
-    return BASE_CLS
+  // ── class helpers ──────────────────────────────────────────────────────────
+
+  function charCls(k: string): string {
+    if (k === baseKey) return `${KEY_ACT} ${STD_W}`
+    if (showFingers && FINGER[k]) {
+      return `${KEY_BASE} ${STD_W} ${FINGER_COLORS[FINGER[k]]} border-transparent shadow-[0_2px_0_rgba(0,0,0,0.1)] dark:shadow-[0_2px_0_rgba(0,0,0,0.4)]`
+    }
+    return KEY_CHAR
   }
 
+  function specCls(id: string, w: string): string {
+    const active =
+      (id === 'Backspace' && baseKey === 'Backspace') ||
+      (id === 'Enter'     && baseKey === 'Enter')     ||
+      ((id === 'ShiftL' || id === 'ShiftR') && isShift)
+    return `${KEY_MOD} ${w} ${active ? 'bg-[var(--accent-500)] border-[var(--accent-600)] text-white shadow-[0_2px_0_var(--accent-600)] scale-105 z-10 dark:bg-[var(--accent-500)]' : ''}`
+  }
+
+  const spaceActive = isSpace
+  const spaceCls = spaceActive
+    ? `${KEY_BASE} w-56 bg-[var(--accent-500)] border-[var(--accent-600)] text-white shadow-[0_2px_0_var(--accent-600)] scale-105`
+    : showFingers
+      ? `${KEY_BASE} w-56 ${FINGER_COLORS['th']} border-transparent shadow-[0_2px_0_rgba(0,0,0,0.08)] dark:shadow-[0_2px_0_rgba(0,0,0,0.4)]`
+      : `${KEY_BASE} w-56 bg-white dark:bg-[#282828] border-gray-200 dark:border-[#161616] text-gray-500 dark:text-gray-600 shadow-[0_2px_0_rgba(0,0,0,0.12)] dark:shadow-[0_2px_0_rgba(0,0,0,0.55)]`
+
+  // ── render ─────────────────────────────────────────────────────────────────
+
   return (
-    <div className="select-none rounded-2xl border border-gray-200 dark:border-[#2a2a2a] bg-gray-50 dark:bg-[#111] p-3 space-y-1.5">
-      {/* Letter + number rows */}
+    <div className="select-none rounded-2xl border border-gray-200 dark:border-[#2a2a2a] bg-[#e8e8e8] dark:bg-[#111] p-3 space-y-1.5">
+
       {ROWS.map((row, ri) => (
         <div key={ri} className="flex justify-center gap-1">
-          {/* Stagger: row 1 = 0.5 key, row 2 = 1 key, row 3 = 1.5 key */}
-          {ri === 1 && <div className="w-5" />}
-          {ri === 2 && <div className="w-9" />}
-          {ri === 3 && <div className="w-14" />}
-          {row.map(k => (
-            <div
-              key={k}
-              className={`relative flex items-center justify-center w-9 h-9 rounded-lg text-xs font-mono font-medium transition-all duration-75 ${keyClass(k)}`}
-            >
-              {k.toUpperCase()}
-              {k === baseKey && showAlt && <span className={ALT_BADGE}>Alt</span>}
-              {k === baseKey && showShift && <span className={SHIFT_BADGE}>⇧</span>}
-            </div>
-          ))}
+          {row.map(k => {
+            if (typeof k === 'string') {
+              return (
+                <div key={k} className={charCls(k)}>
+                  {k.toUpperCase()}
+                  {k === baseKey && showAlt   && <span className={ALT_BADGE}>Alt</span>}
+                </div>
+              )
+            }
+            return (
+              <div key={k.id} className={specCls(k.id, k.w)}>
+                {k.label}
+              </div>
+            )
+          })}
         </div>
       ))}
 
       {/* Space bar */}
       <div className="flex justify-center mt-0.5">
-        <div className={`flex items-center justify-center h-9 w-52 rounded-lg text-xs font-medium transition-all duration-75 ${baseKey === ' ' ? ACTIVE_CLS : showFingers ? FINGER_COLORS['th'] : BASE_CLS}`}>
-          Spacja
-        </div>
+        <div className={spaceCls}>Space</div>
       </div>
 
       {/* Finger legend */}
       {showFingers && (
-        <div className="flex justify-center gap-3 pt-1 flex-wrap">
+        <div className="flex justify-center gap-2 pt-1 flex-wrap">
           {Object.entries(FINGER_LABELS).filter(([id]) => id !== 'th').map(([id, label]) => (
             <span key={id} className={`text-[9px] px-1.5 py-0.5 rounded-full ${FINGER_COLORS[id]}`}>
               {label}

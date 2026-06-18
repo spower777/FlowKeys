@@ -248,6 +248,9 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
             <Row label="Strefy palców" sub="Koloruje klawisze wg palca">
               <Toggle value={settings.showFingers} onChange={v => set('showFingers', v)} />
             </Row>
+            <Row label="Dźwięki klawiatury" sub="Klik mechaniczny przy każdym naciśnięciu">
+              <Toggle value={settings.keyboardSounds} onChange={v => set('keyboardSounds', v)} />
+            </Row>
             <Row label="Blokuj wklejanie" sub="Zapobiega nabijaniu wyników">
               <Toggle value={settings.blockPaste} onChange={v => set('blockPaste', v)} />
             </Row>

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import AudioControls from './AudioControls'
 import TextViewToggle from './TextViewToggle'
 import VirtualKeyboard from './VirtualKeyboard'
+import { playKeySound } from '@/lib/keyboardSounds'
 import type { TypingMode, TextViewMode, ReplayEvent } from '@/lib/types'
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
   onFinish: (typed: string, startTime: number, endTime: number, backspaceCount: number, replayData: ReplayEvent[]) => void
   showKeyboard?: boolean
   showFingers?: boolean
+  keyboardSounds?: boolean
   blockPaste?: boolean
   calmMode?: boolean
   blindHint?: boolean
@@ -101,7 +103,7 @@ function wordAt(text: string, pos: number) {
 
 export default function TypingSession({
   trainingText, typingMode, textViewMode, onTextViewModeChange, onFinish,
-  showKeyboard = false, showFingers = false,
+  showKeyboard = false, showFingers = false, keyboardSounds = false,
   blockPaste = true, calmMode = false, blindHint = true,
   voiceRate = 1, voiceMode = 'all',
 }: Props) {
@@ -156,12 +158,18 @@ export default function TypingSession({
     if (isNoBackspace && e.key === 'Backspace') { e.preventDefault(); return }
     if (e.key === 'Backspace') {
       e.preventDefault()
+      if (keyboardSounds) playKeySound('backspace')
       replayRef.current.push({ ts: Date.now(), char: 'Backspace', isBackspace: true })
       setTyped(prev => prev.slice(0, -1)); setBackspaceCount(c => c + 1); return
     }
     if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
       e.preventDefault()
       if (!startTime) { startTimer(); if (isBlind) setTextHidden(true) }
+      if (keyboardSounds) {
+        if (e.key === ' ') playKeySound('space')
+        else if (e.key === trainingText[typed.length]) playKeySound('normal')
+        else playKeySound('error')
+      }
       replayRef.current.push({ ts: Date.now(), char: e.key, isBackspace: false })
       setTyped(prev => prev + e.key)
     }

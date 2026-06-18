@@ -205,46 +205,79 @@ export default function Home() {
 
         {/* ── HOME ── */}
         {step === 'home' && (
-          <div className="space-y-4">
-            <p className="text-sm text-gray-500 mb-6">
-              Wklej tekst, nagraj wspomnienie albo zacznij od przykładu. AI zamieni to w ćwiczenie pisania.
-            </p>
-            {[
-              {
-                id: 'paste' as InputMethod,
-                icon: '✍️',
-                label: 'Wklej własny tekst',
-                sub: 'Notatka, wspomnienie, fragment czegokolwiek',
-                action: () => { setInputMethod('paste'); setStep('input') },
-              },
-              {
-                id: 'voice' as InputMethod,
-                icon: '🎙️',
-                label: 'Nagraj historię głosem',
-                sub: 'Nagraj głosem — transkrypcja przez Whisper AI',
-                action: () => { setInputMethod('voice'); setStep('input') },
-              },
-              {
-                id: 'example' as InputMethod,
-                icon: '📖',
-                label: 'Użyj przykładowego tekstu',
-                sub: 'Szybki start bez własnego materiału',
-                action: pickExample,
-              },
-            ].map(item => (
-              <button
-                key={item.id}
-                onClick={item.action}
-                className="w-full flex items-center gap-4 bg-white dark:bg-[#161616] hover:bg-gray-50 dark:hover:bg-[#1e1e1e] border border-gray-200 dark:border-[#242424] hover:border-gray-300 dark:hover:border-[#333] rounded-2xl px-5 py-4 text-left transition group"
-              >
-                <span className="text-2xl shrink-0">{item.icon}</span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white transition">{item.label}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{item.sub}</p>
-                </div>
-                <span className="text-gray-400 dark:text-gray-700 group-hover:text-gray-600 dark:group-hover:text-gray-400 transition shrink-0">›</span>
-              </button>
-            ))}
+          <div className="space-y-5">
+
+            {/* Hero */}
+            <div className="relative overflow-hidden rounded-2xl border border-[var(--accent-100)] dark:border-[var(--accent-600)]/15 bg-gradient-to-br from-[var(--accent-50)] to-white dark:from-[var(--accent-600)]/8 dark:to-[#0d0d0d] px-6 py-8">
+              {/* Decorative keyboard rows */}
+              <div className="absolute right-2 top-0 bottom-0 flex flex-col justify-center gap-1.5 opacity-[0.06] dark:opacity-[0.09] pointer-events-none select-none" aria-hidden>
+                {['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'].map((row, i) => (
+                  <div key={i} className="flex gap-1" style={{ paddingLeft: `${i * 10}px` }}>
+                    {row.split('').map(k => (
+                      <span key={k} className="text-[10px] font-mono border border-current rounded px-1 py-px leading-tight">{k}</span>
+                    ))}
+                  </div>
+                ))}
+              </div>
+              <div className="relative z-10 max-w-xs">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight mb-2">
+                  Pisz to, co ważne.
+                </h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                  Zamień własny tekst, wspomnienia i notatki w trening na klawiaturze. Z pomocą AI.
+                </p>
+              </div>
+            </div>
+
+            {/* Action cards */}
+            <div className="space-y-2.5">
+              {[
+                {
+                  id: 'paste' as InputMethod,
+                  icon: '✍️',
+                  label: 'Wklej własny tekst',
+                  sub: 'Notatka, wspomnienie, fragment czegokolwiek',
+                  action: () => { setInputMethod('paste'); setStep('input') },
+                },
+                {
+                  id: 'voice' as InputMethod,
+                  icon: '🎙️',
+                  label: 'Nagraj historię głosem',
+                  sub: 'Nagraj głosem — transkrypcja przez Whisper AI',
+                  action: () => { setInputMethod('voice'); setStep('input') },
+                },
+                {
+                  id: 'example' as InputMethod,
+                  icon: '📖',
+                  label: 'Użyj przykładowego tekstu',
+                  sub: 'Szybki start bez własnego materiału',
+                  action: pickExample,
+                },
+              ].map(item => (
+                <button
+                  key={item.id}
+                  onClick={item.action}
+                  className="w-full flex items-center gap-4 bg-white dark:bg-[#161616] hover:bg-gray-50 dark:hover:bg-[#1c1c1c] border border-gray-200 dark:border-[#242424] hover:border-[var(--accent-200)] dark:hover:border-[var(--accent-600)]/30 rounded-2xl px-5 py-5 text-left transition group"
+                >
+                  <span className="text-2xl shrink-0">{item.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white transition">{item.label}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{item.sub}</p>
+                  </div>
+                  <span className="text-gray-300 dark:text-gray-700 group-hover:text-[var(--accent-400)] transition shrink-0 text-lg">›</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Feature chips */}
+            <div className="flex flex-wrap gap-2 pt-1">
+              {['100+ lekcji', 'Blind Flow', 'Whisper AI', 'Wirtualna klawiatura', 'Odznaki', 'Analiza błędów'].map(feat => (
+                <span key={feat} className="text-[11px] text-gray-400 dark:text-gray-600 bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#252525] rounded-full px-3 py-1">
+                  {feat}
+                </span>
+              ))}
+            </div>
+
           </div>
         )}
 
@@ -386,6 +419,7 @@ export default function Home() {
               onTextViewModeChange={v => handleSettingsChange({ textViewMode: v })}
               showKeyboard={settings.showKeyboard}
               showFingers={settings.showFingers}
+              keyboardSounds={settings.keyboardSounds}
               blockPaste={settings.blockPaste}
               calmMode={settings.calmMode}
               blindHint={settings.blindHint}
