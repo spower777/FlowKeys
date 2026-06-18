@@ -141,14 +141,15 @@ export default function Home() {
     if (currentLesson !== null) {
       updateLessonProgress(currentLesson.id, s)
       setEarnedStars(calculateStars(s))
-      const unlockedIds = checkAndUnlockBadges(badges)
-      if (unlockedIds.length > 0) {
-        const badgeObjects: BadgeSummary[] = unlockedIds
-          .map(id => badges.find(b => b.id === id))
-          .filter((b): b is typeof badges[0] => !!b)
-          .map(b => ({ icon: b.icon, title: b.title, description: b.description }))
-        setNewBadges(badgeObjects)
-      }
+    }
+    // Check badges after every session, not just lesson sessions
+    const unlockedIds = checkAndUnlockBadges(badges)
+    if (unlockedIds.length > 0) {
+      const badgeObjects: BadgeSummary[] = unlockedIds
+        .map(id => badges.find(b => b.id === id))
+        .filter((b): b is typeof badges[0] => !!b)
+        .map(b => ({ icon: b.icon, title: b.title, description: b.description }))
+      setNewBadges(badgeObjects)
     }
     setStep('results')
   }
