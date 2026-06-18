@@ -1,4 +1,5 @@
 import type { TextViewMode } from './types'
+import { type PackGroupId, DEFAULT_PACK_GROUPS } from '@/data/packGroups'
 
 export type Theme = 'light' | 'dark' | 'system'
 export type AccentColor = 'blue' | 'green' | 'purple' | 'orange'
@@ -20,6 +21,7 @@ export interface Settings {
   voiceMode: VoiceMode
   blindHint: boolean
   devUnlockAll: boolean
+  preferredPackGroups: PackGroupId[]
 }
 
 export const DEFAULTS: Settings = {
@@ -36,6 +38,7 @@ export const DEFAULTS: Settings = {
   voiceMode: 'all',
   blindHint: true,
   devUnlockAll: false,
+  preferredPackGroups: DEFAULT_PACK_GROUPS,
 }
 
 const KEY = 'flowkeys_settings'

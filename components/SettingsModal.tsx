@@ -5,6 +5,7 @@ import { clearSessions } from '@/lib/storage'
 import { DEFAULTS, applySettingsToDOM } from '@/lib/settings'
 import type { Settings, Theme, AccentColor, Density, VoiceRate, VoiceMode } from '@/lib/settings'
 import type { TextViewMode } from '@/lib/types'
+import { PACK_GROUPS, type PackGroupId } from '@/data/packGroups'
 
 interface Props {
   settings: Settings
@@ -386,6 +387,40 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
                   Resetuj ustawienia
                 </button>
               )}
+            </div>
+          </Section>
+
+          {/* ── Klimat tekstów ── */}
+          <Section title="E. Klimat tekstów">
+            <div className="px-4 py-3">
+              <p className="text-[11px] text-gray-400 dark:text-gray-600 mb-3">
+                Wybierz styl lekcji. Domyślny widok na mapie lekcji.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {PACK_GROUPS.map(group => {
+                  const isActive = (settings.preferredPackGroups ?? []).includes(group.id as PackGroupId)
+                  return (
+                    <button
+                      key={group.id}
+                      onClick={() => {
+                        const current: PackGroupId[] = settings.preferredPackGroups ?? []
+                        const next = isActive
+                          ? current.length > 1 ? current.filter(g => g !== group.id) : current
+                          : [...current, group.id as PackGroupId]
+                        set('preferredPackGroups', next)
+                      }}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                        isActive
+                          ? 'bg-[var(--accent-500)] border-[var(--accent-500)] text-white'
+                          : 'bg-gray-100 dark:bg-[#1e1e1e] border-gray-200 dark:border-[#2a2a2a] text-gray-500 dark:text-gray-500'
+                      }`}
+                    >
+                      <span>{group.icon}</span>
+                      <span>{group.label}</span>
+                    </button>
+                  )
+                })}
+              </div>
             </div>
           </Section>
 
