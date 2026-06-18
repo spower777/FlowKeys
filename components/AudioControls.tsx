@@ -169,7 +169,7 @@ export default function AudioControls({ text, initialRate = 1.0, voiceMode = 'al
       {/* Main controls */}
       <div className="flex items-center gap-2">
         <button
-          onClick={prev}
+          onClick={(e) => { prev(); e.currentTarget.blur() }}
           disabled={current === 0}
           className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-200/60 dark:bg-white/5 hover:bg-gray-300/60 dark:hover:bg-white/10 disabled:opacity-30 text-gray-600 dark:text-gray-300 transition text-sm"
           title="Poprzednie zdanie"
@@ -177,14 +177,14 @@ export default function AudioControls({ text, initialRate = 1.0, voiceMode = 'al
           ⏮
         </button>
         <button
-          onClick={repeatOne}
+          onClick={(e) => { repeatOne(); e.currentTarget.blur() }}
           className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-200/60 dark:bg-white/5 hover:bg-gray-300/60 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 transition text-sm"
           title="Powtórz zdanie"
         >
           🔁
         </button>
         <button
-          onClick={handlePlayPause}
+          onClick={(e) => { handlePlayPause(); e.currentTarget.blur() }}
           className={`flex-1 h-8 flex items-center justify-center rounded-lg text-white transition text-sm font-medium gap-1.5 ${
             playing
               ? 'bg-purple-500 dark:bg-purple-600/60 hover:bg-purple-600 dark:hover:bg-purple-600/80'
@@ -194,7 +194,7 @@ export default function AudioControls({ text, initialRate = 1.0, voiceMode = 'al
           {playing ? '⏸ Pauza' : '▶ Odtwórz'}
         </button>
         <button
-          onClick={next}
+          onClick={(e) => { next(); e.currentTarget.blur() }}
           disabled={current >= sentences.length - 1}
           className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-200/60 dark:bg-white/5 hover:bg-gray-300/60 dark:hover:bg-white/10 disabled:opacity-30 text-gray-600 dark:text-gray-300 transition text-sm"
           title="Następne zdanie"
@@ -209,7 +209,7 @@ export default function AudioControls({ text, initialRate = 1.0, voiceMode = 'al
         {SPEEDS.map(s => (
           <button
             key={s}
-            onClick={() => changeSpeed(s)}
+            onClick={(e) => { changeSpeed(s); e.currentTarget.blur() }}
             className={`text-[10px] px-2 py-1 rounded-lg transition font-medium ${
               speed === s
                 ? 'bg-purple-100 dark:bg-purple-600/40 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-500/30'
