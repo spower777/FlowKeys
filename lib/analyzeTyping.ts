@@ -1,4 +1,5 @@
 import type { TypingStats, CommonMistake } from './types'
+import { charToFinger } from './fingerMap'
 
 const POLISH_CHARS = new Set('ąćęłńóśźżĄĆĘŁŃÓŚŹŻ')
 const MAX_ALIGN = 600
@@ -55,7 +56,8 @@ export function analyzeTyping(
   sourceText: string,
   typedText: string,
   startTime: number,
-  endTime: number
+  endTime: number,
+  backspaceCount = 0
 ): TypingStats {
   const elapsedMin = Math.max((endTime - startTime) / 60000, 0.01)
   const ops = align(sourceText, typedText)
@@ -65,20 +67,30 @@ export function analyzeTyping(
   let insCount = 0
   let polishCharsMissed = 0
   const mistakeMap = new Map<string, Map<string, number>>()
+  const fingerErrors: Record<string, number> = {}
+  let currentStreak = 0
+  let bestStreak = 0
 
   for (const op of ops) {
     if (op.op === 'match') {
       matches++
+      currentStreak++
+      if (currentStreak > bestStreak) bestStreak = currentStreak
     } else if (op.op === 'sub') {
       subCount++
+      currentStreak = 0
       if (POLISH_CHARS.has(op.expected)) polishCharsMissed++
       if (!mistakeMap.has(op.expected)) mistakeMap.set(op.expected, new Map())
       const m = mistakeMap.get(op.expected)!
       m.set(op.actual, (m.get(op.actual) ?? 0) + 1)
+      const finger = charToFinger(op.expected)
+      if (finger) fingerErrors[finger] = (fingerErrors[finger] ?? 0) + 1
     } else if (op.op === 'ins') {
       insCount++
+      currentStreak = 0
     } else {
       // del — skipped source char, not an active typing mistake
+      currentStreak = 0
       if (POLISH_CHARS.has(op.expected)) polishCharsMissed++
     }
   }
@@ -131,6 +143,12 @@ export function analyzeTyping(
     if (opIdx < ops.length && ops[opIdx]?.op === 'match') opIdx++
   }
 
+  // Indeks spokoju: accuracy penalized for backspace overuse
+  // bsRate = backspaces per typed char; clamped penalty max 40pts
+  const totalKeystrokes = Math.max(1, charsTyped + backspaceCount)
+  const bsPenalty = Math.min(40, Math.round((backspaceCount / totalKeystrokes) * 80))
+  const calmScore = Math.max(0, accuracy - bsPenalty)
+
   return {
     wordsTyped,
     charsTyped,
@@ -141,5 +159,9 @@ export function analyzeTyping(
     commonMistakes: commonMistakes.slice(0, 8),
     difficultWords: [...new Set(difficultWords)].slice(0, 6),
     polishCharsMissed,
+    backspaceCount,
+    bestStreak,
+    calmScore,
+    errorsByFinger: fingerErrors,
   }
 }

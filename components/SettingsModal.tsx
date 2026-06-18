@@ -241,11 +241,12 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
                 ]}
               />
             </Row>
-            <Row label="Pokaż podpowiedzi palców" sub="Wkrótce dostępne">
-              <Toggle value={settings.showFingers} onChange={v => set('showFingers', v)} />
-            </Row>
-            <Row label="Pokaż klawiaturę" sub="Wkrótce dostępne">
+
+            <Row label="Pokaż klawiaturę" sub="Podświetla następny klawisz">
               <Toggle value={settings.showKeyboard} onChange={v => set('showKeyboard', v)} />
+            </Row>
+            <Row label="Strefy palców" sub="Koloruje klawisze wg palca">
+              <Toggle value={settings.showFingers} onChange={v => set('showFingers', v)} />
             </Row>
             <Row label="Blokuj wklejanie" sub="Zapobiega nabijaniu wyników">
               <Toggle value={settings.blockPaste} onChange={v => set('blockPaste', v)} />

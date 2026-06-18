@@ -18,6 +18,16 @@ export interface TypingStats {
   commonMistakes: CommonMistake[]
   difficultWords: string[]
   polishCharsMissed: number
+  backspaceCount: number
+  bestStreak: number
+  calmScore: number
+  errorsByFinger: Record<string, number>
+}
+
+export interface ReplayEvent {
+  ts: number       // absolute ms timestamp
+  char: string     // typed char or 'Backspace'
+  isBackspace: boolean
 }
 
 export interface TypingSessionRecord {
@@ -28,5 +38,7 @@ export interface TypingSessionRecord {
   typedText: string
   mode: TransformMode
   typingMode: TypingMode
+  lessonId?: number
   stats: TypingStats
+  replayData?: ReplayEvent[]
 }

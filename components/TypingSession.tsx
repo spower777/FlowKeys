@@ -3,14 +3,17 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import AudioControls from './AudioControls'
 import TextViewToggle from './TextViewToggle'
-import type { TypingMode, TextViewMode } from '@/lib/types'
+import VirtualKeyboard from './VirtualKeyboard'
+import type { TypingMode, TextViewMode, ReplayEvent } from '@/lib/types'
 
 interface Props {
   trainingText: string
   typingMode: TypingMode
   textViewMode: TextViewMode
   onTextViewModeChange: (mode: TextViewMode) => void
-  onFinish: (typed: string, startTime: number, endTime: number) => void
+  onFinish: (typed: string, startTime: number, endTime: number, backspaceCount: number, replayData: ReplayEvent[]) => void
+  showKeyboard?: boolean
+  showFingers?: boolean
   blockPaste?: boolean
   calmMode?: boolean
   blindHint?: boolean
@@ -98,6 +101,7 @@ function wordAt(text: string, pos: number) {
 
 export default function TypingSession({
   trainingText, typingMode, textViewMode, onTextViewModeChange, onFinish,
+  showKeyboard = false, showFingers = false,
   blockPaste = true, calmMode = false, blindHint = true,
   voiceRate = 1, voiceMode = 'all',
 }: Props) {
@@ -108,11 +112,13 @@ export default function TypingSession({
   const [focused, setFocused] = useState(false)
   const [pasteBlocked, setPasteBlocked] = useState(false)
   const [dropBlocked, setDropBlocked] = useState(false)
+  const [backspaceCount, setBackspaceCount] = useState(0)
 
   const captureRef = useRef<HTMLDivElement>(null)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const pasteToastRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const dropToastRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const replayRef = useRef<ReplayEvent[]>([])
 
   const isBlind = typingMode === 'blind'
   const isNoBackspace = typingMode === 'no_backspace'
@@ -149,11 +155,14 @@ export default function TypingSession({
     if (e.key === 'Tab') { e.preventDefault(); return }
     if (isNoBackspace && e.key === 'Backspace') { e.preventDefault(); return }
     if (e.key === 'Backspace') {
-      e.preventDefault(); setTyped(prev => prev.slice(0, -1)); return
+      e.preventDefault()
+      replayRef.current.push({ ts: Date.now(), char: 'Backspace', isBackspace: true })
+      setTyped(prev => prev.slice(0, -1)); setBackspaceCount(c => c + 1); return
     }
     if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
       e.preventDefault()
       if (!startTime) { startTimer(); if (isBlind) setTextHidden(true) }
+      replayRef.current.push({ ts: Date.now(), char: e.key, isBackspace: false })
       setTyped(prev => prev + e.key)
     }
   }
@@ -172,8 +181,8 @@ export default function TypingSession({
   const handleFinish = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current)
     window.speechSynthesis?.cancel()
-    onFinish(typed, startTime ?? Date.now(), Date.now())
-  }, [typed, startTime, onFinish])
+    onFinish(typed, startTime ?? Date.now(), Date.now(), backspaceCount, replayRef.current)
+  }, [typed, startTime, backspaceCount, onFinish])
 
   useEffect(() => {
     if (trainingText.length > 0 && typed.length >= trainingText.length && startTime !== null) {
@@ -330,7 +339,7 @@ export default function TypingSession({
           </div>
         ) : (
           /* Source text display */
-          <div className="text-sm leading-7 font-mono break-words whitespace-pre-wrap select-none">
+          <div className="text-base leading-8 font-mono break-words whitespace-pre-wrap select-none">
             {textContent}
             {cursorPos >= trainingText.length && trainingText.length > 0 && (
               <span className="animate-pulse text-blue-500">▌</span>
@@ -345,6 +354,14 @@ export default function TypingSession({
           </div>
         )}
       </div>
+
+      {/* Virtual keyboard */}
+      {showKeyboard && !isBlind && (
+        <VirtualKeyboard
+          nextChar={trainingText[cursorPos] ?? ''}
+          showFingers={showFingers}
+        />
+      )}
 
       {/* Stats */}
       <div className="flex items-center gap-4 text-xs text-gray-500">

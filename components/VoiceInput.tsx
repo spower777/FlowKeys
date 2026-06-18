@@ -1,159 +1,160 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
+
+type State = 'idle' | 'recording' | 'transcribing' | 'done' | 'error'
 
 interface Props {
   onTranscript: (text: string) => void
 }
 
+function fmtTime(s: number) {
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+}
+
 export default function VoiceInput({ onTranscript }: Props) {
-  const [supported, setSupported] = useState<boolean | null>(null)
-  const [recording, setRecording] = useState(false)
+  const [state, setState] = useState<State>('idle')
   const [transcript, setTranscript] = useState('')
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const recognitionRef = useRef<any>(null)
+  const [elapsed, setElapsed] = useState(0)
 
-  useEffect(() => {
-    const w = window as unknown as Record<string, unknown>
-    setSupported(!!(w['SpeechRecognition'] ?? w['webkitSpeechRecognition']))
-  }, [])
+  const recorderRef = useRef<MediaRecorder | null>(null)
+  const chunksRef = useRef<BlobPart[]>([])
+  const streamRef = useRef<MediaStream | null>(null)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  function startRecording() {
+  function stopTimer() {
+    if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null }
+  }
+
+  async function startRecording() {
     setErrorMsg(null)
     setTranscript('')
+    setElapsed(0)
 
-    const w = window as unknown as Record<string, unknown>
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const SR = (w['SpeechRecognition'] ?? w['webkitSpeechRecognition']) as any
-    if (!SR) return
-
-    // Null out old handlers before aborting — prevents stale onend from
-    // firing setRecording(false) after the new session's setRecording(true).
-    if (recognitionRef.current) {
-      recognitionRef.current.onresult = null
-      recognitionRef.current.onerror = null
-      recognitionRef.current.onend = null
-      recognitionRef.current.abort()
-    }
-
-    const recognition = new SR()
-    recognition.lang = 'pl-PL'
-    recognition.continuous = true
-    recognition.interimResults = true
-
-    let full = ''
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    recognition.onresult = (e: any) => {
-      let interim = ''
-      for (let i = e.resultIndex; i < e.results.length; i++) {
-        if (e.results[i].isFinal) {
-          full += e.results[i][0].transcript + ' '
-        } else {
-          interim = e.results[i][0].transcript
-        }
-      }
-      setTranscript(full + interim)
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    recognition.onerror = (e: any) => {
-      if (e.error === 'aborted') return
-      setRecording(false)
-      if (e.error === 'not-allowed' || e.error === 'permission-denied') {
-        setErrorMsg('Brak dostępu do mikrofonu. Sprawdź uprawnienia przeglądarki i macOS.')
-      } else if (e.error === 'audio-capture') {
-        setErrorMsg('Mikrofon niedostępny. Sprawdź czy jest podłączony.')
-      } else if (e.error === 'no-speech') {
-        if (!full.trim()) setErrorMsg('Nie udało się rozpoznać mowy. Spróbuj jeszcze raz albo wklej tekst ręcznie.')
-      } else if (e.error === 'network') {
-        setErrorMsg('Przeglądarka nie może połączyć się z serwerem rozpoznawania mowy. Brave i Firefox blokują tę usługę — użyj Chrome.')
-      } else {
-        setErrorMsg(`Błąd nagrywania (${e.error}). Spróbuj odświeżyć stronę.`)
-      }
-    }
-
-    recognition.onend = () => { setRecording(false) }
-
-    // Set ref before start() so stopRecording() can reach the new instance
-    // even if start() fires onend synchronously on some browsers.
-    recognitionRef.current = recognition
-
+    let stream: MediaStream
     try {
-      recognition.start()
-    } catch {
-      recognitionRef.current = null
-      setErrorMsg('Nie udało się uruchomić nagrywania. Odśwież stronę i spróbuj ponownie.')
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    } catch (err) {
+      const name = err instanceof Error ? err.name : ''
+      if (name === 'NotAllowedError' || name === 'PermissionDeniedError') {
+        setErrorMsg('Brak dostępu do mikrofonu. Sprawdź uprawnienia przeglądarki i macOS.')
+      } else if (name === 'NotFoundError') {
+        setErrorMsg('Mikrofon niedostępny. Sprawdź czy jest podłączony.')
+      } else {
+        setErrorMsg('Nie udało się uzyskać dostępu do mikrofonu.')
+      }
+      setState('error')
       return
     }
 
-    setRecording(true)
+    streamRef.current = stream
+    chunksRef.current = []
+
+    const mimeType = ['audio/webm', 'audio/ogg', 'audio/mp4'].find(t => MediaRecorder.isTypeSupported(t)) ?? ''
+    const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined)
+    recorderRef.current = recorder
+
+    recorder.ondataavailable = (e) => {
+      if (e.data.size > 0) chunksRef.current.push(e.data)
+    }
+
+    recorder.onstop = async () => {
+      stream.getTracks().forEach(t => t.stop())
+      const blob = new Blob(chunksRef.current, { type: recorder.mimeType || 'audio/webm' })
+      await transcribeBlob(blob, recorder.mimeType)
+    }
+
+    recorder.start(1000)
+    setState('recording')
+    timerRef.current = setInterval(() => setElapsed(s => s + 1), 1000)
   }
 
   function stopRecording() {
-    recognitionRef.current?.stop()
-    setRecording(false)
+    stopTimer()
+    recorderRef.current?.stop()
+    setState('transcribing')
+  }
+
+  async function transcribeBlob(blob: Blob, mimeType: string) {
+    const ext = mimeType.includes('ogg') ? 'ogg' : mimeType.includes('mp4') ? 'mp4' : 'webm'
+    const file = new File([blob], `recording.${ext}`, { type: mimeType || 'audio/webm' })
+
+    const fd = new FormData()
+    fd.append('audio', file)
+
+    try {
+      const res = await fetch('/api/transcribe', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (!res.ok || data.error) {
+        setErrorMsg(data.error ?? 'Błąd transkrypcji.')
+        setState('error')
+        return
+      }
+      setTranscript(data.text ?? '')
+      setState('done')
+    } catch {
+      setErrorMsg('Nie udało się połączyć z serwerem transkrypcji.')
+      setState('error')
+    }
   }
 
   function useTranscript() {
     const t = transcript.trim()
-    if (!t) return
-    onTranscript(t)
+    if (t) onTranscript(t)
   }
 
-  if (supported === null) return null
-
-  if (!supported) {
-    return (
-      <div className="text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2e2e2e] rounded-2xl px-5 py-4">
-        Rozpoznawanie mowy nie jest dostępne w tej przeglądarce. Najlepiej użyj Chrome albo wklej tekst ręcznie.
-      </div>
-    )
-  }
+  const canStart = state === 'idle' || state === 'error' || state === 'done'
 
   return (
     <div className="space-y-3">
-      <div className="flex gap-3 flex-wrap">
-        {!recording ? (
+      <div className="flex gap-3 flex-wrap items-center">
+        {canStart && (
           <button
             onClick={startRecording}
             className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 dark:bg-[#1a1a1a] hover:bg-gray-200 dark:hover:bg-[#242424] border border-gray-200 dark:border-[#2e2e2e] text-gray-700 dark:text-gray-300 text-sm font-medium rounded-xl transition"
           >
             <span className="w-2 h-2 rounded-full bg-red-500" />
-            Start nagrywania
+            {state === 'done' ? 'Nagraj ponownie' : 'Start nagrywania'}
           </button>
-        ) : (
+        )}
+
+        {state === 'recording' && (
           <button
             onClick={stopRecording}
             className="flex items-center gap-2 px-4 py-2.5 bg-red-50 dark:bg-red-600/20 hover:bg-red-100 dark:hover:bg-red-600/30 border border-red-200 dark:border-red-500/30 text-red-600 dark:text-red-400 text-sm font-medium rounded-xl transition"
           >
             <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
-            Stop
+            Stop · {fmtTime(elapsed)}
           </button>
         )}
-        {transcript.trim() && !recording && (
+
+        {state === 'transcribing' && (
+          <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2e2e2e] text-gray-500 dark:text-gray-500 text-sm rounded-xl">
+            <span className="inline-block animate-spin">⟳</span>
+            Transkrybuję…
+          </div>
+        )}
+
+        {state === 'done' && transcript.trim() && (
           <button
             onClick={useTranscript}
-            className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-xl transition"
+            className="px-4 py-2.5 bg-[var(--accent-500)] hover:bg-[var(--accent-400)] text-white text-sm font-medium rounded-xl transition"
           >
             Użyj transkrypcji
           </button>
         )}
       </div>
 
-      {/* Error as UI message, never as transcript text */}
       {errorMsg && (
         <div className="text-sm text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-400/10 border border-amber-200 dark:border-amber-400/20 rounded-xl px-4 py-3">
           {errorMsg}
         </div>
       )}
 
-      {/* Live transcript preview */}
       {transcript && (
         <div className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2e2e2e] rounded-2xl px-5 py-4 text-sm text-gray-700 dark:text-gray-300 leading-relaxed min-h-[80px]">
           {transcript}
-          {recording && <span className="animate-pulse ml-1 text-gray-400 dark:text-gray-500">|</span>}
         </div>
       )}
     </div>

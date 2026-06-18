@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import TextInput from '@/components/TextInput'
 import VoiceInput from '@/components/VoiceInput'
@@ -12,13 +13,20 @@ import { analyzeTyping } from '@/lib/analyzeTyping'
 import { saveSession } from '@/lib/storage'
 import { EXAMPLE_TEXT } from '@/lib/transformPrompt'
 import { loadSettings, saveSettings, applySettingsToDOM, DEFAULTS } from '@/lib/settings'
-import type { TransformMode, TypingMode, TypingStats } from '@/lib/types'
+import { updateLessonProgress, checkAndUnlockBadges, lessonModeToTypingMode, calculateStars } from '@/lib/lessonProgress'
+import { badges } from '@/data/badges'
+import { lessons } from '@/data/lessons'
+import { chapters } from '@/data/chapters'
+import type { TransformMode, TypingMode, TypingStats, ReplayEvent } from '@/lib/types'
 import type { Settings } from '@/lib/settings'
+import type { FlowLesson, LessonMode } from '@/data/lessons'
+import type { BadgeSummary } from '@/components/ResultsPanel'
 
 type Step = 'home' | 'input' | 'transform' | 'preview' | 'typing' | 'results'
 type InputMethod = 'paste' | 'voice' | 'example'
 
 export default function Home() {
+  const router = useRouter()
   const [step, setStep] = useState<Step>('home')
   const [inputMethod, setInputMethod] = useState<InputMethod>('paste')
   const [sourceText, setSourceText] = useState('')
@@ -32,13 +40,33 @@ export default function Home() {
   const [isMock, setIsMock] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [settings, setSettings] = useState<Settings>(DEFAULTS)
+  const [currentLesson, setCurrentLesson] = useState<FlowLesson | null>(null)
+  const [newBadges, setNewBadges] = useState<BadgeSummary[]>([])
+  const [earnedStars, setEarnedStars] = useState<0|1|2|3>(0)
+
+  // Launch lesson from /lessons page via localStorage signal
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('flowkeys_pending_lesson')
+      if (!raw) return
+      localStorage.removeItem('flowkeys_pending_lesson')
+      const pending = JSON.parse(raw) as { id: number; text: string; mode: LessonMode; title: string }
+      const lesson = lessons.find(l => l.id === pending.id) ?? null
+      setSourceText(pending.text)
+      setTrainingText(pending.text)
+      setTransformMode('1to1')
+      setTypingMode(lessonModeToTypingMode(pending.mode))
+      setCurrentLesson(lesson)
+      setStep('typing')
+    } catch {}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     const s = loadSettings()
     setSettings(s)
     applySettingsToDOM(s)
 
-    // Keep theme in sync when system preference changes
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
     const handler = () => {
       const current = loadSettings()
@@ -47,6 +75,16 @@ export default function Home() {
     mq.addEventListener('change', handler)
     return () => mq.removeEventListener('change', handler)
   }, [])
+
+  // Esc exits focus mode (typing → preview)
+  const handleEsc = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') setStep('preview')
+  }, [])
+  useEffect(() => {
+    if (step !== 'typing') return
+    window.addEventListener('keydown', handleEsc)
+    return () => window.removeEventListener('keydown', handleEsc)
+  }, [step, handleEsc])
 
   function handleSettingsChange(partial: Partial<Settings>) {
     setSettings(prev => {
@@ -84,8 +122,8 @@ export default function Home() {
     }
   }
 
-  function handleFinish(typed: string, start: number, end: number) {
-    const s = analyzeTyping(trainingText, typed, start, end)
+  function handleFinish(typed: string, start: number, end: number, backspaceCount: number, replayData: ReplayEvent[]) {
+    const s = analyzeTyping(trainingText, typed, start, end, backspaceCount)
     setTypedText(typed)
     setStats(s)
     saveSession({
@@ -96,8 +134,22 @@ export default function Home() {
       typedText: typed,
       mode: transformMode,
       typingMode,
+      lessonId: currentLesson?.id,
       stats: s,
+      replayData,
     })
+    if (currentLesson !== null) {
+      updateLessonProgress(currentLesson.id, s)
+      setEarnedStars(calculateStars(s))
+      const unlockedIds = checkAndUnlockBadges(badges)
+      if (unlockedIds.length > 0) {
+        const badgeObjects: BadgeSummary[] = unlockedIds
+          .map(id => badges.find(b => b.id === id))
+          .filter((b): b is typeof badges[0] => !!b)
+          .map(b => ({ icon: b.icon, title: b.title, description: b.description }))
+        setNewBadges(badgeObjects)
+      }
+    }
     setStep('results')
   }
 
@@ -109,6 +161,9 @@ export default function Home() {
     setStats(null)
     setTransformError(null)
     setIsMock(false)
+    setCurrentLesson(null)
+    setNewBadges([])
+    setEarnedStars(0)
   }
 
   function repeatRound() {
@@ -117,16 +172,35 @@ export default function Home() {
     setStep('typing')
   }
 
+  function handleResultAction(action: 'blind' | 'no_backspace' | 'next_lesson') {
+    setTypedText('')
+    setStats(null)
+    setNewBadges([])
+    setEarnedStars(0)
+    if (action === 'blind') { setTypingMode('blind'); setStep('typing') }
+    else if (action === 'no_backspace') { setTypingMode('no_backspace'); setStep('typing') }
+    else if (action === 'next_lesson' && currentLesson) {
+      const next = lessons.find(l => l.id === currentLesson.id + 1) ?? null
+      if (next) {
+        setSourceText(next.text); setTrainingText(next.text)
+        setTransformMode('1to1'); setTypingMode(lessonModeToTypingMode(next.mode))
+        setCurrentLesson(next); setStep('typing')
+      }
+    }
+  }
+
   function pickExample() {
     setSourceText(EXAMPLE_TEXT)
     setInputMethod('example')
     setStep('transform')
   }
 
+  const isFocus = step === 'typing'
+
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-[#0d0d0d] text-gray-900 dark:text-gray-100">
-      <div className="max-w-2xl mx-auto px-4 py-10 sm:py-16">
-        <Header onHomeClick={reset} onSettingsClick={() => setSettingsOpen(true)} />
+      <div className={`mx-auto px-4 ${step === 'results' ? 'max-w-5xl py-10 sm:py-16' : isFocus ? 'max-w-4xl py-6' : 'max-w-3xl py-10 sm:py-16'}`}>
+        {!isFocus && <Header onHomeClick={reset} onSettingsClick={() => setSettingsOpen(true)} />}
 
         {/* ── HOME ── */}
         {step === 'home' && (
@@ -146,7 +220,7 @@ export default function Home() {
                 id: 'voice' as InputMethod,
                 icon: '🎙️',
                 label: 'Nagraj historię głosem',
-                sub: 'Transkrypcja przez Web Speech API',
+                sub: 'Nagraj głosem — transkrypcja przez Whisper AI',
                 action: () => { setInputMethod('voice'); setStep('input') },
               },
               {
@@ -252,20 +326,65 @@ export default function Home() {
           </div>
         )}
 
-        {/* ── TYPING ── */}
+        {/* ── TYPING (focus mode) ── */}
         {step === 'typing' && (
-          <div className="space-y-5">
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <button onClick={() => setStep('preview')} className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-400 transition">← Porzuć rundę</button>
-              <span className="text-xs text-gray-500 bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] px-3 py-1 rounded-full">
-                {typingMode === 'normal' ? 'Normal' : typingMode === 'blind' ? 'Blind Flow' : 'No Backspace'}
-              </span>
+              <button
+                onClick={() => currentLesson ? router.push('/lessons') : setStep('preview')}
+                className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-400 transition"
+              >
+                ← {currentLesson ? 'Lekcje' : 'Porzuć rundę'}
+              </button>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-gray-400 dark:text-gray-600 select-none">Esc — wyjdź</span>
+                <span className="text-xs text-gray-500 bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] px-3 py-1 rounded-full">
+                  {typingMode === 'normal' ? 'Normal' : typingMode === 'blind' ? 'Blind Flow' : 'No Backspace'}
+                </span>
+              </div>
             </div>
+
+            {currentLesson && (() => {
+              const chapterTitle = chapters.find(c => c.id === currentLesson.chapterId)?.title ?? ''
+              return (
+                <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-5 py-3.5">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <span className="font-mono text-xs font-bold text-gray-400 dark:text-gray-600 tabular-nums">
+                      {String(currentLesson.id).padStart(3, '0')}
+                    </span>
+                    <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">{currentLesson.title}</span>
+                    {currentLesson.subtitle && (
+                      <span className="text-xs text-gray-400 dark:text-gray-500 italic">— {currentLesson.subtitle}</span>
+                    )}
+                    <div className="flex items-center gap-1.5 ml-auto shrink-0">
+                      <span className="text-[10px] text-gray-400 dark:text-gray-600">Rozdz. {currentLesson.chapterId} · {chapterTitle}</span>
+                      {typingMode === 'blind' && (
+                        <span className="text-[9px] px-2 py-0.5 rounded-full border font-medium bg-purple-100 dark:bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-500/25">
+                          🙈 Blind
+                        </span>
+                      )}
+                      {typingMode === 'no_backspace' && (
+                        <span className="text-[9px] px-2 py-0.5 rounded-full border font-medium bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-500/25">
+                          ⌫ No BS
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 mt-2 text-[10px] text-gray-400 dark:text-gray-600 select-none">
+                    <span>★ &nbsp;acc 85%</span>
+                    <span>★★ acc 94% + spokój 80</span>
+                    <span>★★★ acc 98% + spokój 90</span>
+                  </div>
+                </div>
+              )
+            })()}
             <TypingSession
               trainingText={trainingText}
               typingMode={typingMode}
               textViewMode={settings.textViewMode}
               onTextViewModeChange={v => handleSettingsChange({ textViewMode: v })}
+              showKeyboard={settings.showKeyboard}
+              showFingers={settings.showFingers}
               blockPaste={settings.blockPaste}
               calmMode={settings.calmMode}
               blindHint={settings.blindHint}
@@ -284,8 +403,13 @@ export default function Home() {
             typedText={typedText}
             transformMode={transformMode}
             typingMode={typingMode}
+            newBadges={newBadges}
+            earnedStars={earnedStars}
+            lessonId={currentLesson?.id}
+            hasNextLesson={!!currentLesson && !!lessons.find(l => l.id === (currentLesson.id + 1))}
             onNewRound={reset}
             onRepeat={repeatRound}
+            onAction={handleResultAction}
           />
         )}
       </div>
@@ -297,6 +421,8 @@ export default function Home() {
           onChange={handleSettingsChange}
         />
       )}
+
+
     </main>
   )
 }
