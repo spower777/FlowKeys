@@ -1,7 +1,7 @@
 export type LessonPack =
   | 'start' | 'motivation' | 'affirmations' | 'polishSigns' | 'mindfulness'
   | 'relationships' | 'spirituality' | 'visualization' | 'stories' | 'mastery'
-  | 'blindFlow' | 'noBackspace'
+  | 'blindFlow' | 'noBackspace' | 'jadePath'
 
 export type LessonMode = 'normal' | 'blindFlow' | 'noBackspace' | 'hardSigns'
 
@@ -24,6 +24,7 @@ export const PACK_LABEL: Record<LessonPack, string> = {
   polishSigns: 'Polskie znaki', mindfulness: 'Uważność', relationships: 'Relacje',
   spirituality: 'Duchowość', visualization: 'Wizualizacja', stories: 'Opowieści',
   mastery: 'Mistrzostwo', blindFlow: 'Blind Flow', noBackspace: 'No Backspace',
+  jadePath: 'Jadeitowa Droga',
 }
 
 export const MODE_LABEL: Record<LessonMode, string> = {
@@ -805,5 +806,211 @@ export const lessons: FlowLesson[] = [
     id: 150, chapterId: 12, pack: 'mastery', title: '777 Flow',
     difficulty: 5, mode: 'normal',
     text: 'Na końcu nie chodzi o 777 lekcji. Chodzi o człowieka, który nauczył się wracać. Do rytmu, do spokoju, do siebie i do następnego znaku.',
+  },
+
+  // ── Rozdział 13 · Jadeitowa Droga I ─────────────────────────────────────────
+  {
+    id: 151, chapterId: 13, pack: 'jadePath', title: 'Ciche Ostrze',
+    difficulty: 2, mode: 'normal',
+    text: 'Ostrze nie musi błyszczeć, żeby było ostre. Człowiek nie musi krzyczeć, żeby mieć siłę. Najpierw cisza, potem ruch.',
+  },
+  {
+    id: 152, chapterId: 13, pack: 'jadePath', title: 'Droga Bambusu',
+    difficulty: 2, mode: 'normal',
+    text: 'Bambus ugina się na wietrze, ale nie łamie. Uczę się tego samego. Mniej oporu, więcej elastyczności, spokojniejszy powrót.',
+  },
+  {
+    id: 153, chapterId: 13, pack: 'jadePath', title: 'Mistrz I Oddech',
+    difficulty: 2, mode: 'normal',
+    text: 'Mistrz nie patrzył na moje błędy. Patrzył na mój oddech. Powiedział, że palce zdradzają tylko to, czego serce jeszcze nie uspokoiło.',
+  },
+  {
+    id: 154, chapterId: 13, pack: 'jadePath', title: 'Deszcz Na Dziedzińcu',
+    difficulty: 2, mode: 'normal',
+    text: 'Deszcz padał na pusty dziedziniec. Każda kropla trafiała dokładnie tam, gdzie miała spaść. Tak chcę pisać: bez pośpiechu i bez walki.',
+  },
+  {
+    id: 155, chapterId: 13, pack: 'jadePath', title: 'Pierwszy Ukłon',
+    difficulty: 2, mode: 'normal',
+    text: 'Zanim dotknę klawiatury, robię wewnętrzny ukłon. Nie przed tekstem, nie przed wynikiem, ale przed własnym skupieniem.',
+  },
+  {
+    id: 156, chapterId: 13, pack: 'jadePath', title: 'Liść Na Wodzie',
+    difficulty: 2, mode: 'normal',
+    text: 'Liść płynie po wodzie, bo nie próbuje wygrać z rzeką. Ja też nie muszę walczyć z tekstem. Wystarczy, że odnajdę nurt.',
+  },
+
+  // ── Rozdział 14 · Jadeitowa Droga II ────────────────────────────────────────
+  {
+    id: 157, chapterId: 14, pack: 'jadePath', title: 'Dziesięć Pierścieni Spokoju',
+    difficulty: 3, mode: 'normal',
+    text: 'Każdy pierścień był lekcją. Jeden uczył cierpliwości, drugi odwagi, trzeci ciszy. Ostatni przypominał, że największa moc nie potrzebuje hałasu.',
+  },
+  {
+    id: 158, chapterId: 14, pack: 'jadePath', title: 'Dom Latających Myśli',
+    difficulty: 3, mode: 'normal',
+    text: 'Myśli przelatywały jak sztylety przez bambusowy las. Nie próbowałem łapać wszystkich. Wybrałem jedną i poprowadziłem ją spokojnie do końca.',
+  },
+  {
+    id: 159, chapterId: 14, pack: 'jadePath', title: 'Hero Bez Publiczności',
+    difficulty: 3, mode: 'normal',
+    text: 'Prawdziwy bohater nie zawsze stoi na placu przed armią. Czasem siedzi wieczorem przy biurku i nie ucieka od własnego treningu.',
+  },
+  {
+    id: 160, chapterId: 14, pack: 'jadePath', title: 'Szkoła Cienia',
+    difficulty: 3, mode: 'normal',
+    text: 'Cień nie jest wrogiem. Pokazuje tylko, gdzie jeszcze nie dotarło światło. Błąd w tekście działa podobnie, choć mniej poetycko i bardziej irytująco.',
+  },
+  {
+    id: 161, chapterId: 14, pack: 'jadePath', title: 'Niebieski Miecz',
+    difficulty: 3, mode: 'normal',
+    text: 'Niebieski miecz przeciął powietrze bez gniewu. W tym ruchu było coś więcej niż siła. Była decyzja, że chaos nie będzie już dowodził.',
+  },
+  {
+    id: 162, chapterId: 14, pack: 'jadePath', title: 'Jadeitowa Brama',
+    difficulty: 3, mode: 'normal',
+    text: 'Przed jadeitową bramą nie pytano o szybkość. Pytano, czy umiesz wrócić po błędzie. Dopiero wtedy otwierała się pierwsza lekcja.',
+  },
+  {
+    id: 163, chapterId: 14, pack: 'jadePath', title: 'Trening O Świcie',
+    difficulty: 3, mode: 'normal',
+    text: 'O świcie nie było widowni. Był tylko chłód, oddech i powtarzany ruch. Tak rodzi się prawdziwa zmiana: bez świadków, bez fanfar.',
+  },
+  {
+    id: 164, chapterId: 14, pack: 'jadePath', title: 'Czerwony Szal',
+    difficulty: 3, mode: 'normal',
+    text: 'Czerwony szal poruszył się na wietrze, zanim ciało zrobiło pierwszy krok. Czasem zamiar pojawia się wcześniej niż ruch. Trzeba go usłyszeć.',
+  },
+  {
+    id: 165, chapterId: 14, pack: 'jadePath', title: 'Lekcja Mistrza',
+    difficulty: 3, mode: 'normal',
+    text: 'Mistrz powiedział: jeśli chcesz pisać szybko, najpierw naucz się pisać spokojnie. Uznałem to za banał, więc oczywiście miał rację.',
+  },
+  {
+    id: 166, chapterId: 14, pack: 'jadePath', title: 'Kamień I Rzeka',
+    difficulty: 3, mode: 'normal',
+    text: 'Kamień trwa, rzeka płynie. Człowiek potrzebuje obu. Stałości, żeby wracać, i ruchu, żeby nie zamienić się w mebel z ambicjami.',
+  },
+  {
+    id: 167, chapterId: 14, pack: 'jadePath', title: 'Ostrze Bez Gniewu',
+    difficulty: 3, mode: 'normal',
+    text: 'Ostrze prowadzone gniewem drży. Ostrze prowadzone spokojem trafia. Palce działają podobnie. Gdy przestaję walczyć, zaczynam pisać czyściej.',
+  },
+  {
+    id: 168, chapterId: 14, pack: 'jadePath', title: 'Sala Luster',
+    difficulty: 3, mode: 'normal',
+    text: 'W sali luster zobaczyłem wszystkie swoje wersje. Najbardziej spodobała mi się ta, która nie panikowała po jednym błędzie.',
+  },
+  {
+    id: 169, chapterId: 14, pack: 'jadePath', title: 'Smok Nad Dachami',
+    difficulty: 3, mode: 'normal',
+    text: 'Smok przeleciał nad dachami miasta i nie obejrzał się ani razu. Być może dlatego był smokiem, a nie człowiekiem poprawiającym każde zdanie.',
+  },
+  {
+    id: 170, chapterId: 14, pack: 'jadePath', title: 'Ukryta Siła',
+    difficulty: 3, mode: 'normal',
+    text: 'Ukryta siła nie mieszka w napięciu. Mieszka w decyzji, że dziś znów siadam, znów ćwiczę i znów wracam do rytmu.',
+  },
+
+  // ── Rozdział 15 · Jadeitowa Droga III ───────────────────────────────────────
+  {
+    id: 171, chapterId: 15, pack: 'jadePath', title: 'Most Nad Mgłą',
+    difficulty: 4, mode: 'normal',
+    text: 'Most nad mgłą wyglądał, jakby prowadził donikąd. A jednak każdy krok odsłaniał następny fragment drogi. Tak właśnie działa praktyka.',
+  },
+  {
+    id: 172, chapterId: 15, pack: 'jadePath', title: 'Cisza Przed Ruchem',
+    difficulty: 4, mode: 'normal',
+    text: 'Najważniejszy moment przychodzi przed ruchem. Krótka cisza, w której ciało wybiera kierunek. Jeśli tam jest spokój, reszta ma szansę się ułożyć.',
+  },
+  {
+    id: 173, chapterId: 15, pack: 'jadePath', title: 'Tancerz I Wojownik',
+    difficulty: 4, mode: 'normal',
+    text: 'Tancerz i wojownik spotkali się na pustym placu. Jeden znał lekkość, drugi dyscyplinę. Dopiero razem zrozumieli, czym jest prawdziwy rytm.',
+  },
+  {
+    id: 174, chapterId: 15, pack: 'jadePath', title: 'Złoty Krąg',
+    difficulty: 4, mode: 'normal',
+    text: 'Złoty krąg zamknął się wokół dłoni, ale nie był więzieniem. Był przypomnieniem, że moc bez kierunku staje się tylko hałasem.',
+  },
+  {
+    id: 175, chapterId: 15, pack: 'jadePath', title: 'Bambusowy Las',
+    difficulty: 4, mode: 'normal',
+    text: 'W bambusowym lesie każdy dźwięk wydawał się większy. Mój oddech, krok, szelest ubrania. W takim miejscu nie da się oszukać własnego napięcia.',
+  },
+  {
+    id: 176, chapterId: 15, pack: 'jadePath', title: 'Czarna Herbata',
+    difficulty: 4, mode: 'normal',
+    text: 'Czarna herbata parzyła się powoli. Nikt jej nie poganiał, bo każdy wiedział, że smak wymaga czasu. Trening dłoni też nie lubi desperacji.',
+  },
+  {
+    id: 177, chapterId: 15, pack: 'jadePath', title: 'Mapa Bez Atramentu',
+    difficulty: 4, mode: 'normal',
+    text: 'Dostałem mapę bez atramentu. Mistrz powiedział, że droga pojawi się dopiero wtedy, gdy zacznę iść. Bardzo zabawne, mistrzu, bardzo wygodne.',
+  },
+  {
+    id: 178, chapterId: 15, pack: 'jadePath', title: 'Trzy Oddechy',
+    difficulty: 4, mode: 'normal',
+    text: 'Pierwszy oddech uspokaja ciało. Drugi porządkuje myśli. Trzeci przypomina, że nie muszę wygrać rundy, żeby ją dobrze przeżyć.',
+  },
+  {
+    id: 179, chapterId: 15, pack: 'jadePath', title: 'Księga Bez Tytułu',
+    difficulty: 4, mode: 'normal',
+    text: 'Księga nie miała tytułu, bo każdy uczeń musiał nadać jej własny sens. Moja zaczęła się od prostego zdania: wracaj do rytmu.',
+  },
+  {
+    id: 180, chapterId: 15, pack: 'jadePath', title: 'Ostatnia Próba',
+    difficulty: 4, mode: 'normal',
+    text: 'Ostatnia próba nie sprawdzała siły. Sprawdzała, czy po porażce potrafię wstać bez teatralnego cierpienia i zrobić następny krok.',
+  },
+  {
+    id: 181, chapterId: 15, pack: 'jadePath', title: 'Czerwony Pył',
+    difficulty: 4, mode: 'normal',
+    text: 'Czerwony pył unosił się po walce, ale najważniejsze było to, co zostało po nim: cisza, oddech i decyzja, żeby nie wracać do chaosu.',
+  },
+  {
+    id: 182, chapterId: 15, pack: 'jadePath', title: 'Mistrz Klawiatury',
+    difficulty: 4, mode: 'normal',
+    text: 'Mistrz klawiatury nie wali w klawisze. Dotyka ich jak ktoś, kto wie, że każdy znak jest małą bramą. Pretensjonalne, ale działa.',
+  },
+  {
+    id: 183, chapterId: 15, pack: 'jadePath', title: 'Siedem Bram',
+    difficulty: 4, mode: 'normal',
+    text: 'Przeszedłem przez siedem bram. Za każdą czekała ta sama lekcja w innym przebraniu: mniej napięcia, więcej obecności, spokojniejszy powrót.',
+  },
+  {
+    id: 184, chapterId: 15, pack: 'jadePath', title: 'Wojownik Nie Ucieka',
+    difficulty: 4, mode: 'normal',
+    text: 'Wojownik nie ucieka przed własnym błędem. Patrzy na niego, uczy się z niego i idzie dalej. Bez dramatu, bez fanfar, bez robienia miny do plakatu.',
+  },
+  {
+    id: 185, chapterId: 15, pack: 'jadePath', title: 'Światło Na Ostrzu',
+    difficulty: 4, mode: 'normal',
+    text: 'Światło zatrzymało się na ostrzu tylko przez chwilę. Wystarczyło, żeby zobaczyć, że prawdziwa precyzja jest spokojna.',
+  },
+  {
+    id: 186, chapterId: 15, pack: 'jadePath', title: 'Kropla Atramentu',
+    difficulty: 4, mode: 'normal',
+    text: 'Jedna kropla atramentu spadła na papier i zmieniła cały znak. Jedna decyzja potrafi zrobić to samo z dniem.',
+  },
+  {
+    id: 187, chapterId: 15, pack: 'jadePath', title: 'Niebo Po Burzy',
+    difficulty: 4, mode: 'normal',
+    text: 'Niebo po burzy nie tłumaczy się z grzmotów. Po prostu robi się jasne. Może ja też nie muszę analizować każdego starego chaosu.',
+  },
+  {
+    id: 188, chapterId: 15, pack: 'jadePath', title: 'Krąg Uczniów',
+    difficulty: 4, mode: 'normal',
+    text: 'W kręgu uczniów każdy chciał wyglądać spokojnie. Tylko jeden naprawdę oddychał. I oczywiście ten jeden pisał najlepiej, irytująca legenda.',
+  },
+  {
+    id: 189, chapterId: 15, pack: 'jadePath', title: 'Stary Dzwon',
+    difficulty: 4, mode: 'normal',
+    text: 'Stary dzwon zabrzmiał raz i wszyscy zamilkli. Nie dlatego, że był głośny. Dlatego, że jego dźwięk miał środek.',
+  },
+  {
+    id: 190, chapterId: 15, pack: 'jadePath', title: 'Złoty Smok',
+    difficulty: 5, mode: 'normal',
+    text: 'Złoty smok nie pilnował skarbu. Pilnował wejścia do miejsca, w którym człowiek przestaje udawać, że brak cierpliwości jest charakterem.',
   },
 ]
