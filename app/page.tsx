@@ -380,9 +380,12 @@ export default function Home() {
             </button>
 
             {/* Footer */}
-            <div className="animate-fade-up flex items-center justify-center pt-4 pb-1" style={{ animationDelay: '180ms' }}>
-              <p className="text-xs font-black tracking-[0.25em] uppercase text-gray-300 dark:text-gray-700 select-none">
-                CHROBRY 🐾
+            <div className="animate-fade-up flex flex-col items-center gap-1 pt-4 pb-1" style={{ animationDelay: '180ms' }}>
+              <p className="text-[10px] tracking-widest uppercase text-gray-300 dark:text-gray-700 select-none">
+                © 2026 FlowKeys
+              </p>
+              <p className="text-sm font-black tracking-[0.3em] uppercase text-gray-300 dark:text-gray-700 select-none">
+                CHROBRY KING 👑
               </p>
             </div>
 
