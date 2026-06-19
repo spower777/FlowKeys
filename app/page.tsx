@@ -379,21 +379,11 @@ export default function Home() {
               <span className="text-gray-300 dark:text-gray-700 group-hover:text-gray-500 dark:group-hover:text-gray-500 transition-colors text-sm">›</span>
             </button>
 
-            {/* Akademia — link, nie karta */}
-            <div className="animate-fade-up flex items-center justify-center gap-4 pt-2 pb-1" style={{ animationDelay: '180ms' }}>
-              <button
-                onClick={() => router.push('/lessons')}
-                className="text-xs text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 transition-colors flex items-center gap-1.5"
-              >
-                ⌨️ Akademia klawiatury →
-              </button>
-              <span className="text-gray-200 dark:text-gray-800">·</span>
-              <button
-                onClick={() => router.push('/history')}
-                className="text-xs text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 transition-colors flex items-center gap-1.5"
-              >
-                📊 Historia →
-              </button>
+            {/* Footer */}
+            <div className="animate-fade-up flex items-center justify-center pt-3 pb-1" style={{ animationDelay: '180ms' }}>
+              <p className="text-[10px] text-gray-300 dark:text-gray-700 select-none tracking-wide">
+                © 2026 FlowKeys · Chorby King 🐾
+              </p>
             </div>
 
           </div>

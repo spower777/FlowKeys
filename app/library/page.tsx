@@ -318,6 +318,28 @@ function TextRow({
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 type View = 'list' | 'add' | 'edit'
+type DateFilter = 'all' | 'week' | 'month' | 'older'
+
+const DATE_FILTER_LABELS: Record<DateFilter, string> = {
+  all: 'Wszystkie',
+  week: 'Ten tydzień',
+  month: 'Ten miesiąc',
+  older: 'Starsze',
+}
+
+function applyDateFilter(texts: CustomText[], filter: DateFilter): CustomText[] {
+  if (filter === 'all') return texts
+  const now = Date.now()
+  const WEEK  = 7  * 24 * 60 * 60 * 1000
+  const MONTH = 30 * 24 * 60 * 60 * 1000
+  return texts.filter(t => {
+    const age = now - new Date(t.createdAt).getTime()
+    if (filter === 'week')  return age <= WEEK
+    if (filter === 'month') return age <= MONTH
+    if (filter === 'older') return age > MONTH
+    return true
+  })
+}
 
 export default function LibraryPage() {
   const router = useRouter()
@@ -326,6 +348,7 @@ export default function LibraryPage() {
   const [editId, setEditId] = useState<string | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [listMode, setListMode] = useState(false)
+  const [dateFilter, setDateFilter] = useState<DateFilter>('all')
 
   useEffect(() => { setTexts(getLibrary()) }, [])
 
@@ -392,6 +415,7 @@ export default function LibraryPage() {
     .sort((a, b) => (b.lastPracticedAt! > a.lastPracticedAt! ? 1 : -1))[0]
   const continueText = lastPracticed ?? texts[0] ?? null
   const editingText = editId ? texts.find(t => t.id === editId) : null
+  const filteredTexts = applyDateFilter(texts, dateFilter)
 
   // Form view
   if (view === 'add' || view === 'edit') {
@@ -505,10 +529,35 @@ export default function LibraryPage() {
         {/* Text grid / list */}
         {texts.length > 0 && (
           <div className="space-y-3">
-            <p className="text-xs font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-widest">Moje teksty</p>
+            {/* Header row: label + filters */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-xs font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-widest shrink-0">Moje teksty</p>
+              <div className="flex items-center gap-1.5 overflow-x-auto">
+                {(Object.keys(DATE_FILTER_LABELS) as DateFilter[]).map(f => (
+                  <button
+                    key={f}
+                    onClick={() => setDateFilter(f)}
+                    className={`text-[10px] px-2.5 py-1 rounded-full border whitespace-nowrap transition ${
+                      dateFilter === f
+                        ? 'bg-[var(--accent-500)] text-white border-[var(--accent-600)]'
+                        : 'bg-white dark:bg-[#161616] text-gray-500 dark:text-gray-500 border-gray-200 dark:border-[#2a2a2a] hover:border-[var(--accent-400)]'
+                    }`}
+                  >
+                    {DATE_FILTER_LABELS[f]}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {filteredTexts.length === 0 && (
+              <p className="text-sm text-gray-400 dark:text-gray-600 py-8 text-center">
+                Brak tekstów z wybranego okresu.
+              </p>
+            )}
+
             {listMode ? (
               <div className="space-y-1.5">
-                {texts.map(text => (
+                {filteredTexts.map(text => (
                   <TextRow
                     key={text.id}
                     text={text}
@@ -517,16 +566,18 @@ export default function LibraryPage() {
                     onDelete={() => setDeleteId(text.id)}
                   />
                 ))}
-                <button
-                  onClick={() => setView('add')}
-                  className="w-full text-left px-4 py-3 rounded-xl border border-dashed border-gray-200 dark:border-[#2a2a2a] hover:border-[var(--accent-400)] dark:hover:border-[var(--accent-500)]/40 text-xs text-gray-400 dark:text-gray-600 hover:text-[var(--accent-500)] dark:hover:text-[var(--accent-400)] transition-all"
-                >
-                  + Dodaj nowy tekst
-                </button>
+                {dateFilter === 'all' && (
+                  <button
+                    onClick={() => setView('add')}
+                    className="w-full text-left px-4 py-3 rounded-xl border border-dashed border-gray-200 dark:border-[#2a2a2a] hover:border-[var(--accent-400)] dark:hover:border-[var(--accent-500)]/40 text-xs text-gray-400 dark:text-gray-600 hover:text-[var(--accent-500)] dark:hover:text-[var(--accent-400)] transition-all"
+                  >
+                    + Dodaj nowy tekst
+                  </button>
+                )}
               </div>
             ) : (
               <div className="grid sm:grid-cols-2 gap-3">
-                {texts.map(text => (
+                {filteredTexts.map(text => (
                   <TextCard
                     key={text.id}
                     text={text}
@@ -535,13 +586,15 @@ export default function LibraryPage() {
                     onDelete={() => setDeleteId(text.id)}
                   />
                 ))}
-                <button
-                  onClick={() => setView('add')}
-                  className="border-2 border-dashed border-gray-200 dark:border-[#2a2a2a] hover:border-[var(--accent-400)] dark:hover:border-[var(--accent-500)]/40 rounded-2xl p-5 flex flex-col items-center justify-center gap-3 text-gray-400 dark:text-gray-600 hover:text-[var(--accent-500)] dark:hover:text-[var(--accent-400)] transition-all duration-200 min-h-[180px] group"
-                >
-                  <span className="text-4xl leading-none group-hover:scale-110 transition-transform duration-200">+</span>
-                  <span className="text-xs font-medium">Dodaj nowy tekst</span>
-                </button>
+                {dateFilter === 'all' && (
+                  <button
+                    onClick={() => setView('add')}
+                    className="border-2 border-dashed border-gray-200 dark:border-[#2a2a2a] hover:border-[var(--accent-400)] dark:hover:border-[var(--accent-500)]/40 rounded-2xl p-5 flex flex-col items-center justify-center gap-3 text-gray-400 dark:text-gray-600 hover:text-[var(--accent-500)] dark:hover:text-[var(--accent-400)] transition-all duration-200 min-h-[180px] group"
+                  >
+                    <span className="text-4xl leading-none group-hover:scale-110 transition-transform duration-200">+</span>
+                    <span className="text-xs font-medium">Dodaj nowy tekst</span>
+                  </button>
+                )}
               </div>
             )}
           </div>

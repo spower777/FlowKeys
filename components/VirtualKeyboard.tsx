@@ -1,6 +1,7 @@
 'use client'
 
 import { FINGER, POLISH_BASE, FINGER_COLORS, FINGER_LABELS } from '@/lib/fingerMap'
+import HandsDisplay from './HandsDisplay'
 
 // ── Row definitions ───────────────────────────────────────────────────────────
 
@@ -97,8 +98,12 @@ export default function VirtualKeyboard({ nextChar, showFingers, pressedKey }: P
 
   // ── render ─────────────────────────────────────────────────────────────────
 
+  const activeFinger = FINGER[baseKey] ?? null
+
   return (
     <div className="select-none rounded-2xl border border-gray-200 dark:border-[#2a2a2a] bg-[#e8e8e8] dark:bg-[#111] p-3 space-y-1.5">
+
+      {showFingers && <HandsDisplay activeFinger={activeFinger} />}
 
       {ROWS.map((row, ri) => (
         <div key={ri} className="flex justify-center gap-1">
