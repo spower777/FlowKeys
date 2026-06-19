@@ -22,4 +22,6 @@ export const chapters: Chapter[] = [
   { id: 14, title: 'Jadeitowa Droga II',  range: '157–170', description: 'Coraz głębiej — cień, ostrze i rytm.' },
   { id: 15, title: 'Jadeitowa Droga III', range: '171–190', description: 'Trudniejsze zdania, mistrzowski poziom.' },
   { id: 16, title: 'Gaming Flow',         range: '191–210', description: 'Respawn, loot, baza. Trening w języku gracza.' },
+  { id: 17, title: 'Rząd Domowy',         range: '211–222', description: 'a s d f g h j k l — palce uczą się swojego miejsca.' },
+  { id: 18, title: 'Nowe Klawisze',       range: '223–232', description: 'e i r n o t w z c — krok po kroku poza rząd domowy.' },
 ]

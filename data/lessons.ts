@@ -1,7 +1,7 @@
 export type LessonPack =
   | 'start' | 'motivation' | 'affirmations' | 'polishSigns' | 'mindfulness'
   | 'relationships' | 'spirituality' | 'visualization' | 'stories' | 'mastery'
-  | 'blindFlow' | 'noBackspace' | 'jadePath' | 'gaming'
+  | 'blindFlow' | 'noBackspace' | 'jadePath' | 'gaming' | 'homerow'
 
 export type LessonMode = 'normal' | 'blindFlow' | 'noBackspace' | 'hardSigns'
 
@@ -26,6 +26,7 @@ export const PACK_LABEL: Record<LessonPack, string> = {
   mastery: 'Mistrzostwo', blindFlow: 'Blind Flow', noBackspace: 'No Backspace',
   jadePath: 'Jadeitowa Droga',
   gaming: 'Gaming',
+  homerow: 'Podstawy',
 }
 
 export const MODE_LABEL: Record<LessonMode, string> = {
@@ -33,6 +34,142 @@ export const MODE_LABEL: Record<LessonMode, string> = {
 }
 
 export const lessons: FlowLesson[] = [
+  // ── Rozdział 17 · Rząd Domowy ─────────────────────────────────────────────────
+  {
+    id: 211, chapterId: 17, pack: 'homerow', title: 'Palce na miejscu',
+    subtitle: 'f i j — dwa wskazujące', difficulty: 1, mode: 'normal',
+    text: 'ff jj ff jj fj jf fff jjj fjf jfj ffj jjf fj jf fjfj jfjf ff jj ff jj fj jf fjf jfj fj jf',
+    tags: ['podstawy', 'rząd-domowy'],
+  },
+  {
+    id: 212, chapterId: 17, pack: 'homerow', title: 'Środkowe palce',
+    subtitle: 'd i k', difficulty: 1, mode: 'normal',
+    text: 'dd kk dd kk dk kd ddd kkk dkd kdk ddk kdd dk kd dkdk kdkd dd kk dd kk dk kd dkd kdk',
+    tags: ['podstawy', 'rząd-domowy'],
+  },
+  {
+    id: 213, chapterId: 17, pack: 'homerow', title: 'Pierścieniowe palce',
+    subtitle: 's i l', difficulty: 1, mode: 'normal',
+    text: 'ss ll ss ll sl ls sss lll sls lsl ssl lss sl ls slsl lsls ss ll ss ll sl ls sls lsl',
+    tags: ['podstawy', 'rząd-domowy'],
+  },
+  {
+    id: 214, chapterId: 17, pack: 'homerow', title: 'Mały palec',
+    subtitle: 'a — lewy mały', difficulty: 1, mode: 'normal',
+    text: 'aa aa aaa aas aad aaf aaj aak aal as ad af aj ak al aa ss aa dd aa ff aa jj aa kk aa ll',
+    tags: ['podstawy', 'rząd-domowy'],
+  },
+  {
+    id: 215, chapterId: 17, pack: 'homerow', title: 'g i h — środek',
+    subtitle: 'wskazujące sięgają środka', difficulty: 1, mode: 'normal',
+    text: 'gg hh gg hh gh hg ggg hhh ghg hgh ggh hhg gh hg fgh jhg ghgh hghg gg hh gh hg fgh jhg',
+    tags: ['podstawy', 'rząd-domowy'],
+  },
+  {
+    id: 216, chapterId: 17, pack: 'homerow', title: 'Lewa ręka',
+    subtitle: 'asdf — cztery klucze', difficulty: 1, mode: 'normal',
+    text: 'asdf fdsa asdf fdsa asd fds dsa fda sdf adf asdf fdsa asd sdf fda adf dsa asdf fdsa',
+    tags: ['podstawy', 'rząd-domowy'],
+  },
+  {
+    id: 217, chapterId: 17, pack: 'homerow', title: 'Prawa ręka',
+    subtitle: 'jkl — trzy klucze', difficulty: 1, mode: 'normal',
+    text: 'jkl lkj jkl lkj jk kj kl lk jl lj jkl lkj jkl lkj jk lk kl jl jkl lkj kl lk jl',
+    tags: ['podstawy', 'rząd-domowy'],
+  },
+  {
+    id: 218, chapterId: 17, pack: 'homerow', title: 'Pierwsze słowa',
+    subtitle: 'tylko rząd domowy', difficulty: 1, mode: 'normal',
+    text: 'las dal sad jak fal jad daj sal las jak fal dal sad daj sal jak las dal fal sad jak daj',
+    tags: ['podstawy', 'rząd-domowy'],
+  },
+  {
+    id: 219, chapterId: 17, pack: 'homerow', title: 'Klasa i skala',
+    subtitle: 'dłuższe słowa z rzędu', difficulty: 1, mode: 'normal',
+    text: 'klasa skala alfa slajd falka faks lada klasa skala alfa faks lada klasa skala alfa slajd',
+    tags: ['podstawy', 'rząd-domowy'],
+  },
+  {
+    id: 220, chapterId: 17, pack: 'homerow', title: 'Zdanie z rzędu',
+    subtitle: 'las dal jak fal', difficulty: 1, mode: 'normal',
+    text: 'jak las dal fal jak las dal sad jak fal las dal jak las dal sad fal jak las dal jak fal',
+    tags: ['podstawy', 'rząd-domowy'],
+  },
+  {
+    id: 221, chapterId: 17, pack: 'homerow', title: 'Pełny rząd',
+    subtitle: 'asdfghjkl razem', difficulty: 1, mode: 'normal',
+    text: 'asdfghjkl lkjhgfdsa jak las dal fal klasa skala alfa jak las fal sad jak klasa alfa las',
+    tags: ['podstawy', 'rząd-domowy'],
+  },
+  {
+    id: 222, chapterId: 17, pack: 'homerow', title: 'Tylko rząd — czysto',
+    subtitle: 'runda bez błędów', difficulty: 1, mode: 'normal',
+    text: 'jak las dal fal klasa skala alfa slajd faks lada sad jak daj sal jak las dal alfa klasa',
+    tags: ['podstawy', 'rząd-domowy'],
+  },
+
+  // ── Rozdział 18 · Nowe Klawisze ───────────────────────────────────────────────
+  {
+    id: 223, chapterId: 18, pack: 'homerow', title: 'E — pierwsza góra',
+    subtitle: 'środkowy sięga w górę', difficulty: 1, mode: 'normal',
+    text: 'jej lej jej lej dej jej lej jak jej lej jak las jej lej dej jak fal jej lej jej lej jak',
+    tags: ['podstawy', 'nowe-klawisze'],
+  },
+  {
+    id: 224, chapterId: 18, pack: 'homerow', title: 'I — prawa góra',
+    subtitle: 'prawy pierścieniowy sięga', difficulty: 1, mode: 'normal',
+    text: 'jaki dali sali ski jaki jak dali las jaki sali jak ski las jaki dali jak ski jaki dali',
+    tags: ['podstawy', 'nowe-klawisze'],
+  },
+  {
+    id: 225, chapterId: 18, pack: 'homerow', title: 'R — lewa góra',
+    subtitle: 'wskazujący sięga po r', difficulty: 1, mode: 'normal',
+    text: 'rak raj dar rasa kar rak raj dar las rak raj dar jak rak raj dar rasa kar rak raj dar',
+    tags: ['podstawy', 'nowe-klawisze'],
+  },
+  {
+    id: 226, chapterId: 18, pack: 'homerow', title: 'N — prawa dół',
+    subtitle: 'wskazujący sięga w dół', difficulty: 1, mode: 'normal',
+    text: 'nas nad na nas nad las jak na dal nas nad jak fal nas nad na las jak na nas nad nad na',
+    tags: ['podstawy', 'nowe-klawisze'],
+  },
+  {
+    id: 227, chapterId: 18, pack: 'homerow', title: 'O — prawa góra',
+    subtitle: 'pierścieniowy sięga po o', difficulty: 2, mode: 'normal',
+    text: 'do ok los sol kos dok kod do ok jak los sol do ok jak kos dok kod do ok los jak sol do',
+    tags: ['podstawy', 'nowe-klawisze'],
+  },
+  {
+    id: 228, chapterId: 18, pack: 'homerow', title: 'T — lewa góra',
+    subtitle: 'wskazujący sięga po t', difficulty: 2, mode: 'normal',
+    text: 'tak lat kat tak lat jak kat tak las tak lat jak fal tak lat kat jak las tak lat kat jak',
+    tags: ['podstawy', 'nowe-klawisze'],
+  },
+  {
+    id: 229, chapterId: 18, pack: 'homerow', title: 'W — sąsiad T',
+    subtitle: 'kolejna lewa litera', difficulty: 2, mode: 'normal',
+    text: 'was wal was wal jak was wal las was wal dal was wal fal was jak was wal las was wal jak',
+    tags: ['podstawy', 'nowe-klawisze'],
+  },
+  {
+    id: 230, chapterId: 18, pack: 'homerow', title: 'Z — lewa dół',
+    subtitle: 'dolny rząd zaczyna się', difficulty: 2, mode: 'normal',
+    text: 'raz za zad zero raz za jak raz las za rak dar raz zero na los tak raz za zero raz jak',
+    tags: ['podstawy', 'nowe-klawisze'],
+  },
+  {
+    id: 231, chapterId: 18, pack: 'homerow', title: 'C — prawa dół',
+    subtitle: 'bo c jest wszędzie', difficulty: 2, mode: 'normal',
+    text: 'co cal co cal jak co cal las co jak cal co jak cal las co jak cal jak las co cal jak co',
+    tags: ['podstawy', 'nowe-klawisze'],
+  },
+  {
+    id: 232, chapterId: 18, pack: 'homerow', title: 'Pierwsze zdania',
+    subtitle: 'łączę wszystkie poznane klawisze', difficulty: 2, mode: 'normal',
+    text: 'tak on do jak las dal rak dar na los tak on jak las tak on do jak los dar na rak tak on',
+    tags: ['podstawy', 'nowe-klawisze'],
+  },
+
   // ── Rozdział 1 · Pierwszy Rytm ────────────────────────────────────────────────
   {
     id: 1, chapterId: 1, pack: 'start', title: 'Pierwszy Rytm',

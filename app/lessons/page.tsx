@@ -94,6 +94,7 @@ export default function LessonsPage() {
 
   // 8 ścieżek treningowych
   const PATH_DEFS: { id: string; icon: string; label: string; packs: LessonPack[]; modeOverride?: TypingMode; isCustom?: boolean; color: string; text: string; btn: string }[] = [
+    { id: 'basics',   icon: '⌨️', label: 'Podstawy',       packs: ['homerow'],                                    color: 'bg-orange-50 dark:bg-orange-500/10 border-orange-200 dark:border-orange-500/20', text: 'text-orange-700 dark:text-orange-400', btn: 'bg-orange-500 hover:bg-orange-600' },
     { id: 'start',    icon: '📘', label: 'Start',          packs: ['start'],                                      color: 'bg-sky-50 dark:bg-sky-500/10 border-sky-200 dark:border-sky-500/20',         text: 'text-sky-700 dark:text-sky-400',     btn: 'bg-sky-500 hover:bg-sky-600' },
     { id: 'fluency',  icon: '🌊', label: 'Płynność',       packs: ['mastery', 'motivation', 'mindfulness'],       color: 'bg-teal-50 dark:bg-teal-500/10 border-teal-200 dark:border-teal-500/20',     text: 'text-teal-700 dark:text-teal-400',   btn: 'bg-teal-500 hover:bg-teal-600' },
     { id: 'polish',   icon: '🇵🇱', label: 'Polskie znaki', packs: ['polishSigns'],                                color: 'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20',         text: 'text-red-700 dark:text-red-400',     btn: 'bg-red-500 hover:bg-red-600' },

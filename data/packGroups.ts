@@ -1,6 +1,6 @@
 import type { LessonPack } from './lessons'
 
-export type PackGroupId = 'zen' | 'gaming' | 'self' | 'spirit' | 'story' | 'polish'
+export type PackGroupId = 'zen' | 'gaming' | 'self' | 'spirit' | 'story' | 'polish' | 'basics'
 
 export interface PackGroup {
   id: PackGroupId
@@ -12,6 +12,14 @@ export interface PackGroup {
 }
 
 export const PACK_GROUPS: PackGroup[] = [
+  {
+    id: 'basics',
+    label: 'Podstawy',
+    description: 'Rząd domowy i pierwsze litery — start od zera.',
+    icon: '⌨️',
+    packs: ['homerow'],
+    defaultEnabled: true,
+  },
   {
     id: 'zen',
     label: 'Zen Flow',
