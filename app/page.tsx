@@ -163,6 +163,7 @@ export default function Home() {
       mode: transformMode,
       typingMode,
       lessonId: currentLesson?.id,
+      libraryTextId: currentLibraryTextId ?? undefined,
       stats: s,
       replayData,
     })
@@ -536,10 +537,14 @@ export default function Home() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <button
-                onClick={() => currentLesson ? router.push('/lessons') : setStep('preview')}
+                onClick={() => {
+                  if (currentLesson) router.push('/lessons')
+                  else if (currentLibraryTextId) router.push('/library')
+                  else reset()
+                }}
                 className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-400 transition"
               >
-                ← {currentLesson ? 'Lekcje' : 'Porzuć rundę'}
+                ← {currentLesson ? 'Lekcje' : currentLibraryTextId ? 'Biblioteka' : 'Porzuć rundę'}
               </button>
               <div className="flex items-center gap-2">
                 <span className="text-[10px] text-gray-400 dark:text-gray-600 select-none">Esc — wyjdź</span>

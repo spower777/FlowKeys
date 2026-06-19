@@ -39,6 +39,7 @@ export interface TypingSessionRecord {
   mode: TransformMode
   typingMode: TypingMode
   lessonId?: number
+  libraryTextId?: string
   stats: TypingStats
   replayData?: ReplayEvent[]
 }

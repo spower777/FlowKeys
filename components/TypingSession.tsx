@@ -118,6 +118,7 @@ export default function TypingSession({
   const [backspaceCount, setBackspaceCount] = useState(0)
 
   const captureRef = useRef<HTMLDivElement>(null)
+  const cursorSpanRef = useRef<HTMLSpanElement>(null)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const pasteToastRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const dropToastRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -137,6 +138,13 @@ export default function TypingSession({
       window.speechSynthesis?.cancel()
     }
   }, [])
+
+  // Auto-scroll current character into view in 'full' mode
+  useEffect(() => {
+    if (textViewMode === 'full') {
+      cursorSpanRef.current?.scrollIntoView({ block: 'nearest' })
+    }
+  }, [cursorPos, textViewMode])
 
   useEffect(() => { if (textHidden) captureRef.current?.focus() }, [textHidden])
 
@@ -232,7 +240,15 @@ export default function TypingSession({
   function renderRange(from: number, to: number) {
     return trainingText.slice(from, to).split('').map((char, rel) => {
       const abs = from + rel
-      return <span key={abs} className={cls(abs, char)}>{char}</span>
+      return (
+        <span
+          key={abs}
+          ref={abs === cursorPos ? cursorSpanRef : undefined}
+          className={cls(abs, char)}
+        >
+          {char}
+        </span>
+      )
     })
   }
 
@@ -348,8 +364,10 @@ export default function TypingSession({
             )}
           </div>
         ) : (
-          /* Source text display */
-          <div className="text-base leading-8 font-mono break-words whitespace-pre-wrap select-none">
+          /* Source text display — max-height in full mode keeps keyboard on-screen */
+          <div className={`text-base leading-8 font-mono break-words whitespace-pre-wrap select-none ${
+            textViewMode === 'full' ? 'max-h-[220px] overflow-y-auto' : ''
+          }`}>
             {textContent}
             {cursorPos >= trainingText.length && trainingText.length > 0 && (
               <span className="animate-pulse text-blue-500">▌</span>

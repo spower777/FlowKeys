@@ -91,6 +91,11 @@ function LibraryForm({ initialTitle = '', initialText = '', initialTags = [], in
         <p className="text-[10px] text-gray-400 dark:text-gray-600 mt-1">
           {wordCount} {plural(wordCount, 'słowo', 'słowa', 'słów')} · {text.length} znaków
         </p>
+        {text.trim().length > 0 && text.trim().length < 100 && (
+          <p className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-xl px-3 py-2 mt-2">
+            Ten tekst jest bardzo krótki — wynik rundy może być niemiarodajny. Zalecane minimum to ok. 100 znaków.
+          </p>
+        )}
       </div>
 
       <div>
@@ -209,6 +214,11 @@ function TextCard({
       <p className="text-xs text-gray-500 dark:text-gray-500 leading-relaxed mb-4 flex-1 line-clamp-2">
         {text.text.slice(0, 140)}{text.text.length > 140 ? '…' : ''}
       </p>
+
+      {/* Short text badge */}
+      {text.text.trim().length < 100 && (
+        <p className="text-[9px] text-amber-600 dark:text-amber-400 mb-2">⚠ Krótki tekst — wynik próbny</p>
+      )}
 
       {/* Stats */}
       <div className="flex items-center gap-3 text-[10px] text-gray-400 dark:text-gray-600 mb-3">
