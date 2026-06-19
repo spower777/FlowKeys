@@ -130,6 +130,19 @@ export function checkAndUnlockBadges(badgeList: FlowBadge[]): string[] {
     return lesson?.pack === 'polishSigns' && p.bestAccuracy >= 90
   }).length
 
+  const quietRounds = sessions.filter(s =>
+    (s.stats.calmScore ?? s.stats.accuracy) >= 90 &&
+    (s.stats.backspaceCount ?? 0) <= 10 &&
+    s.stats.completionPercent >= 90
+  ).length
+  const cleanRounds = sessions.filter(s =>
+    (s.stats.backspaceCount ?? 0) <= 5 &&
+    s.stats.completionPercent >= 90
+  ).length
+  const customTextSessions = sessions.filter(s =>
+    !s.lessonId && s.stats.completionPercent >= 90
+  ).length
+
   const bestAccuracy = sessions.length > 0 ? Math.max(...sessions.map(s => s.stats.accuracy)) : 0
   const bestWpm = sessions.length > 0 ? Math.max(...sessions.map(s => s.stats.wpm)) : 0
   const bestCalm = sessions.length > 0 ? Math.max(...sessions.map(s => s.stats.calmScore ?? s.stats.accuracy)) : 0
@@ -150,6 +163,9 @@ export function checkAndUnlockBadges(badgeList: FlowBadge[]): string[] {
       case 'wpm':                achieved = bestWpm >= value; break
       case 'calmIndex':          achieved = bestCalm >= value; break
       case 'daysStreak':         achieved = streak >= value; break
+      case 'quietRound':         achieved = quietRounds >= value; break
+      case 'cleanRound':         achieved = cleanRounds >= value; break
+      case 'customTextSession':  achieved = customTextSessions >= value; break
     }
 
     if (achieved) {

@@ -12,6 +12,7 @@ const CATEGORY_LABELS: Record<BadgeCategory | 'all', string> = {
   all: 'Wszystkie', streak: 'Seria', accuracy: 'Dokładność', speed: 'Prędkość',
   calm: 'Spokój', blindFlow: 'Blind Flow', noBackspace: 'No Backspace',
   polishSigns: 'Polskie znaki', lessons: 'Lekcje', mastery: 'Mistrzostwo',
+  quality: 'Jakość',
 }
 
 const CATEGORY_COLOR: Record<BadgeCategory, string> = {
@@ -24,11 +25,12 @@ const CATEGORY_COLOR: Record<BadgeCategory, string> = {
   polishSigns: 'bg-pink-100 dark:bg-pink-500/15 text-pink-600 dark:text-pink-400',
   lessons:     'bg-indigo-100 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400',
   mastery:     'bg-amber-100 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400',
+  quality:     'bg-violet-100 dark:bg-violet-500/15 text-violet-600 dark:text-violet-400',
 }
 
 const CATEGORIES: Array<BadgeCategory | 'all'> = [
   'all', 'streak', 'accuracy', 'speed', 'calm',
-  'blindFlow', 'noBackspace', 'polishSigns', 'lessons', 'mastery',
+  'blindFlow', 'noBackspace', 'polishSigns', 'lessons', 'mastery', 'quality',
 ]
 
 interface BadgeState {

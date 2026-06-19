@@ -1,6 +1,6 @@
 export type BadgeCategory =
   | 'streak' | 'accuracy' | 'speed' | 'calm'
-  | 'blindFlow' | 'noBackspace' | 'polishSigns' | 'lessons' | 'mastery'
+  | 'blindFlow' | 'noBackspace' | 'polishSigns' | 'lessons' | 'mastery' | 'quality'
 
 export interface FlowBadge {
   id: string
@@ -13,9 +13,15 @@ export interface FlowBadge {
       | 'daysStreak' | 'accuracy' | 'wpm' | 'calmIndex'
       | 'blindFlowCount' | 'noBackspaceCount' | 'polishSignsPerfect'
       | 'lessonsCompleted' | 'lessonsMastered'
+      | 'quietRound' | 'cleanRound' | 'customTextSession'
     value: number
   }
 }
+
+// Qualitative badge requirement types (used in checkAndUnlockBadges)
+// quietRound: sessions with calmScore>=90 AND backspace<=10 AND completion>=90
+// cleanRound: sessions with backspace<=5 AND completion>=90
+// customTextSession: sessions with own text (no lessonId) AND completion>=90
 
 export const badges: FlowBadge[] = [
   // Lessons
@@ -62,6 +68,11 @@ export const badges: FlowBadge[] = [
   { id: 'polish_1',  title: 'Pierwszy Ogonek',   description: 'Ukończ lekcję z polskimi znakami.',                   category: 'polishSigns', icon: 'ą', requirement: { type: 'polishSignsPerfect', value: 1 } },
   { id: 'polish_10', title: 'Mistrz Ogonków',    description: 'Ukończ 10 lekcji z polskimi znakami bez błędu.',      category: 'polishSigns', icon: 'ą', requirement: { type: 'polishSignsPerfect', value: 10 } },
   { id: 'polish_50', title: 'Zażółć Champion',   description: 'Ukończ 50 lekcji z polskimi znakami bez błędu.',      category: 'polishSigns', icon: 'ą', requirement: { type: 'polishSignsPerfect', value: 50 } },
+
+  // Quality badges
+  { id: 'cicha_runda',    title: 'Cicha Runda',      description: 'Ukończ rundę ze spokojem ≥90 i maks. 10 cofnięciami.',  category: 'quality', icon: '🤫', requirement: { type: 'quietRound',        value: 1 } },
+  { id: 'bez_szarpania',  title: 'Bez Szarpania',    description: 'Ukończ rundę z maksymalnie 5 cofnięciami.',             category: 'quality', icon: '🧊', requirement: { type: 'cleanRound',        value: 1 } },
+  { id: 'wlasny_glos',    title: 'Własny Głos',      description: 'Ukończ trening na własnym tekście (nie lekcji).',       category: 'quality', icon: '✍️', requirement: { type: 'customTextSession', value: 1 } },
 
   // Mastery
   { id: 'mastered_10',  title: 'Dziesięć Czystych', description: 'Opanuj 10 lekcji na 3 gwiazdki.',    category: 'mastery', icon: '◇', requirement: { type: 'lessonsMastered', value: 10 } },
