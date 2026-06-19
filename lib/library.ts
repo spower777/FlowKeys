@@ -2,6 +2,56 @@ import type { TypingStats, TypingMode } from './types'
 
 const LIBRARY_KEY = 'flowkeys_library'
 
+export const CHUNK_THRESHOLD = 500  // texts longer than this get split
+export const CHUNK_TARGET    = 400  // target chunk character size
+
+export function splitIntoChunks(text: string, targetSize = CHUNK_TARGET): string[] {
+  const trimmed = text.trim()
+  if (trimmed.length <= CHUNK_THRESHOLD) return [trimmed]
+
+  const chunks: string[] = []
+  let start = 0
+
+  while (start < trimmed.length) {
+    const remaining = trimmed.length - start
+    // If what's left fits within 1.5x target, take it all
+    if (remaining <= targetSize * 1.5) {
+      const tail = trimmed.slice(start).trim()
+      if (tail) chunks.push(tail)
+      break
+    }
+
+    const end = start + targetSize
+
+    // Search backward from `end` for a sentence boundary
+    let splitAt = -1
+    for (let i = Math.min(end, trimmed.length - 1); i > start + targetSize * 0.4; i--) {
+      if ('.!?…'.includes(trimmed[i])) {
+        let j = i + 1
+        while (j < trimmed.length && trimmed[j] === ' ') j++
+        splitAt = j
+        break
+      }
+    }
+
+    // Fall back to word boundary
+    if (splitAt === -1) {
+      for (let i = end; i > start; i--) {
+        if (trimmed[i] === ' ') { splitAt = i + 1; break }
+      }
+    }
+
+    if (splitAt === -1) splitAt = end
+
+    const chunk = trimmed.slice(start, splitAt).trim()
+    if (chunk) chunks.push(chunk)
+    start = splitAt
+    while (start < trimmed.length && trimmed[start] === ' ') start++
+  }
+
+  return chunks.filter(c => c.length > 0)
+}
+
 export interface CustomTextSession {
   id: string
   date: string
@@ -30,6 +80,7 @@ export interface CustomText {
   lastWpm?: number
   lastAccuracy?: number
   lastCalm?: number
+  lastChunkIndex?: number
   sessions: CustomTextSession[]
 }
 
@@ -87,7 +138,8 @@ export function recordLibrarySession(
   id: string,
   stats: TypingStats,
   typingMode: TypingMode,
-  firstHitAccuracy?: number
+  firstHitAccuracy?: number,
+  chunkIndex?: number
 ): void {
   const lib = getLibrary()
   const idx = lib.findIndex(t => t.id === id)
@@ -118,6 +170,7 @@ export function recordLibrarySession(
     bestAccuracy: Math.max(entry.bestAccuracy ?? 0, stats.accuracy),
     bestCalm: Math.max(entry.bestCalm ?? 0, calm),
     updatedAt: session.date,
+    lastChunkIndex: chunkIndex !== undefined ? chunkIndex : entry.lastChunkIndex,
     sessions: [session, ...entry.sessions].slice(0, 50),
   }
   writeLibrary(lib)

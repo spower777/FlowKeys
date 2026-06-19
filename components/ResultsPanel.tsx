@@ -236,6 +236,8 @@ interface Props {
   replayData?: ReplayEvent[]
   libraryTextId?: string | null
   onSaveToLibrary?: (title: string) => void
+  hasNextChunk?: boolean
+  onNextChunk?: () => void
   onNewRound: () => void
   onRepeat: () => void
   onAction?: (action: SuggestionAction) => void
@@ -244,7 +246,7 @@ interface Props {
 export default function ResultsPanel({
   stats, trainingText, typedText, transformMode, typingMode,
   newBadges, earnedStars, lessonId, hasNextLesson, replayData,
-  libraryTextId, onSaveToLibrary,
+  libraryTextId, onSaveToLibrary, hasNextChunk, onNextChunk,
   onNewRound, onRepeat, onAction,
 }: Props) {
   const router = useRouter()
@@ -561,13 +563,22 @@ export default function ResultsPanel({
               <p className="text-[10px] text-gray-500 dark:text-gray-500 mt-0.5">acc best</p>
             </div>
           </div>
-          <div className="px-5 py-3 flex gap-2">
-            <button
-              onClick={onRepeat}
-              className="flex-1 py-2.5 bg-violet-100 dark:bg-violet-500/15 hover:bg-violet-200 dark:hover:bg-violet-500/25 text-violet-700 dark:text-violet-300 text-xs font-bold rounded-xl transition"
-            >
-              Powtórz tekst
-            </button>
+          <div className="px-5 py-3 flex gap-2 flex-wrap">
+            {hasNextChunk && onNextChunk ? (
+              <button
+                onClick={onNextChunk}
+                className="flex-1 py-2.5 bg-violet-500 hover:bg-violet-600 text-white text-xs font-bold rounded-xl transition"
+              >
+                Następny fragment →
+              </button>
+            ) : (
+              <button
+                onClick={onRepeat}
+                className="flex-1 py-2.5 bg-violet-100 dark:bg-violet-500/15 hover:bg-violet-200 dark:hover:bg-violet-500/25 text-violet-700 dark:text-violet-300 text-xs font-bold rounded-xl transition"
+              >
+                Powtórz tekst
+              </button>
+            )}
             <button
               onClick={() => router.push('/library')}
               className="flex-1 py-2.5 bg-gray-100 dark:bg-[#1e1e1e] hover:bg-gray-200 dark:hover:bg-[#282828] text-gray-600 dark:text-gray-400 text-xs font-semibold rounded-xl transition"

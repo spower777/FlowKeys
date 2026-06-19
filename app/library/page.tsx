@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import {
   getLibrary, saveCustomText, updateCustomText, deleteCustomText,
+  splitIntoChunks, CHUNK_THRESHOLD,
   type CustomText,
 } from '@/lib/library'
 
@@ -171,6 +172,13 @@ function TextCard({
   onEdit: () => void
   onDelete: () => void
 }) {
+  const chunks = text.text.length > CHUNK_THRESHOLD ? splitIntoChunks(text.text) : null
+  const nextChunk = chunks ? Math.min((text.lastChunkIndex ?? -1) + 1, chunks.length - 1) : 0
+  const allDone = chunks ? (text.lastChunkIndex ?? -1) >= chunks.length - 1 : false
+  const practiceLabel = chunks
+    ? (allDone ? 'Zacznij od nowa →' : `Fragment ${nextChunk + 1}/${chunks.length} →`)
+    : (text.lastPracticedAt ? 'Kontynuuj →' : 'Ćwicz →')
+
   return (
     <div className="group bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] hover:border-violet-300 dark:hover:border-violet-500/30 rounded-2xl p-5 transition-all duration-200 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/30 hover:-translate-y-0.5 flex flex-col">
       {/* Header */}
@@ -226,7 +234,12 @@ function TextCard({
         {text.bestWpm != null && (
           <span className="text-blue-500 dark:text-blue-400 font-semibold">{text.bestWpm} WPM best</span>
         )}
-        {text.lastPracticedAt && (
+        {chunks && (
+          <span className="ml-auto text-violet-500 dark:text-violet-400 font-medium">
+            {allDone ? `✓ ${chunks.length} fragmentów` : `${nextChunk}/${chunks.length} fragmentów`}
+          </span>
+        )}
+        {!chunks && text.lastPracticedAt && (
           <span className="ml-auto">{formatDate(text.lastPracticedAt)}</span>
         )}
       </div>
@@ -236,7 +249,7 @@ function TextCard({
         onClick={onPractice}
         className="w-full py-2.5 bg-violet-50 dark:bg-violet-500/10 hover:bg-violet-100 dark:hover:bg-violet-500/20 text-violet-700 dark:text-violet-400 text-xs font-bold rounded-xl border border-violet-200 dark:border-violet-500/20 transition group-hover:border-violet-300 dark:group-hover:border-violet-500/40"
       >
-        Ćwicz →
+        {practiceLabel}
       </button>
     </div>
   )
@@ -258,10 +271,17 @@ export default function LibraryPage() {
   function refresh() { setTexts(getLibrary()) }
 
   function practice(text: CustomText) {
+    let chunkIndex = 0
+    if (text.text.length > CHUNK_THRESHOLD) {
+      const chunks = splitIntoChunks(text.text)
+      const last = text.lastChunkIndex ?? -1
+      chunkIndex = last + 1 >= chunks.length ? 0 : last + 1
+    }
     localStorage.setItem('flowkeys_pending_library_text', JSON.stringify({
       id: text.id,
       text: text.text,
       title: text.title,
+      chunkIndex,
     }))
     router.push('/')
   }
@@ -287,6 +307,7 @@ export default function LibraryPage() {
         id,
         text: data.text,
         title: data.title,
+        chunkIndex: 0,
       }))
       router.push('/')
     }
@@ -383,7 +404,16 @@ export default function LibraryPage() {
                 <p className="text-[10px] font-bold uppercase tracking-widest opacity-65 mb-0.5">Kontynuuj</p>
                 <p className="text-base font-bold leading-tight truncate">{continueText.title}</p>
                 <p className="text-xs opacity-60 mt-0.5">
-                  {continueText.lastWpm != null ? `${continueText.lastWpm} WPM · ` : ''}{continueText.practiceCount} {plural(continueText.practiceCount, 'runda', 'rundy', 'rund')} · {formatDate(continueText.lastPracticedAt)}
+                  {continueText.lastWpm != null ? `${continueText.lastWpm} WPM · ` : ''}
+                  {continueText.practiceCount} {plural(continueText.practiceCount, 'runda', 'rundy', 'rund')}
+                  {(() => {
+                    if (continueText.text.length > CHUNK_THRESHOLD) {
+                      const ch = splitIntoChunks(continueText.text)
+                      const next = Math.min((continueText.lastChunkIndex ?? -1) + 1, ch.length - 1)
+                      return ` · Fragment ${next + 1}/${ch.length}`
+                    }
+                    return ` · ${formatDate(continueText.lastPracticedAt!)}`
+                  })()}
                 </p>
               </div>
               <span className="shrink-0 text-2xl opacity-70 group-hover:translate-x-1 transition-transform">→</span>

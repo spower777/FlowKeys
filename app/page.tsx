@@ -11,7 +11,7 @@ import ResultsPanel from '@/components/ResultsPanel'
 import SettingsModal from '@/components/SettingsModal'
 import { analyzeTyping, computeCorrectedPositions } from '@/lib/analyzeTyping'
 import { saveSession, getSessions } from '@/lib/storage'
-import { getLibrary, saveCustomText, recordLibrarySession } from '@/lib/library'
+import { getLibrary, saveCustomText, recordLibrarySession, splitIntoChunks } from '@/lib/library'
 import { EXAMPLE_TEXT } from '@/lib/transformPrompt'
 import { loadSettings, saveSettings, applySettingsToDOM, DEFAULTS } from '@/lib/settings'
 import { updateLessonProgress, checkAndUnlockBadges, lessonModeToTypingMode, calculateStars } from '@/lib/lessonProgress'
@@ -47,6 +47,9 @@ export default function Home() {
   const [lastReplayData, setLastReplayData] = useState<ReplayEvent[]>([])
   const [lastSession, setLastSession] = useState<TypingSessionRecord | null>(null)
   const [currentLibraryTextId, setCurrentLibraryTextId] = useState<string | null>(null)
+  const [chunkIndex, setChunkIndex] = useState(0)
+  const [totalChunks, setTotalChunks] = useState(1)
+  const [chunkTitle, setChunkTitle] = useState<string | null>(null)
   const [libraryCount, setLibraryCount] = useState(0)
 
   // Load last session + library count whenever returning to home
@@ -63,13 +66,18 @@ export default function Home() {
       const libRaw = localStorage.getItem('flowkeys_pending_library_text')
       if (libRaw) {
         localStorage.removeItem('flowkeys_pending_library_text')
-        const pending = JSON.parse(libRaw) as { id: string; text: string; title: string }
+        const pending = JSON.parse(libRaw) as { id: string; text: string; title: string; chunkIndex?: number }
+        const chunks = splitIntoChunks(pending.text)
+        const ci = pending.chunkIndex ?? 0
         setSourceText(pending.text)
-        setTrainingText(pending.text)
+        setTrainingText(chunks[ci] ?? pending.text)
         setTransformMode('1to1')
         setTypingMode('normal')
         setCurrentLesson(null)
         setCurrentLibraryTextId(pending.id)
+        setChunkIndex(ci)
+        setTotalChunks(chunks.length)
+        setChunkTitle(pending.title)
         setStep('typing')
         return
       }
@@ -174,7 +182,7 @@ export default function Home() {
       const firstHit = corrected > 0 && s.charsTyped > 0
         ? Math.min(99, Math.round(((s.charsTyped - corrected) / s.charsTyped) * 100))
         : s.accuracy
-      recordLibrarySession(currentLibraryTextId, s, typingMode, firstHit)
+      recordLibrarySession(currentLibraryTextId, s, typingMode, firstHit, chunkIndex)
     }
     if (currentLesson !== null) {
       updateLessonProgress(currentLesson.id, s)
@@ -202,6 +210,9 @@ export default function Home() {
     setIsMock(false)
     setCurrentLesson(null)
     setCurrentLibraryTextId(null)
+    setChunkIndex(0)
+    setTotalChunks(1)
+    setChunkTitle(null)
     setNewBadges([])
     setEarnedStars(0)
   }
@@ -235,6 +246,19 @@ export default function Home() {
         setCurrentLesson(next); setStep('typing')
       }
     }
+  }
+
+  function handleNextChunk() {
+    const nextIdx = chunkIndex + 1
+    if (!currentLibraryTextId || nextIdx >= totalChunks) return
+    const chunks = splitIntoChunks(sourceText)
+    setTrainingText(chunks[nextIdx] ?? chunks[0])
+    setChunkIndex(nextIdx)
+    setTypedText('')
+    setStats(null)
+    setNewBadges([])
+    setEarnedStars(0)
+    setStep('typing')
   }
 
   function handleContinue() {
@@ -588,6 +612,16 @@ export default function Home() {
                 </div>
               )
             })()}
+            {currentLibraryTextId && totalChunks > 1 && chunkTitle && (
+              <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-5 py-3.5">
+                <div className="flex items-center gap-3 flex-wrap">
+                  <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate flex-1">{chunkTitle}</span>
+                  <span className="shrink-0 text-[10px] px-2.5 py-1 rounded-full bg-violet-100 dark:bg-violet-500/15 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-500/20 font-medium">
+                    Fragment {chunkIndex + 1} / {totalChunks}
+                  </span>
+                </div>
+              </div>
+            )}
             <TypingSession
               trainingText={trainingText}
               typingMode={typingMode}
@@ -621,6 +655,8 @@ export default function Home() {
             replayData={lastReplayData}
             libraryTextId={currentLibraryTextId}
             onSaveToLibrary={handleSaveToLibrary}
+            hasNextChunk={!!currentLibraryTextId && chunkIndex + 1 < totalChunks}
+            onNextChunk={handleNextChunk}
             onNewRound={reset}
             onRepeat={repeatRound}
             onAction={handleResultAction}
