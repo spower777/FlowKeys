@@ -424,13 +424,6 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
             </div>
           </Section>
 
-          {/* ── Dev ── */}
-          <Section title="Dev">
-            <Row label="Odblokuj wszystkie lekcje" sub="Tylko do testowania — nie wpływa na postęp">
-              <Toggle value={settings.devUnlockAll} onChange={v => set('devUnlockAll', v)} />
-            </Row>
-          </Section>
-
         </div>
       </div>
     </div>

@@ -1380,4 +1380,128 @@ export const lessons: FlowLesson[] = [
     text: 'Cena: 100 zł (50%). Zadzwoń: 600-700-800. Więcej na: flowkeys.pl/start! (2025)',
     tags: ['symbole'],
   },
+
+  // ── Rozdział 21 · Górny Rząd ─────────────────────────────────────────────────
+  {
+    id: 253, chapterId: 21, pack: 'homerow', title: 'Q — mały palec lewy',
+    subtitle: 'mały palec sięga w górę', difficulty: 2, mode: 'normal',
+    text: 'qaq qsq qdq qfq qaq qsq qdq qfq aqa sqs dqd fqf qas qad qak qal qaj',
+    tags: ['podstawy', 'górny-rząd'],
+  },
+  {
+    id: 254, chapterId: 21, pack: 'homerow', title: 'P — mały palec prawy',
+    subtitle: 'prawy mały sięga w górę', difficulty: 2, mode: 'normal',
+    text: 'pal pas pak pad paj paw pal pak pad jak pal las paj pak pal pas pad paw',
+    tags: ['podstawy', 'górny-rząd'],
+  },
+  {
+    id: 255, chapterId: 21, pack: 'homerow', title: 'Y — wskazujący prawy góra',
+    subtitle: 'prawy wskazujący sięga po y', difficulty: 2, mode: 'normal',
+    text: 'yaj yal yak yas yad yaf yaj yal yak jas las jak fay say day yak yal yaj',
+    tags: ['podstawy', 'górny-rząd'],
+  },
+  {
+    id: 256, chapterId: 21, pack: 'homerow', title: 'U — wskazujący prawy góra',
+    subtitle: 'kolejny prawy w górnym rzędzie', difficulty: 2, mode: 'normal',
+    text: 'uka ula udo uje ura uku juk kuk luk uka ula jak udo uje las ura uku juk',
+    tags: ['podstawy', 'górny-rząd'],
+  },
+  {
+    id: 257, chapterId: 21, pack: 'homerow', title: 'Y i U razem',
+    subtitle: 'obaj wskazujący w górze', difficulty: 2, mode: 'normal',
+    text: 'yak ula yas udo yaj uje yal ura day juk ray kuk say luk yak ula yas udo',
+    tags: ['podstawy', 'górny-rząd'],
+  },
+  {
+    id: 258, chapterId: 21, pack: 'homerow', title: 'Q i P razem',
+    subtitle: 'obaj mali palce w górze', difficulty: 2, mode: 'normal',
+    text: 'qal pal qas pas qak pak qad pad pal qal jak pal pas qad jak qal pal pas',
+    tags: ['podstawy', 'górny-rząd'],
+  },
+  {
+    id: 259, chapterId: 21, pack: 'homerow', title: 'Górny rząd lewy',
+    subtitle: 'q w e r t — lewa pięć', difficulty: 2, mode: 'normal',
+    text: 'qwer wert ertq qwer rew tew wer ret ewq qwert rew wert qwer ertq ret rew',
+    tags: ['podstawy', 'górny-rząd'],
+  },
+  {
+    id: 260, chapterId: 21, pack: 'homerow', title: 'Górny rząd prawy',
+    subtitle: 'y u i o p — prawa pięć', difficulty: 2, mode: 'normal',
+    text: 'yuio uiop poiu yup opu iop poy yoi upo piu yuio iop poiu yup opu yoi',
+    tags: ['podstawy', 'górny-rząd'],
+  },
+  {
+    id: 261, chapterId: 21, pack: 'homerow', title: 'Górny rząd — słowa',
+    subtitle: 'polskie słowa z górnego rzędu', difficulty: 3, mode: 'normal',
+    text: 'ryba typy wyry przy tryb ropy pory tory rysy wiry quiz pal yak ula pory',
+    tags: ['podstawy', 'górny-rząd'],
+  },
+  {
+    id: 262, chapterId: 21, pack: 'homerow', title: 'Pełny górny rząd',
+    subtitle: 'cały górny rząd razem', difficulty: 3, mode: 'normal',
+    text: 'qwerty yuiop ryba typy pory quiz pal wiry tryb ropy tory wyry przy yak',
+    tags: ['podstawy', 'górny-rząd'],
+  },
+
+  // ── Rozdział 22 · Dolny Rząd ─────────────────────────────────────────────────
+  {
+    id: 263, chapterId: 22, pack: 'homerow', title: 'X — lewy serdeczny dół',
+    subtitle: 'serdeczny sięga w dół', difficulty: 2, mode: 'normal',
+    text: 'xax xsx xdx xfx xax xsx xdx xfx axa sxs dxd fxf max mix six tax xas',
+    tags: ['podstawy', 'dolny-rząd'],
+  },
+  {
+    id: 264, chapterId: 22, pack: 'homerow', title: 'V — lewy wskazujący dół',
+    subtitle: 'wskazujący sięga najniżej', difficulty: 2, mode: 'normal',
+    text: 'vav vsv vdv vfv vav vsv vfv fvf vas vad vaf sva dva fva vav vas vad vaf',
+    tags: ['podstawy', 'dolny-rząd'],
+  },
+  {
+    id: 265, chapterId: 22, pack: 'homerow', title: 'B — lewy wskazujący wewnętrzny',
+    subtitle: 'wskazujący sięga najdalej w dół', difficulty: 2, mode: 'normal',
+    text: 'baj bal bak bad baf bas baw baj bal las jak bak bad baf bas baw baj bal',
+    tags: ['podstawy', 'dolny-rząd'],
+  },
+  {
+    id: 266, chapterId: 22, pack: 'homerow', title: 'M — prawy wskazujący dół',
+    subtitle: 'prawy wskazujący w dół', difficulty: 2, mode: 'normal',
+    text: 'mam mal mak maj maf mas maw mam mal jak mak maj maf mas maw mam mal mak',
+    tags: ['podstawy', 'dolny-rząd'],
+  },
+  {
+    id: 267, chapterId: 22, pack: 'homerow', title: 'X i V razem',
+    subtitle: 'dwa palce w dolnym rzędzie', difficulty: 2, mode: 'normal',
+    text: 'vax xav vas xas vad xad vaf xaf max mix vax xav vas tax xas vad six xaf',
+    tags: ['podstawy', 'dolny-rząd'],
+  },
+  {
+    id: 268, chapterId: 22, pack: 'homerow', title: 'B i M razem',
+    subtitle: 'obaj wskazujący w dole', difficulty: 2, mode: 'normal',
+    text: 'bam mab bas mas bad mad baf maf bam mab jak mal bal mak baj maj bam mab',
+    tags: ['podstawy', 'dolny-rząd'],
+  },
+  {
+    id: 269, chapterId: 22, pack: 'homerow', title: 'Dolny rząd lewy',
+    subtitle: 'z x c v b — lewa pięć', difficulty: 3, mode: 'normal',
+    text: 'zxc xcv cvb zxcv xcvb zxcvb cvbz vbzx bxcv zxc xcv cvb zxcv xcvb zxc',
+    tags: ['podstawy', 'dolny-rząd'],
+  },
+  {
+    id: 270, chapterId: 22, pack: 'homerow', title: 'Dolny rząd prawy',
+    subtitle: 'n m — prawa część', difficulty: 2, mode: 'normal',
+    text: 'nam man nab mab naj maj nak mak nal mal naf maf nas mas nam jak man mak',
+    tags: ['podstawy', 'dolny-rząd'],
+  },
+  {
+    id: 271, chapterId: 22, pack: 'homerow', title: 'Dolny rząd — słowa',
+    subtitle: 'polskie słowa z dolnego rzędu', difficulty: 3, mode: 'normal',
+    text: 'baw veto mix box nami ceny bazy mamy max taxi mam baj mal mak bal mas',
+    tags: ['podstawy', 'dolny-rząd'],
+  },
+  {
+    id: 272, chapterId: 22, pack: 'homerow', title: 'Trzy rzędy razem',
+    subtitle: 'pełna klawiatura — rytm wszystkich rzędów', difficulty: 3, mode: 'normal',
+    text: 'ryba mamy bazy przy tryb veto mix nami tory pory quiz pal las jak dal',
+    tags: ['podstawy', 'trzy-rzędy'],
+  },
 ]

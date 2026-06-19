@@ -319,6 +319,31 @@ function TextRow({
 
 type View = 'list' | 'add' | 'edit'
 type DateFilter = 'all' | 'week' | 'month' | 'older'
+type SortBy = 'newest' | 'practiced' | 'az' | 'rounds' | 'wpm'
+
+const SORT_LABELS: Record<SortBy, string> = {
+  newest:   'Najnowsze',
+  practiced:'Ostatnio ćwiczone',
+  az:       'A–Z',
+  rounds:   'Rundy ↓',
+  wpm:      'WPM ↓',
+}
+
+function sortTexts(texts: CustomText[], sort: SortBy): CustomText[] {
+  return [...texts].sort((a, b) => {
+    switch (sort) {
+      case 'newest':   return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      case 'practiced': {
+        const ta = a.lastPracticedAt ? new Date(a.lastPracticedAt).getTime() : 0
+        const tb = b.lastPracticedAt ? new Date(b.lastPracticedAt).getTime() : 0
+        return tb - ta
+      }
+      case 'az':      return a.title.localeCompare(b.title, 'pl')
+      case 'rounds':  return b.practiceCount - a.practiceCount
+      case 'wpm':     return (b.bestWpm ?? 0) - (a.bestWpm ?? 0)
+    }
+  })
+}
 
 const DATE_FILTER_LABELS: Record<DateFilter, string> = {
   all: 'Wszystkie',
@@ -349,8 +374,13 @@ export default function LibraryPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [listMode, setListMode] = useState(false)
   const [dateFilter, setDateFilter] = useState<DateFilter>('all')
+  const [sortBy, setSortBy] = useState<SortBy>('newest')
 
-  useEffect(() => { setTexts(getLibrary()) }, [])
+  useEffect(() => {
+    const lib = getLibrary()
+    setTexts(lib)
+    if (lib.length > 5) setListMode(true)
+  }, [])
 
   function refresh() { setTexts(getLibrary()) }
 
@@ -415,7 +445,7 @@ export default function LibraryPage() {
     .sort((a, b) => (b.lastPracticedAt! > a.lastPracticedAt! ? 1 : -1))[0]
   const continueText = lastPracticed ?? texts[0] ?? null
   const editingText = editId ? texts.find(t => t.id === editId) : null
-  const filteredTexts = applyDateFilter(texts, dateFilter)
+  const filteredTexts = sortTexts(applyDateFilter(texts, dateFilter), sortBy)
 
   // Form view
   if (view === 'add' || view === 'edit') {
@@ -529,10 +559,10 @@ export default function LibraryPage() {
         {/* Text grid / list */}
         {texts.length > 0 && (
           <div className="space-y-3">
-            {/* Header row: label + filters */}
+            {/* Header row: label + filters + sort */}
             <div className="flex items-center gap-2 flex-wrap">
               <p className="text-xs font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-widest shrink-0">Moje teksty</p>
-              <div className="flex items-center gap-1.5 overflow-x-auto">
+              <div className="flex items-center gap-1.5 overflow-x-auto flex-1">
                 {(Object.keys(DATE_FILTER_LABELS) as DateFilter[]).map(f => (
                   <button
                     key={f}
@@ -547,6 +577,15 @@ export default function LibraryPage() {
                   </button>
                 ))}
               </div>
+              <select
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value as SortBy)}
+                className="text-[10px] px-2.5 py-1 rounded-full border bg-white dark:bg-[#161616] text-gray-500 dark:text-gray-500 border-gray-200 dark:border-[#2a2a2a] hover:border-[var(--accent-400)] transition shrink-0 cursor-pointer"
+              >
+                {(Object.keys(SORT_LABELS) as SortBy[]).map(s => (
+                  <option key={s} value={s}>{SORT_LABELS[s]}</option>
+                ))}
+              </select>
             </div>
 
             {filteredTexts.length === 0 && (

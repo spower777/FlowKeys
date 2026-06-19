@@ -26,4 +26,6 @@ export const chapters: Chapter[] = [
   { id: 18, title: 'Nowe Klawisze',       range: '223–232', description: 'e i r n o t w z c — krok po kroku poza rząd domowy.' },
   { id: 19, title: 'Cyfry',              range: '233–242', description: '1 2 3 4 5 6 7 8 9 0 — rząd numeryczny od podstaw.' },
   { id: 20, title: 'Symbole',            range: '243–252', description: '. , ! ? : ; - ( ) " % @ / — interpunkcja i znaki specjalne.' },
+  { id: 21, title: 'Górny Rząd',         range: '253–262', description: 'q w e r t y u i o p — kompletny górny rząd krok po kroku.' },
+  { id: 22, title: 'Dolny Rząd',         range: '263–272', description: 'z x c v b n m — dolny rząd i łączenie wszystkich trzech.' },
 ]
