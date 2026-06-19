@@ -207,7 +207,34 @@ export default function Home() {
 
         {/* ── HOME ── */}
         {step === 'home' && (
-          <div className="space-y-5">
+          <div className="space-y-5 relative">
+
+            {/* Invisible cat trail — łapki pojawiają się sekwencyjnie */}
+            {[
+              { top: '4%',   right: '9%',  left: undefined, rot: -14, delay: 250  },
+              { top: '10%',  right: '3%',  left: undefined, rot: 22,  delay: 480  },
+              { top: '17%',  right: '13%', left: undefined, rot: -8,  delay: 710  },
+              { top: '23%',  right: undefined, left: '4%',  rot: 18,  delay: 940  },
+              { top: '30%',  right: undefined, left: '10%', rot: -22, delay: 1170 },
+              { top: '37%',  right: undefined, left: '2%',  rot: 14,  delay: 1400 },
+              { top: '45%',  right: '6%',  left: undefined, rot: -16, delay: 1630 },
+              { top: '53%',  right: '14%', left: undefined, rot: 20,  delay: 1860 },
+              { top: '61%',  right: undefined, left: '7%',  rot: -10, delay: 2090 },
+              { top: '68%',  right: undefined, left: '13%', rot: 18,  delay: 2320 },
+              { top: '76%',  right: '5%',  left: undefined, rot: -20, delay: 2550 },
+              { top: '83%',  right: '11%', left: undefined, rot: 12,  delay: 2780 },
+              { top: '90%',  right: undefined, left: '3%',  rot: -16, delay: 3010 },
+              { top: '96%',  right: undefined, left: '9%',  rot: 22,  delay: 3240 },
+            ].map((paw, i) => (
+              <div
+                key={i}
+                className="absolute pointer-events-none select-none z-30"
+                style={{ top: paw.top, right: paw.right ?? undefined, left: paw.left ?? undefined, transform: `rotate(${paw.rot}deg)` }}
+                aria-hidden
+              >
+                <span className="text-lg block" style={{ animation: `pawFadeIn 0.35s ease-out ${paw.delay}ms both` }}>🐾</span>
+              </div>
+            ))}
 
             {/* Big Logo / Brand */}
             <div
@@ -225,15 +252,6 @@ export default function Home() {
                 ))}
               </div>
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_60%,var(--accent-100),transparent_65%)] dark:bg-[radial-gradient(ellipse_at_20%_60%,var(--accent-600)/12%,transparent_65%)] pointer-events-none" />
-
-              {/* Floating cat */}
-              <div
-                className="animate-float-cat absolute bottom-5 right-28 text-5xl select-none pointer-events-none z-20 hidden sm:block"
-                aria-hidden
-                title="miau 🐾"
-              >
-                <span className="animate-cat-blink inline-block">😸</span>
-              </div>
 
               <div className="relative z-10">
                 <div className="flex items-center gap-4 mb-4">
