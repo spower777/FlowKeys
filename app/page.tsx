@@ -298,9 +298,21 @@ export default function Home() {
 
         {/* ── HOME ── */}
         {step === 'home' && (
-          <div className="space-y-5 relative">
+          <div className="space-y-3">
 
-            {/* Kontynuuj — tylko dla powracających użytkowników */}
+            {/* Nowy użytkownik — nagłówek */}
+            {!lastSession && (
+              <div className="animate-fade-up pb-4">
+                <h1 className="text-3xl font-black text-gray-900 dark:text-gray-100 leading-tight tracking-tight">
+                  Pisz własnym głosem.
+                </h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">
+                  Zamień wspomnienia i notatki w trening na klawiaturze.
+                </p>
+              </div>
+            )}
+
+            {/* Kontynuuj — powracający użytkownicy */}
             {lastSession && (() => {
               const lessonTitle = lastSession.lessonId != null
                 ? (lessons.find(l => l.id === lastSession.lessonId)?.title ?? `Lekcja ${lastSession.lessonId}`)
@@ -309,169 +321,79 @@ export default function Home() {
               return (
                 <button
                   onClick={handleContinue}
-                  className="animate-fade-up w-full flex items-center gap-4 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white rounded-2xl px-6 py-5 text-left transition-all duration-200 hover:shadow-xl hover:shadow-[var(--accent-600)]/30 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none group"
-                  style={{ animationDelay: '0ms' }}
+                  className="animate-fade-up w-full flex items-center gap-4 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white rounded-2xl px-6 py-5 text-left transition-all duration-200 hover:shadow-lg hover:shadow-[var(--accent-600)]/30 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none group"
                 >
-                  <div className="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center shrink-0 text-xl group-hover:scale-110 transition-transform duration-200">
-                    ▶
-                  </div>
+                  <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center shrink-0 text-lg group-hover:scale-110 transition-transform duration-200">▶</div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[10px] font-bold uppercase tracking-widest opacity-65 mb-0.5">Kontynuuj gdzie skończyłeś</p>
-                    <p className="text-base font-bold leading-tight truncate">{lessonTitle}</p>
-                    <p className="text-xs opacity-60 mt-0.5">
-                      {lastSession.stats.wpm} WPM · {lastSession.stats.accuracy}% · {dateStr}
-                    </p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest opacity-65 mb-0.5">Kontynuuj</p>
+                    <p className="text-sm font-bold leading-tight truncate">{lessonTitle}</p>
+                    <p className="text-xs opacity-60 mt-0.5">{lastSession.stats.wpm} WPM · {lastSession.stats.accuracy}% · {dateStr}</p>
                   </div>
-                  <span className="shrink-0 text-2xl opacity-70 group-hover:translate-x-1 transition-transform duration-200">→</span>
+                  <span className="shrink-0 opacity-70 group-hover:translate-x-1 transition-transform duration-200">→</span>
                 </button>
               )
             })()}
 
-            {/* Invisible cat trail — łapki pojawiają się sekwencyjnie */}
-            {[
-              { top: '4%',   right: '9%',  left: undefined, rot: -14, delay: 250  },
-              { top: '10%',  right: '3%',  left: undefined, rot: 22,  delay: 480  },
-              { top: '17%',  right: '13%', left: undefined, rot: -8,  delay: 710  },
-              { top: '23%',  right: undefined, left: '4%',  rot: 18,  delay: 940  },
-              { top: '30%',  right: undefined, left: '10%', rot: -22, delay: 1170 },
-              { top: '37%',  right: undefined, left: '2%',  rot: 14,  delay: 1400 },
-              { top: '45%',  right: '6%',  left: undefined, rot: -16, delay: 1630 },
-              { top: '53%',  right: '14%', left: undefined, rot: 20,  delay: 1860 },
-              { top: '61%',  right: undefined, left: '7%',  rot: -10, delay: 2090 },
-              { top: '68%',  right: undefined, left: '13%', rot: 18,  delay: 2320 },
-              { top: '76%',  right: '5%',  left: undefined, rot: -20, delay: 2550 },
-              { top: '83%',  right: '11%', left: undefined, rot: 12,  delay: 2780 },
-              { top: '90%',  right: undefined, left: '3%',  rot: -16, delay: 3010 },
-              { top: '96%',  right: undefined, left: '9%',  rot: 22,  delay: 3240 },
-            ].map((paw, i) => (
-              <div
-                key={i}
-                className="absolute pointer-events-none select-none z-30"
-                style={{ top: paw.top, right: paw.right ?? undefined, left: paw.left ?? undefined, transform: `rotate(${paw.rot}deg)` }}
-                aria-hidden
+            {/* Dwa główne CTA */}
+            <div className="space-y-2 animate-fade-up" style={{ animationDelay: '60ms' }}>
+              <button
+                onClick={() => { setInputMethod('paste'); setStep('input') }}
+                className="w-full flex items-center gap-4 bg-white dark:bg-[#161616] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] border border-gray-200 dark:border-[#242424] hover:border-[var(--accent-400)] dark:hover:border-[var(--accent-500)]/50 rounded-2xl px-6 py-5 text-left transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 group"
               >
-                <span className="text-lg block" style={{ animation: `pawFadeIn 0.35s ease-out ${paw.delay}ms both` }}>🐾</span>
-              </div>
-            ))}
-
-            {/* Big Logo / Brand */}
-            <div
-              className="animate-fade-up relative overflow-hidden rounded-3xl border border-[var(--accent-100)] dark:border-[var(--accent-600)]/20 bg-gradient-to-br from-[var(--accent-50)] via-white to-white dark:from-[var(--accent-600)]/10 dark:via-[#111] dark:to-[#0d0d0d] px-10 py-10"
-              style={{ animationDelay: '60ms' }}
-            >
-              {/* Decorative keyboard rows */}
-              <div className="absolute right-4 top-0 bottom-0 flex flex-col justify-center gap-2 opacity-[0.07] dark:opacity-[0.10] pointer-events-none select-none" aria-hidden>
-                {['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'].map((row, i) => (
-                  <div key={i} className="flex gap-1.5" style={{ paddingLeft: `${i * 12}px` }}>
-                    {row.split('').map(k => (
-                      <span key={k} className="text-[11px] font-mono border border-current rounded-md px-1.5 py-0.5 leading-tight">{k}</span>
-                    ))}
-                  </div>
-                ))}
-              </div>
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_60%,var(--accent-100),transparent_65%)] dark:bg-[radial-gradient(ellipse_at_20%_60%,var(--accent-600)/12%,transparent_65%)] pointer-events-none" />
-
-              <div className="relative z-10">
-                <div className="flex items-center gap-4 mb-4">
-                  <span className="text-5xl">⌨️</span>
-                  <h1 className="text-5xl font-black tracking-tight text-gray-900 dark:text-gray-100 leading-none">
-                    FlowKeys
-                  </h1>
+                <span className="text-2xl shrink-0">✍️</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-gray-800 dark:text-gray-200">Wklej własny tekst</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">Notatka, wspomnienie, fragment czegokolwiek</p>
                 </div>
-                <p className="text-base text-gray-500 dark:text-gray-400 leading-relaxed max-w-sm">
-                  Zamień własny tekst, wspomnienia i notatki w&nbsp;trening na klawiaturze. Z pomocą AI.
-                </p>
-              </div>
-            </div>
+                <span className="text-gray-400 dark:text-gray-600 group-hover:text-[var(--accent-500)] transition-colors">›</span>
+              </button>
 
-            {/* Action cards */}
-            <div className="space-y-2.5">
-              {[
-                {
-                  id: 'paste' as InputMethod,
-                  icon: '✍️',
-                  label: 'Wklej własny tekst',
-                  sub: 'Notatka, wspomnienie, fragment czegokolwiek',
-                  action: () => { setInputMethod('paste'); setStep('input') },
-                },
-                {
-                  id: 'voice' as InputMethod,
-                  icon: '🎙️',
-                  label: 'Nagraj historię głosem',
-                  sub: 'Nagraj głosem — transkrypcja przez Whisper AI',
-                  action: () => { setInputMethod('voice'); setStep('input') },
-                },
-                {
-                  id: 'example' as InputMethod,
-                  icon: '📖',
-                  label: 'Użyj przykładowego tekstu',
-                  sub: 'Szybki start bez własnego materiału',
-                  action: pickExample,
-                },
-              ].map((item, i) => (
-                <button
-                  key={item.id}
-                  onClick={item.action}
-                  className="animate-fade-up w-full flex items-center gap-5 bg-white dark:bg-[#161616] hover:bg-[var(--accent-50)]/60 dark:hover:bg-[#1d1d1d] border border-gray-200 dark:border-[#242424] hover:border-[var(--accent-300)] dark:hover:border-[var(--accent-600)]/40 rounded-2xl px-6 py-5 text-left transition-all duration-200 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/30 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none group"
-                  style={{ animationDelay: `${140 + i * 70}ms` }}
-                >
-                  <span className="text-3xl shrink-0 group-hover:scale-110 transition-transform duration-200">{item.icon}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">{item.label}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">{item.sub}</p>
-                  </div>
-                  {/* paw on hover */}
-                  <span className="shrink-0 text-xl w-6 text-center transition-all duration-200 text-gray-300 dark:text-gray-700 group-hover:text-[var(--accent-400)]">
-                    <span className="group-hover:hidden">›</span>
-                    <span className="hidden group-hover:inline animate-paw-pop">🐾</span>
-                  </span>
-                </button>
-              ))}
-
-              {/* Moja Biblioteka */}
               <button
                 onClick={() => router.push('/library')}
-                className="animate-fade-up w-full flex items-center gap-5 bg-white dark:bg-[#161616] hover:bg-violet-50/40 dark:hover:bg-[#1d1d1d] border border-gray-200 dark:border-[#242424] hover:border-violet-300 dark:hover:border-violet-500/30 rounded-2xl px-6 py-5 text-left transition-all duration-200 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/30 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none group"
-                style={{ animationDelay: '365ms' }}
+                className="w-full flex items-center gap-4 bg-white dark:bg-[#161616] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] border border-gray-200 dark:border-[#242424] hover:border-[var(--accent-400)] dark:hover:border-[var(--accent-500)]/50 rounded-2xl px-6 py-5 text-left transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 group"
               >
-                <span className="text-3xl shrink-0 group-hover:scale-110 transition-transform duration-200">📚</span>
+                <span className="text-2xl shrink-0">📚</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">Moja Biblioteka</p>
+                  <p className="text-sm font-bold text-gray-800 dark:text-gray-200">Moja Biblioteka</p>
                   <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
                     {libraryCount > 0
-                      ? `${libraryCount} ${libraryCount === 1 ? 'tekst' : libraryCount < 5 ? 'teksty' : 'tekstów'} · Teksty, do których warto wracać`
-                      : 'Wracaj do tekstów, które coś znaczą'}
+                      ? `${libraryCount} ${libraryCount === 1 ? 'tekst' : libraryCount < 5 ? 'teksty' : 'tekstów'} · Wróć do swoich materiałów`
+                      : 'Wróć do tekstów, które coś znaczą'}
                   </p>
                 </div>
-                <span className="shrink-0 text-xl w-6 text-center transition-all duration-200 text-gray-300 dark:text-gray-700 group-hover:text-violet-400">
-                  <span className="group-hover:hidden">›</span>
-                  <span className="hidden group-hover:inline animate-paw-pop">📖</span>
-                </span>
+                <span className="text-gray-400 dark:text-gray-600 group-hover:text-[var(--accent-500)] transition-colors">›</span>
               </button>
             </div>
 
-            {/* Odkryj — ciche linki, nie pitch deck */}
-            <div
-              className="animate-fade-up flex flex-wrap gap-x-4 gap-y-1.5 px-1"
-              style={{ animationDelay: '360ms' }}
+            {/* Głos — drugorzędne */}
+            <button
+              onClick={() => { setInputMethod('voice'); setStep('input') }}
+              className="animate-fade-up w-full flex items-center gap-4 bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-[#1e1e1e] hover:border-gray-300 dark:hover:border-[#2a2a2a] rounded-2xl px-6 py-4 text-left transition-all duration-200 group"
+              style={{ animationDelay: '120ms' }}
             >
-              {([
-                { label: '100+ lekcji',   icon: '📚', action: () => router.push('/lessons') },
-                { label: 'Blind Flow',    icon: '🙈', action: () => router.push('/lessons') },
-                { label: 'Nagraj głosem', icon: '🎙️', action: () => { setInputMethod('voice'); setStep('input') } },
-                { label: 'Odznaki',       icon: '🏅', action: () => router.push('/badges') },
-                { label: 'Historia',      icon: '📊', action: () => router.push('/history') },
-                { label: 'Biblioteka',    icon: '📖', action: () => router.push('/library') },
-              ] as { label: string; icon: string; action: () => void }[]).map(feat => (
-                <button
-                  key={feat.label}
-                  onClick={feat.action}
-                  className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-600 hover:text-[var(--accent-500)] dark:hover:text-[var(--accent-400)] transition-colors duration-150"
-                >
-                  <span className="text-[11px]">{feat.icon}</span>{feat.label}
-                </button>
-              ))}
-              <span className="text-gray-300 dark:text-gray-700 text-xs select-none">🐾</span>
+              <span className="text-xl shrink-0">🎙️</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Nagraj historię głosem</p>
+                <p className="text-xs text-gray-400 dark:text-gray-600 mt-0.5">Transkrypcja przez Whisper AI</p>
+              </div>
+              <span className="text-gray-300 dark:text-gray-700 group-hover:text-gray-500 dark:group-hover:text-gray-500 transition-colors text-sm">›</span>
+            </button>
+
+            {/* Akademia — link, nie karta */}
+            <div className="animate-fade-up flex items-center justify-center gap-4 pt-2 pb-1" style={{ animationDelay: '180ms' }}>
+              <button
+                onClick={() => router.push('/lessons')}
+                className="text-xs text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 transition-colors flex items-center gap-1.5"
+              >
+                ⌨️ Akademia klawiatury →
+              </button>
+              <span className="text-gray-200 dark:text-gray-800">·</span>
+              <button
+                onClick={() => router.push('/history')}
+                className="text-xs text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 transition-colors flex items-center gap-1.5"
+              >
+                📊 Historia →
+              </button>
             </div>
 
           </div>

@@ -92,19 +92,18 @@ export default function LessonsPage() {
     ? lessons.find(l => l.id === lastPracticedEntry.lessonId && activePacks.has(l.pack))
     : null
 
-  // 8 ścieżek treningowych
-  const PATH_DEFS: { id: string; icon: string; label: string; packs: LessonPack[]; modeOverride?: TypingMode; isCustom?: boolean; color: string; text: string; btn: string }[] = [
-    { id: 'numbers',  icon: '🔢', label: 'Cyfry',           packs: ['numbers'],                                    color: 'bg-indigo-50 dark:bg-indigo-500/10 border-indigo-200 dark:border-indigo-500/20', text: 'text-indigo-700 dark:text-indigo-400', btn: 'bg-indigo-500 hover:bg-indigo-600' },
-    { id: 'symbols',  icon: '!?', label: 'Symbole',         packs: ['symbols'],                                    color: 'bg-pink-50 dark:bg-pink-500/10 border-pink-200 dark:border-pink-500/20',     text: 'text-pink-700 dark:text-pink-400',   btn: 'bg-pink-500 hover:bg-pink-600' },
-    { id: 'basics',   icon: '⌨️', label: 'Podstawy',       packs: ['homerow'],                                    color: 'bg-orange-50 dark:bg-orange-500/10 border-orange-200 dark:border-orange-500/20', text: 'text-orange-700 dark:text-orange-400', btn: 'bg-orange-500 hover:bg-orange-600' },
-    { id: 'start',    icon: '📘', label: 'Start',          packs: ['start'],                                      color: 'bg-sky-50 dark:bg-sky-500/10 border-sky-200 dark:border-sky-500/20',         text: 'text-sky-700 dark:text-sky-400',     btn: 'bg-sky-500 hover:bg-sky-600' },
-    { id: 'fluency',  icon: '🌊', label: 'Płynność',       packs: ['mastery', 'motivation', 'mindfulness'],       color: 'bg-teal-50 dark:bg-teal-500/10 border-teal-200 dark:border-teal-500/20',     text: 'text-teal-700 dark:text-teal-400',   btn: 'bg-teal-500 hover:bg-teal-600' },
-    { id: 'polish',   icon: '🇵🇱', label: 'Polskie znaki', packs: ['polishSigns'],                                color: 'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20',         text: 'text-red-700 dark:text-red-400',     btn: 'bg-red-500 hover:bg-red-600' },
-    { id: 'no_bs',    icon: '⌫',  label: 'No Backspace',   packs: ['noBackspace'],  modeOverride: 'no_backspace', color: 'bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/20', text: 'text-amber-700 dark:text-amber-400', btn: 'bg-amber-500 hover:bg-amber-600' },
-    { id: 'blind',    icon: '🙈', label: 'Blind Flow',     packs: ['blindFlow'],    modeOverride: 'blind',        color: 'bg-purple-50 dark:bg-purple-500/10 border-purple-200 dark:border-purple-500/20', text: 'text-purple-700 dark:text-purple-400', btn: 'bg-purple-500 hover:bg-purple-600' },
-    { id: 'jade',     icon: '🍃', label: 'Jade Path',      packs: ['jadePath'],                                   color: 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20', text: 'text-emerald-700 dark:text-emerald-400', btn: 'bg-emerald-500 hover:bg-emerald-600' },
-    { id: 'gaming',   icon: '🎮', label: 'Gaming Flow',    packs: ['gaming'],                                     color: 'bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20',     text: 'text-blue-700 dark:text-blue-400',   btn: 'bg-blue-500 hover:bg-blue-600' },
-    { id: 'own',      icon: '✍️', label: 'Własne teksty',  packs: [], isCustom: true,                             color: 'bg-gray-50 dark:bg-[#1a1a1a] border-gray-200 dark:border-[#2a2a2a]',         text: 'text-gray-700 dark:text-gray-400',   btn: 'bg-gray-500 hover:bg-gray-600' },
+  const PATH_DEFS: { id: string; icon: string; label: string; packs: LessonPack[]; modeOverride?: TypingMode; isCustom?: boolean }[] = [
+    { id: 'basics',  icon: '⌨️', label: 'Podstawy',      packs: ['homerow'] },
+    { id: 'numbers', icon: '🔢', label: 'Cyfry',          packs: ['numbers'] },
+    { id: 'symbols', icon: '.,', label: 'Symbole',        packs: ['symbols'] },
+    { id: 'start',   icon: '📘', label: 'Start',         packs: ['start'] },
+    { id: 'fluency', icon: '🌊', label: 'Płynność',      packs: ['mastery', 'motivation', 'mindfulness'] },
+    { id: 'polish',  icon: 'ą',  label: 'Polskie znaki', packs: ['polishSigns'] },
+    { id: 'no_bs',   icon: '⌫',  label: 'No Backspace',  packs: ['noBackspace'], modeOverride: 'no_backspace' },
+    { id: 'blind',   icon: '🙈', label: 'Blind Flow',    packs: ['blindFlow'],   modeOverride: 'blind' },
+    { id: 'jade',    icon: '🍃', label: 'Jade Path',     packs: ['jadePath'] },
+    { id: 'gaming',  icon: '🎮', label: 'Gaming',        packs: ['gaming'] },
+    { id: 'own',     icon: '✍️', label: 'Własne teksty', packs: [], isCustom: true },
   ]
 
   const pathData = PATH_DEFS.map(def => {
@@ -167,18 +166,18 @@ export default function LessonsPage() {
           <div className="mb-2">
             <p className="text-[10px] text-gray-400 dark:text-gray-600 uppercase tracking-widest mb-3">Ścieżki treningowe</p>
           </div>
-          <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 mb-6 snap-x">
+          <div className="flex gap-2.5 overflow-x-auto pb-2 -mx-4 px-4 mb-6 snap-x">
             {pathData.map(path => (
               <div
                 key={path.id}
-                className={`flex-none w-36 flex flex-col gap-2 border rounded-2xl px-3.5 py-3.5 snap-start ${path.color}`}
+                className="flex-none w-32 flex flex-col gap-2 bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] hover:border-[var(--accent-400)] dark:hover:border-[var(--accent-500)]/40 rounded-2xl px-3.5 py-3.5 snap-start transition-colors"
               >
                 <div className="flex items-center gap-1.5">
-                  <span className="text-lg leading-none">{path.icon}</span>
-                  <span className={`text-[11px] font-bold leading-tight ${path.text}`}>{path.label}</span>
+                  <span className="text-base leading-none">{path.icon}</span>
+                  <span className="text-[11px] font-bold leading-tight text-gray-700 dark:text-gray-300">{path.label}</span>
                 </div>
-                <p className="text-[10px] text-gray-500 dark:text-gray-500 leading-tight flex-1">
-                  {path.isCustom ? 'Wklej swój tekst' : mounted ? `${path.done} / ${path.total}` : '—'}
+                <p className="text-[10px] text-gray-400 dark:text-gray-600 leading-tight flex-1">
+                  {path.isCustom ? 'Własny tekst' : mounted ? `${path.done} / ${path.total}` : '—'}
                 </p>
                 <button
                   onClick={() => {
@@ -186,10 +185,10 @@ export default function LessonsPage() {
                     else if (path.next) startLesson(path.next.id, path.modeOverride)
                   }}
                   disabled={!path.isCustom && !path.next}
-                  className={`text-[11px] font-semibold text-white px-2.5 py-1.5 rounded-lg transition-all ${
+                  className={`text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition-all ${
                     (path.isCustom || path.next)
-                      ? `${path.btn} hover:shadow-md active:scale-95`
-                      : 'bg-gray-300 dark:bg-gray-700 cursor-not-allowed opacity-40'
+                      ? 'bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white active:scale-95'
+                      : 'bg-gray-100 dark:bg-[#222] text-gray-400 dark:text-gray-600 cursor-not-allowed'
                   }`}
                 >
                   {path.isCustom ? 'Wklej →' : path.next ? 'Start →' : 'Gotowe ✓'}
