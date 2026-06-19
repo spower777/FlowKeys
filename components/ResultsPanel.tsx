@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import type { TypingStats, TypingMode, TransformMode, ReplayEvent } from '@/lib/types'
 import { align, computeCorrectedPositions } from '@/lib/analyzeTyping'
 import { FINGER_LABELS, FINGER_COLORS } from '@/lib/fingerMap'
+import { getCustomText, type CustomText } from '@/lib/library'
 
 const MODE_LABEL: Record<TransformMode, string> = {
   '1to1': 'Bez zmian', clean: 'Oczyść', story: 'Opowieść', exercise: 'Ćwiczenie', polish_chars: 'Trudne znaki',
@@ -232,6 +234,8 @@ interface Props {
   lessonId?: number
   hasNextLesson?: boolean
   replayData?: ReplayEvent[]
+  libraryTextId?: string | null
+  onSaveToLibrary?: (title: string) => void
   onNewRound: () => void
   onRepeat: () => void
   onAction?: (action: SuggestionAction) => void
@@ -240,8 +244,18 @@ interface Props {
 export default function ResultsPanel({
   stats, trainingText, typedText, transformMode, typingMode,
   newBadges, earnedStars, lessonId, hasNextLesson, replayData,
+  libraryTextId, onSaveToLibrary,
   onNewRound, onRepeat, onAction,
 }: Props) {
+  const router = useRouter()
+  const [libraryEntry, setLibraryEntry] = useState<CustomText | null>(null)
+  const [saveExpanded, setSaveExpanded] = useState(false)
+  const [saveTitle, setSaveTitle] = useState('')
+  const [savedToLib, setSavedToLib] = useState(false)
+
+  useEffect(() => {
+    if (libraryTextId) setLibraryEntry(getCustomText(libraryTextId))
+  }, [libraryTextId])
   const acc = stats.accuracy
   const calm = stats.calmScore ?? acc
   const bs = stats.backspaceCount ?? 0
@@ -521,6 +535,116 @@ export default function ResultsPanel({
         isBlind={isBlind}
         correctedPositions={correctedPositions}
       />
+
+      {/* ── TEN TEKST (library context) ── */}
+      {libraryEntry && (
+        <div className="bg-violet-50 dark:bg-violet-500/8 border border-violet-200 dark:border-violet-500/20 rounded-2xl overflow-hidden">
+          <div className="px-5 py-3.5 border-b border-violet-100 dark:border-violet-500/15 flex items-center justify-between">
+            <p className="text-xs font-bold text-violet-600 dark:text-violet-400 uppercase tracking-widest">Ten tekst</p>
+            <p className="text-xs text-violet-500/70 dark:text-violet-400/60 truncate max-w-[60%] text-right">{libraryEntry.title}</p>
+          </div>
+          <div className="px-5 py-4 grid grid-cols-3 gap-4 border-b border-violet-100 dark:border-violet-500/15">
+            <div className="text-center">
+              <p className="text-2xl font-black text-violet-600 dark:text-violet-400">{libraryEntry.practiceCount}</p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-500 mt-0.5">
+                {libraryEntry.practiceCount === 1 ? 'runda' : libraryEntry.practiceCount < 5 ? 'rundy' : 'rund'}
+              </p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-black text-blue-600 dark:text-blue-400">{libraryEntry.bestWpm ?? '—'}</p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-500 mt-0.5">WPM best</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-black text-green-600 dark:text-green-400">
+                {libraryEntry.bestAccuracy != null ? `${libraryEntry.bestAccuracy}%` : '—'}
+              </p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-500 mt-0.5">acc best</p>
+            </div>
+          </div>
+          <div className="px-5 py-3 flex gap-2">
+            <button
+              onClick={onRepeat}
+              className="flex-1 py-2.5 bg-violet-100 dark:bg-violet-500/15 hover:bg-violet-200 dark:hover:bg-violet-500/25 text-violet-700 dark:text-violet-300 text-xs font-bold rounded-xl transition"
+            >
+              Powtórz tekst
+            </button>
+            <button
+              onClick={() => router.push('/library')}
+              className="flex-1 py-2.5 bg-gray-100 dark:bg-[#1e1e1e] hover:bg-gray-200 dark:hover:bg-[#282828] text-gray-600 dark:text-gray-400 text-xs font-semibold rounded-xl transition"
+            >
+              Wróć do biblioteki →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── ZAPISZ DO BIBLIOTEKI (custom text, not lesson, not already in library) ── */}
+      {!lessonId && !libraryTextId && onSaveToLibrary && (
+        <div className="bg-violet-50 dark:bg-violet-500/8 border border-violet-200 dark:border-violet-500/20 rounded-2xl p-5">
+          {savedToLib ? (
+            <div className="flex items-center gap-3">
+              <span className="text-xl">✅</span>
+              <div>
+                <p className="text-sm font-semibold text-violet-700 dark:text-violet-300">Zapisano do Mojej Biblioteki</p>
+                <button onClick={() => router.push('/library')} className="text-xs text-violet-500 hover:text-violet-700 dark:hover:text-violet-300 underline mt-0.5 transition">
+                  Przejdź do biblioteki →
+                </button>
+              </div>
+            </div>
+          ) : !saveExpanded ? (
+            <button
+              onClick={() => setSaveExpanded(true)}
+              className="w-full flex items-center gap-3 text-left group"
+            >
+              <span className="text-xl shrink-0">📚</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-violet-700 dark:text-violet-300">Zapisz do Mojej Biblioteki</p>
+                <p className="text-xs text-violet-500/70 dark:text-violet-400/60 mt-0.5">Wróć do tego tekstu kiedy chcesz. Każda runda zostawia ślad.</p>
+              </div>
+              <span className="text-violet-400 shrink-0 group-hover:translate-x-0.5 transition-transform">›</span>
+            </button>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-sm font-semibold text-violet-700 dark:text-violet-300">Nadaj tytuł temu tekstowi</p>
+              <input
+                type="text"
+                value={saveTitle}
+                onChange={e => setSaveTitle(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && saveTitle.trim()) {
+                    onSaveToLibrary(saveTitle.trim())
+                    setSavedToLib(true)
+                  }
+                  if (e.key === 'Escape') setSaveExpanded(false)
+                }}
+                placeholder="Np. Wspomnienie, Moja afirmacja..."
+                autoFocus
+                className="w-full bg-white dark:bg-[#161616] border border-violet-200 dark:border-violet-500/30 rounded-xl px-4 py-2.5 text-sm placeholder-violet-300 dark:placeholder-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-400 transition"
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setSaveExpanded(false)}
+                  className="px-4 py-2 text-xs text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-400 transition"
+                >
+                  Anuluj
+                </button>
+                <button
+                  onClick={() => {
+                    if (saveTitle.trim()) {
+                      onSaveToLibrary(saveTitle.trim())
+                      setSavedToLib(true)
+                    }
+                  }}
+                  disabled={!saveTitle.trim()}
+                  className="flex-1 py-2 bg-violet-500 hover:bg-violet-600 text-white text-xs font-bold rounded-xl transition disabled:opacity-40"
+                >
+                  Zapisz →
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ── ACTIONS ── */}
       <div className="flex gap-3">

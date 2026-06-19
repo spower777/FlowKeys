@@ -9,8 +9,9 @@ import TransformOptions from '@/components/TransformOptions'
 import TypingSession from '@/components/TypingSession'
 import ResultsPanel from '@/components/ResultsPanel'
 import SettingsModal from '@/components/SettingsModal'
-import { analyzeTyping } from '@/lib/analyzeTyping'
+import { analyzeTyping, computeCorrectedPositions } from '@/lib/analyzeTyping'
 import { saveSession, getSessions } from '@/lib/storage'
+import { getLibrary, saveCustomText, recordLibrarySession } from '@/lib/library'
 import { EXAMPLE_TEXT } from '@/lib/transformPrompt'
 import { loadSettings, saveSettings, applySettingsToDOM, DEFAULTS } from '@/lib/settings'
 import { updateLessonProgress, checkAndUnlockBadges, lessonModeToTypingMode, calculateStars } from '@/lib/lessonProgress'
@@ -45,17 +46,33 @@ export default function Home() {
   const [earnedStars, setEarnedStars] = useState<0|1|2|3>(0)
   const [lastReplayData, setLastReplayData] = useState<ReplayEvent[]>([])
   const [lastSession, setLastSession] = useState<TypingSessionRecord | null>(null)
+  const [currentLibraryTextId, setCurrentLibraryTextId] = useState<string | null>(null)
+  const [libraryCount, setLibraryCount] = useState(0)
 
-  // Load last session whenever returning to home
+  // Load last session + library count whenever returning to home
   useEffect(() => {
     if (step === 'home') {
       try { setLastSession(getSessions()[0] ?? null) } catch {}
+      try { setLibraryCount(getLibrary().length) } catch {}
     }
   }, [step])
 
-  // Launch lesson from /lessons page via localStorage signal
+  // Launch lesson / library text from localStorage signal
   useEffect(() => {
     try {
+      const libRaw = localStorage.getItem('flowkeys_pending_library_text')
+      if (libRaw) {
+        localStorage.removeItem('flowkeys_pending_library_text')
+        const pending = JSON.parse(libRaw) as { id: string; text: string; title: string }
+        setSourceText(pending.text)
+        setTrainingText(pending.text)
+        setTransformMode('1to1')
+        setTypingMode('normal')
+        setCurrentLesson(null)
+        setCurrentLibraryTextId(pending.id)
+        setStep('typing')
+        return
+      }
       const raw = localStorage.getItem('flowkeys_pending_lesson')
       if (!raw) return
       localStorage.removeItem('flowkeys_pending_lesson')
@@ -136,8 +153,9 @@ export default function Home() {
     setTypedText(typed)
     setStats(s)
     setLastReplayData(replayData)
+    const sessionId = Date.now().toString()
     saveSession({
-      id: Date.now().toString(),
+      id: sessionId,
       createdAt: new Date().toISOString(),
       sourceText,
       trainingText,
@@ -148,6 +166,15 @@ export default function Home() {
       stats: s,
       replayData,
     })
+    if (currentLibraryTextId) {
+      const corrected = replayData?.length
+        ? computeCorrectedPositions(trainingText, replayData).size
+        : 0
+      const firstHit = corrected > 0 && s.charsTyped > 0
+        ? Math.min(99, Math.round(((s.charsTyped - corrected) / s.charsTyped) * 100))
+        : s.accuracy
+      recordLibrarySession(currentLibraryTextId, s, typingMode, firstHit)
+    }
     if (currentLesson !== null) {
       updateLessonProgress(currentLesson.id, s)
       setEarnedStars(calculateStars(s))
@@ -173,8 +200,17 @@ export default function Home() {
     setTransformError(null)
     setIsMock(false)
     setCurrentLesson(null)
+    setCurrentLibraryTextId(null)
     setNewBadges([])
     setEarnedStars(0)
+  }
+
+  function handleSaveToLibrary(title: string) {
+    const saved = saveCustomText({ title, text: trainingText, tags: [], mood: '' })
+    if (stats) {
+      recordLibrarySession(saved.id, stats, typingMode)
+    }
+    setCurrentLibraryTextId(saved.id)
   }
 
   function repeatRound() {
@@ -366,6 +402,27 @@ export default function Home() {
                   </span>
                 </button>
               ))}
+
+              {/* Moja Biblioteka */}
+              <button
+                onClick={() => router.push('/library')}
+                className="animate-fade-up w-full flex items-center gap-5 bg-white dark:bg-[#161616] hover:bg-violet-50/40 dark:hover:bg-[#1d1d1d] border border-gray-200 dark:border-[#242424] hover:border-violet-300 dark:hover:border-violet-500/30 rounded-2xl px-6 py-5 text-left transition-all duration-200 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/30 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none group"
+                style={{ animationDelay: '365ms' }}
+              >
+                <span className="text-3xl shrink-0 group-hover:scale-110 transition-transform duration-200">📚</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">Moja Biblioteka</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
+                    {libraryCount > 0
+                      ? `${libraryCount} ${libraryCount === 1 ? 'tekst' : libraryCount < 5 ? 'teksty' : 'tekstów'} · Teksty, do których warto wracać`
+                      : 'Wracaj do tekstów, które coś znaczą'}
+                  </p>
+                </div>
+                <span className="shrink-0 text-xl w-6 text-center transition-all duration-200 text-gray-300 dark:text-gray-700 group-hover:text-violet-400">
+                  <span className="group-hover:hidden">›</span>
+                  <span className="hidden group-hover:inline animate-paw-pop">📖</span>
+                </span>
+              </button>
             </div>
 
             {/* Odkryj — ciche linki, nie pitch deck */}
@@ -374,11 +431,12 @@ export default function Home() {
               style={{ animationDelay: '360ms' }}
             >
               {([
-                { label: '100+ lekcji',         icon: '📚', action: () => router.push('/lessons') },
-                { label: 'Blind Flow',           icon: '🙈', action: () => router.push('/lessons') },
-                { label: 'Nagraj głosem',        icon: '🎙️', action: () => { setInputMethod('voice'); setStep('input') } },
-                { label: 'Odznaki',              icon: '🏅', action: () => router.push('/badges') },
-                { label: 'Historia',             icon: '📊', action: () => router.push('/history') },
+                { label: '100+ lekcji',   icon: '📚', action: () => router.push('/lessons') },
+                { label: 'Blind Flow',    icon: '🙈', action: () => router.push('/lessons') },
+                { label: 'Nagraj głosem', icon: '🎙️', action: () => { setInputMethod('voice'); setStep('input') } },
+                { label: 'Odznaki',       icon: '🏅', action: () => router.push('/badges') },
+                { label: 'Historia',      icon: '📊', action: () => router.push('/history') },
+                { label: 'Biblioteka',    icon: '📖', action: () => router.push('/library') },
               ] as { label: string; icon: string; action: () => void }[]).map(feat => (
                 <button
                   key={feat.label}
@@ -556,6 +614,8 @@ export default function Home() {
             lessonId={currentLesson?.id}
             hasNextLesson={!!currentLesson && !!lessons.find(l => l.id === (currentLesson.id + 1))}
             replayData={lastReplayData}
+            libraryTextId={currentLibraryTextId}
+            onSaveToLibrary={handleSaveToLibrary}
             onNewRound={reset}
             onRepeat={repeatRound}
             onAction={handleResultAction}
