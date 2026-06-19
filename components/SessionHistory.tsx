@@ -1,7 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { getSessions } from '@/lib/storage'
+import { getLibrary } from '@/lib/library'
+import { lessons } from '@/data/lessons'
 import type { TypingSessionRecord, TransformMode, TypingMode } from '@/lib/types'
 import { FINGER_LABELS, FINGER_COLORS } from '@/lib/fingerMap'
 import ReplayModal from './ReplayModal'
@@ -12,14 +15,27 @@ const MODE_LABEL: Record<TransformMode, string> = {
 const TYPING_LABEL: Record<TypingMode, string> = {
   normal: 'Normal', blind: 'Blind Flow', no_backspace: 'No Backspace',
 }
-type FilterValue = TypingMode | 'all' | 'lessons'
+
+type SessionType = 'lesson' | 'library' | 'custom'
+type FilterValue = TypingMode | 'all' | 'lessons' | 'library' | 'custom'
+
 const TYPING_FILTERS: Array<{ label: string; value: FilterValue }> = [
   { label: 'Wszystkie', value: 'all' },
   { label: 'Lekcje', value: 'lessons' },
-  { label: 'Normal', value: 'normal' },
+  { label: 'Biblioteka', value: 'library' },
+  { label: 'Własne', value: 'custom' },
   { label: 'Blind Flow', value: 'blind' },
   { label: 'No Backspace', value: 'no_backspace' },
 ]
+
+const TYPE_BADGE: Record<SessionType, string> = {
+  lesson:  'bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-500/25',
+  library: 'bg-violet-100 dark:bg-violet-500/15 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-500/25',
+  custom:  'bg-gray-100 dark:bg-[#1e1e1e] text-gray-500 dark:text-gray-500 border-gray-200 dark:border-[#2a2a2a]',
+}
+const TYPE_LABEL: Record<SessionType, string> = {
+  lesson: 'Lekcja', library: '📚 Biblioteka', custom: 'Własny tekst',
+}
 
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString('pl', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
@@ -29,6 +45,12 @@ function accColor(acc: number) {
 }
 function calmColor(c: number) {
   return c >= 80 ? 'text-teal-600 dark:text-teal-400' : c >= 60 ? 'text-amber-600 dark:text-amber-400' : 'text-red-500 dark:text-red-400'
+}
+
+function sessionType(s: TypingSessionRecord): SessionType {
+  if (s.lessonId !== undefined) return 'lesson'
+  if (s.libraryTextId) return 'library'
+  return 'custom'
 }
 
 interface StatCardProps { value: string | number; label: string; desc?: string; color: string }
@@ -43,17 +65,41 @@ function StatCard({ value, label, desc, color }: StatCardProps) {
 }
 
 export default function SessionHistory() {
+  const router = useRouter()
   const [sessions, setSessions] = useState<TypingSessionRecord[]>([])
+  const [libraryMap, setLibraryMap] = useState<Record<string, string>>({})
   const [selected, setSelected] = useState<TypingSessionRecord | null>(null)
   const [filter, setFilter] = useState<FilterValue>('all')
   const [sortBest, setSortBest] = useState(false)
   const [replaySession, setReplaySession] = useState<TypingSessionRecord | null>(null)
 
-  useEffect(() => { setSessions(getSessions()) }, [])
+  useEffect(() => {
+    setSessions(getSessions())
+    const lib = getLibrary()
+    const map: Record<string, string> = {}
+    for (const t of lib) map[t.id] = t.title
+    setLibraryMap(map)
+  }, [])
+
+  function getTitle(s: TypingSessionRecord): string {
+    if (s.lessonId !== undefined) {
+      const lesson = lessons.find(l => l.id === s.lessonId)
+      return lesson
+        ? `${String(s.lessonId).padStart(3, '0')} — ${lesson.title}`
+        : `Lekcja ${s.lessonId}`
+    }
+    if (s.libraryTextId) {
+      return libraryMap[s.libraryTextId] ?? 'Tekst z biblioteki'
+    }
+    return s.trainingText.slice(0, 60)
+  }
 
   const base = filter === 'all' ? sessions
     : filter === 'lessons' ? sessions.filter(s => s.lessonId !== undefined)
+    : filter === 'library' ? sessions.filter(s => !!s.libraryTextId)
+    : filter === 'custom' ? sessions.filter(s => !s.lessonId && !s.libraryTextId)
     : sessions.filter(s => s.typingMode === filter)
+
   const filtered = sortBest ? [...base].sort((a, b) => b.stats.wpm - a.stats.wpm) : base
 
   if (sessions.length === 0) {
@@ -72,6 +118,8 @@ export default function SessionHistory() {
     const incomplete = st.completionPercent < 90
     const hasReplay = !!selected.replayData?.length
     const fingerErrors = st.errorsByFinger ?? {}
+    const type = sessionType(selected)
+    const title = getTitle(selected)
 
     return (
       <>
@@ -98,12 +146,30 @@ export default function SessionHistory() {
             )}
           </div>
 
-          <div>
-            <p className="text-xs text-gray-500 dark:text-gray-600">
-              {fmtDate(selected.createdAt)} · {MODE_LABEL[selected.mode]} · {TYPING_LABEL[selected.typingMode]}
+          {/* Session header */}
+          <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-5 py-4 space-y-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full border ${TYPE_BADGE[type]}`}>
+                {TYPE_LABEL[type]}
+              </span>
+              <span className="text-[10px] bg-gray-100 dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#2a2a2a] text-gray-500 px-2 py-0.5 rounded-full">
+                {TYPING_LABEL[selected.typingMode]}
+              </span>
+              {type === 'library' && selected.libraryTextId && (
+                <button
+                  onClick={() => router.push('/library')}
+                  className="text-[10px] text-violet-500 dark:text-violet-400 hover:underline ml-auto"
+                >
+                  Otwórz w bibliotece →
+                </button>
+              )}
+            </div>
+            <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 leading-snug">{title}</p>
+            <p className="text-xs text-gray-400 dark:text-gray-600">
+              {fmtDate(selected.createdAt)} · {MODE_LABEL[selected.mode]}
             </p>
             {incomplete && (
-              <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+              <p className="text-xs text-amber-600 dark:text-amber-400">
                 Runda niedokończona — metryki dotyczą {st.charsTyped} wpisanych znaków
               </p>
             )}
@@ -180,6 +246,8 @@ export default function SessionHistory() {
         {TYPING_FILTERS.map(f => {
           const count = f.value === 'all' ? null
             : f.value === 'lessons' ? sessions.filter(s => s.lessonId !== undefined).length
+            : f.value === 'library' ? sessions.filter(s => !!s.libraryTextId).length
+            : f.value === 'custom' ? sessions.filter(s => !s.lessonId && !s.libraryTextId).length
             : sessions.filter(s => s.typingMode === f.value).length
           return (
             <button
@@ -192,7 +260,7 @@ export default function SessionHistory() {
               }`}
             >
               {f.label}
-              {count !== null && <span className="ml-1 opacity-60">{count}</span>}
+              {count !== null && count > 0 && <span className="ml-1 opacity-60">{count}</span>}
             </button>
           )
         })}
@@ -217,6 +285,8 @@ export default function SessionHistory() {
           const calm = s.stats.calmScore ?? s.stats.accuracy
           const bs = s.stats.backspaceCount ?? 0
           const hasReplay = !!s.replayData?.length
+          const type = sessionType(s)
+          const title = getTitle(s)
 
           return (
             <button
@@ -225,9 +295,12 @@ export default function SessionHistory() {
               className="w-full flex items-center gap-4 bg-white dark:bg-[#161616] hover:bg-gray-50 dark:hover:bg-[#1e1e1e] border border-gray-200 dark:border-[#242424] rounded-2xl px-5 py-4 text-left transition group"
             >
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-gray-700 dark:text-gray-300 truncate font-mono">{s.trainingText.slice(0, 55)}…</p>
+                <p className="text-sm text-gray-700 dark:text-gray-300 truncate font-medium">{title}</p>
                 <div className="flex items-center gap-2 mt-1 flex-wrap">
                   <span className="text-xs text-gray-400 dark:text-gray-600">{fmtDate(s.createdAt)}</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full border ${TYPE_BADGE[type]}`}>
+                    {TYPE_LABEL[type]}
+                  </span>
                   <span className="text-[10px] bg-gray-100 dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#2a2a2a] text-gray-500 px-2 py-0.5 rounded-full">
                     {TYPING_LABEL[s.typingMode]}
                   </span>
