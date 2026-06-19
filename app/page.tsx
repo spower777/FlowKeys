@@ -207,10 +207,13 @@ export default function Home() {
 
         {/* ── HOME ── */}
         {step === 'home' && (
-          <div className="space-y-6">
+          <div className="space-y-5">
 
             {/* Big Logo / Brand */}
-            <div className="relative overflow-hidden rounded-3xl border border-[var(--accent-100)] dark:border-[var(--accent-600)]/20 bg-gradient-to-br from-[var(--accent-50)] via-white to-white dark:from-[var(--accent-600)]/10 dark:via-[#111] dark:to-[#0d0d0d] px-10 py-10">
+            <div
+              className="animate-fade-up relative overflow-hidden rounded-3xl border border-[var(--accent-100)] dark:border-[var(--accent-600)]/20 bg-gradient-to-br from-[var(--accent-50)] via-white to-white dark:from-[var(--accent-600)]/10 dark:via-[#111] dark:to-[#0d0d0d] px-10 py-10"
+              style={{ animationDelay: '0ms' }}
+            >
               {/* Decorative keyboard rows */}
               <div className="absolute right-4 top-0 bottom-0 flex flex-col justify-center gap-2 opacity-[0.07] dark:opacity-[0.10] pointer-events-none select-none" aria-hidden>
                 {['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'].map((row, i) => (
@@ -222,6 +225,16 @@ export default function Home() {
                 ))}
               </div>
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_60%,var(--accent-100),transparent_65%)] dark:bg-[radial-gradient(ellipse_at_20%_60%,var(--accent-600)/12%,transparent_65%)] pointer-events-none" />
+
+              {/* Floating cat */}
+              <div
+                className="animate-float-cat absolute bottom-5 right-28 text-5xl select-none pointer-events-none z-20 hidden sm:block"
+                aria-hidden
+                title="miau 🐾"
+              >
+                <span className="animate-cat-blink inline-block">😸</span>
+              </div>
+
               <div className="relative z-10">
                 <div className="flex items-center gap-4 mb-4">
                   <span className="text-5xl">⌨️</span>
@@ -259,40 +272,49 @@ export default function Home() {
                   sub: 'Szybki start bez własnego materiału',
                   action: pickExample,
                 },
-              ].map(item => (
+              ].map((item, i) => (
                 <button
                   key={item.id}
                   onClick={item.action}
-                  className="w-full flex items-center gap-5 bg-white dark:bg-[#161616] hover:bg-[var(--accent-50)]/60 dark:hover:bg-[#1d1d1d] border border-gray-200 dark:border-[#242424] hover:border-[var(--accent-300)] dark:hover:border-[var(--accent-600)]/40 rounded-2xl px-6 py-5 text-left transition-all duration-200 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/30 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none group"
+                  className="animate-fade-up w-full flex items-center gap-5 bg-white dark:bg-[#161616] hover:bg-[var(--accent-50)]/60 dark:hover:bg-[#1d1d1d] border border-gray-200 dark:border-[#242424] hover:border-[var(--accent-300)] dark:hover:border-[var(--accent-600)]/40 rounded-2xl px-6 py-5 text-left transition-all duration-200 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/30 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none group"
+                  style={{ animationDelay: `${80 + i * 70}ms` }}
                 >
                   <span className="text-3xl shrink-0 group-hover:scale-110 transition-transform duration-200">{item.icon}</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">{item.label}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">{item.sub}</p>
                   </div>
-                  <span className="text-gray-300 dark:text-gray-700 group-hover:text-[var(--accent-400)] group-hover:translate-x-1 transition-all duration-200 shrink-0 text-xl font-light">›</span>
+                  {/* paw on hover */}
+                  <span className="shrink-0 text-xl w-6 text-center transition-all duration-200 text-gray-300 dark:text-gray-700 group-hover:text-[var(--accent-400)]">
+                    <span className="group-hover:hidden">›</span>
+                    <span className="hidden group-hover:inline animate-paw-pop">🐾</span>
+                  </span>
                 </button>
               ))}
             </div>
 
             {/* Feature chips — klikalne skróty */}
-            <div className="flex flex-wrap gap-2">
+            <div
+              className="animate-fade-up flex flex-wrap gap-2"
+              style={{ animationDelay: '310ms' }}
+            >
               {([
-                { label: '100+ lekcji',       icon: '📚', action: () => router.push('/lessons') },
-                { label: 'Blind Flow',         icon: '🙈', action: () => router.push('/lessons') },
-                { label: 'Whisper AI',         icon: '🎙️', action: () => { setInputMethod('voice'); setStep('input') } },
-                { label: 'Wirtualna klawiatura', icon: '⌨️', action: () => { setInputMethod('paste'); setStep('input') } },
-                { label: 'Odznaki',            icon: '🏅', action: () => router.push('/badges') },
-                { label: 'Analiza błędów',     icon: '📊', action: () => router.push('/history') },
+                { label: '100+ lekcji',          icon: '📚', action: () => router.push('/lessons') },
+                { label: 'Blind Flow',            icon: '🙈', action: () => router.push('/lessons') },
+                { label: 'Whisper AI',            icon: '🎙️', action: () => { setInputMethod('voice'); setStep('input') } },
+                { label: 'Wirtualna klawiatura',  icon: '⌨️', action: () => { setInputMethod('paste'); setStep('input') } },
+                { label: 'Odznaki',               icon: '🏅', action: () => router.push('/badges') },
+                { label: 'Analiza błędów',        icon: '📊', action: () => router.push('/history') },
               ] as { label: string; icon: string; action: () => void }[]).map(feat => (
                 <button
                   key={feat.label}
                   onClick={feat.action}
-                  className="flex items-center gap-1.5 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#252525] rounded-full px-3.5 py-2 hover:bg-[var(--accent-50)] dark:hover:bg-[var(--accent-600)]/15 hover:border-[var(--accent-200)] dark:hover:border-[var(--accent-600)]/40 hover:text-[var(--accent-600)] dark:hover:text-[var(--accent-400)] hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 transition-all duration-150 cursor-pointer"
+                  className="flex items-center gap-1.5 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#252525] rounded-full px-3.5 py-2 hover:bg-[var(--accent-50)] dark:hover:bg-[var(--accent-600)]/15 hover:border-[var(--accent-200)] dark:hover:border-[var(--accent-600)]/40 hover:text-[var(--accent-600)] dark:hover:text-[var(--accent-400)] hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 transition-all duration-150"
                 >
                   <span className="text-[14px] leading-none">{feat.icon}</span>{feat.label}
                 </button>
               ))}
+              <span className="text-gray-300 dark:text-gray-700 self-center ml-1 select-none text-sm">🐾</span>
             </div>
 
           </div>
