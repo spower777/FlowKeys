@@ -24,4 +24,6 @@ export const chapters: Chapter[] = [
   { id: 16, title: 'Gaming Flow',         range: '191–210', description: 'Respawn, loot, baza. Trening w języku gracza.' },
   { id: 17, title: 'Rząd Domowy',         range: '211–222', description: 'a s d f g h j k l — palce uczą się swojego miejsca.' },
   { id: 18, title: 'Nowe Klawisze',       range: '223–232', description: 'e i r n o t w z c — krok po kroku poza rząd domowy.' },
+  { id: 19, title: 'Cyfry',              range: '233–242', description: '1 2 3 4 5 6 7 8 9 0 — rząd numeryczny od podstaw.' },
+  { id: 20, title: 'Symbole',            range: '243–252', description: '. , ! ? : ; - ( ) " % @ / — interpunkcja i znaki specjalne.' },
 ]

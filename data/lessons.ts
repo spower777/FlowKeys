@@ -2,6 +2,7 @@ export type LessonPack =
   | 'start' | 'motivation' | 'affirmations' | 'polishSigns' | 'mindfulness'
   | 'relationships' | 'spirituality' | 'visualization' | 'stories' | 'mastery'
   | 'blindFlow' | 'noBackspace' | 'jadePath' | 'gaming' | 'homerow'
+  | 'numbers' | 'symbols'
 
 export type LessonMode = 'normal' | 'blindFlow' | 'noBackspace' | 'hardSigns'
 
@@ -27,6 +28,8 @@ export const PACK_LABEL: Record<LessonPack, string> = {
   jadePath: 'Jadeitowa Droga',
   gaming: 'Gaming',
   homerow: 'Podstawy',
+  numbers: 'Cyfry',
+  symbols: 'Symbole',
 }
 
 export const MODE_LABEL: Record<LessonMode, string> = {
@@ -1252,5 +1255,129 @@ export const lessons: FlowLesson[] = [
     id: 210, chapterId: 16, pack: 'gaming', title: 'Legenda Serwera',
     difficulty: 4, mode: 'normal',
     text: 'Legenda serwera nie wygrywa dlatego, że nigdy nie przegrywa. Wygrywa, bo po każdej porażce wraca mądrzejsza.',
+  },
+
+  // ── Rozdział 19 · Cyfry ───────────────────────────────────────────────────────
+  {
+    id: 233, chapterId: 19, pack: 'numbers', title: '1 i 2',
+    subtitle: 'lewy mały i pierścieniowy', difficulty: 1, mode: 'normal',
+    text: '11 22 11 22 12 21 111 222 121 212 112 221 12 21 1221 2112 11 22 12 21 121 212',
+    tags: ['cyfry'],
+  },
+  {
+    id: 234, chapterId: 19, pack: 'numbers', title: '3 i 4',
+    subtitle: 'środkowy i wskazujący', difficulty: 1, mode: 'normal',
+    text: '33 44 33 44 34 43 333 444 343 434 334 443 34 43 3443 4334 33 44 34 43 343 434',
+    tags: ['cyfry'],
+  },
+  {
+    id: 235, chapterId: 19, pack: 'numbers', title: '5 — środek',
+    subtitle: 'wskazujący sięga środka', difficulty: 1, mode: 'normal',
+    text: '55 15 25 35 45 55 51 52 53 54 555 155 255 355 455 55 15 25 35 45 55 512 345',
+    tags: ['cyfry'],
+  },
+  {
+    id: 236, chapterId: 19, pack: 'numbers', title: '6 i 7',
+    subtitle: 'prawa strona zaczyna', difficulty: 1, mode: 'normal',
+    text: '66 77 66 77 67 76 666 777 676 767 667 776 67 76 6776 7667 66 77 67 76 676 767',
+    tags: ['cyfry'],
+  },
+  {
+    id: 237, chapterId: 19, pack: 'numbers', title: '8, 9 i 0',
+    subtitle: 'prawy pierścieniowy i mały', difficulty: 1, mode: 'normal',
+    text: '88 99 00 89 90 80 98 09 08 80 89 890 980 089 809 098 809 908 089 890 09 80 98',
+    tags: ['cyfry'],
+  },
+  {
+    id: 238, chapterId: 19, pack: 'numbers', title: 'Lewa ręka — 1 do 5',
+    subtitle: 'pięć cyfr razem', difficulty: 1, mode: 'normal',
+    text: '12345 54321 12345 54321 123 234 345 12 23 34 45 123 234 345 12345 54321 1234',
+    tags: ['cyfry'],
+  },
+  {
+    id: 239, chapterId: 19, pack: 'numbers', title: 'Prawa ręka — 6 do 0',
+    subtitle: 'pięć cyfr razem', difficulty: 1, mode: 'normal',
+    text: '67890 09876 67890 09876 678 789 890 67 78 89 90 678 789 890 67890 09876 6789',
+    tags: ['cyfry'],
+  },
+  {
+    id: 240, chapterId: 19, pack: 'numbers', title: 'Wszystkie cyfry',
+    subtitle: 'cały rząd numeryczny', difficulty: 2, mode: 'normal',
+    text: '1234567890 0987654321 123 456 789 0 12 34 56 78 90 1234 5678 90 12345 67890',
+    tags: ['cyfry'],
+  },
+  {
+    id: 241, chapterId: 19, pack: 'numbers', title: 'Daty',
+    subtitle: 'cyfry w kontekście', difficulty: 2, mode: 'normal',
+    text: '2025-06-19 2024-01-01 15-08-1945 01 02 03 04 05 06 07 08 09 10 11 12 2025',
+    tags: ['cyfry'],
+  },
+  {
+    id: 242, chapterId: 19, pack: 'numbers', title: 'Numery i kody',
+    subtitle: 'telefony, ceny, kody', difficulty: 2, mode: 'normal',
+    text: '100 112 999 600-700-800 48 600 700 800 900 1234 5678 50 100 200 500 1000 2025',
+    tags: ['cyfry'],
+  },
+
+  // ── Rozdział 20 · Symbole ─────────────────────────────────────────────────────
+  {
+    id: 243, chapterId: 20, pack: 'symbols', title: 'Kropka i przecinek',
+    subtitle: '. i , — najczęstsze symbole', difficulty: 1, mode: 'normal',
+    text: 'tak. nie. jak. las, fal, dal, tak. jak, dal. fal, las. jak. sal, tak, las.',
+    tags: ['symbole'],
+  },
+  {
+    id: 244, chapterId: 20, pack: 'symbols', title: 'Wykrzyknik i pytajnik',
+    subtitle: '! i ? — koniec zdania', difficulty: 1, mode: 'normal',
+    text: 'Tak! Nie! Jak? Dal? Fal! Las? Tak! Jak? Nie! Las! Fal? Dal? Tak! Jak? Nie!',
+    tags: ['symbole'],
+  },
+  {
+    id: 245, chapterId: 20, pack: 'symbols', title: 'Dwukropek i średnik',
+    subtitle: ': i ; — listy i pauzy', difficulty: 1, mode: 'normal',
+    text: 'tak: nie; jak: dal; fal: las; tak: jak; dal: fal; las: tak; jak: dal; fal:',
+    tags: ['symbole'],
+  },
+  {
+    id: 246, chapterId: 20, pack: 'symbols', title: 'Myślnik i podkreślnik',
+    subtitle: '- i _ — łączenia', difficulty: 1, mode: 'normal',
+    text: 'las-fal jak-dal tak-nie las_fal jak_dal tak_nie fal-las jak-dal las_fal jak-dal',
+    tags: ['symbole'],
+  },
+  {
+    id: 247, chapterId: 20, pack: 'symbols', title: 'Nawiasy',
+    subtitle: '( i ) — wtrącenia', difficulty: 1, mode: 'normal',
+    text: '(tak) (jak) (las) (dal) (fal) tak (las) jak (dal) (fal) jak (tak) (las dal)',
+    tags: ['symbole'],
+  },
+  {
+    id: 248, chapterId: 20, pack: 'symbols', title: 'Cudzysłów',
+    subtitle: '" i \' — cytowanie', difficulty: 2, mode: 'normal',
+    text: '"tak" "jak" "las" "dal" "fal" jak "tak" las "dal" fal "jak" tak "las" jak "dal"',
+    tags: ['symbole'],
+  },
+  {
+    id: 249, chapterId: 20, pack: 'symbols', title: 'Procent i małpa',
+    subtitle: '% i @ — cyfry i e-mail', difficulty: 2, mode: 'normal',
+    text: '50% 100% 25% 75% 10% 90% user@mail.com admin@wp.pl 50% kontakt@flowkeys.pl 25%',
+    tags: ['symbole'],
+  },
+  {
+    id: 250, chapterId: 20, pack: 'symbols', title: 'Ukośniki i hash',
+    subtitle: '/ \\ # — ścieżki i tagi', difficulty: 2, mode: 'normal',
+    text: 'tak/nie las/fal 100/200 a/b c/d #tak #jak #las #fal #dal tak/nie las/fal 50/100',
+    tags: ['symbole'],
+  },
+  {
+    id: 251, chapterId: 20, pack: 'symbols', title: 'Zdanie z interpunkcją',
+    subtitle: 'łączę wszystkie symbole', difficulty: 2, mode: 'normal',
+    text: 'Jak tak, to tak! Las, fal i dal. Nie ma tak: jak tak. Jak? Tak! Las (fal) dal.',
+    tags: ['symbole'],
+  },
+  {
+    id: 252, chapterId: 20, pack: 'symbols', title: 'Symbole w kontekście',
+    subtitle: 'pełna runda z symbolami', difficulty: 3, mode: 'normal',
+    text: 'Cena: 100 zł (50%). Zadzwoń: 600-700-800. Więcej na: flowkeys.pl/start! (2025)',
+    tags: ['symbole'],
   },
 ]

@@ -94,6 +94,8 @@ export default function LessonsPage() {
 
   // 8 ścieżek treningowych
   const PATH_DEFS: { id: string; icon: string; label: string; packs: LessonPack[]; modeOverride?: TypingMode; isCustom?: boolean; color: string; text: string; btn: string }[] = [
+    { id: 'numbers',  icon: '🔢', label: 'Cyfry',           packs: ['numbers'],                                    color: 'bg-indigo-50 dark:bg-indigo-500/10 border-indigo-200 dark:border-indigo-500/20', text: 'text-indigo-700 dark:text-indigo-400', btn: 'bg-indigo-500 hover:bg-indigo-600' },
+    { id: 'symbols',  icon: '!?', label: 'Symbole',         packs: ['symbols'],                                    color: 'bg-pink-50 dark:bg-pink-500/10 border-pink-200 dark:border-pink-500/20',     text: 'text-pink-700 dark:text-pink-400',   btn: 'bg-pink-500 hover:bg-pink-600' },
     { id: 'basics',   icon: '⌨️', label: 'Podstawy',       packs: ['homerow'],                                    color: 'bg-orange-50 dark:bg-orange-500/10 border-orange-200 dark:border-orange-500/20', text: 'text-orange-700 dark:text-orange-400', btn: 'bg-orange-500 hover:bg-orange-600' },
     { id: 'start',    icon: '📘', label: 'Start',          packs: ['start'],                                      color: 'bg-sky-50 dark:bg-sky-500/10 border-sky-200 dark:border-sky-500/20',         text: 'text-sky-700 dark:text-sky-400',     btn: 'bg-sky-500 hover:bg-sky-600' },
     { id: 'fluency',  icon: '🌊', label: 'Płynność',       packs: ['mastery', 'motivation', 'mindfulness'],       color: 'bg-teal-50 dark:bg-teal-500/10 border-teal-200 dark:border-teal-500/20',     text: 'text-teal-700 dark:text-teal-400',   btn: 'bg-teal-500 hover:bg-teal-600' },

@@ -1,6 +1,6 @@
 import type { LessonPack } from './lessons'
 
-export type PackGroupId = 'zen' | 'gaming' | 'self' | 'spirit' | 'story' | 'polish' | 'basics'
+export type PackGroupId = 'zen' | 'gaming' | 'self' | 'spirit' | 'story' | 'polish' | 'basics' | 'keyboard'
 
 export interface PackGroup {
   id: PackGroupId
@@ -12,6 +12,14 @@ export interface PackGroup {
 }
 
 export const PACK_GROUPS: PackGroup[] = [
+  {
+    id: 'keyboard',
+    label: 'Klawiatura',
+    description: 'Cyfry i symbole — pełna klawiatura.',
+    icon: '🔢',
+    packs: ['numbers', 'symbols'],
+    defaultEnabled: true,
+  },
   {
     id: 'basics',
     label: 'Podstawy',
