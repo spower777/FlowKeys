@@ -11,6 +11,7 @@ import { getAllLessonProgress, getLessonStatus, calculateStreak } from '@/lib/le
 import { loadSettings } from '@/lib/settings'
 import type { LessonProgress, LessonStatus } from '@/lib/lessonProgress'
 import { getSessions } from '@/lib/storage'
+import type { TypingMode } from '@/lib/types'
 
 export default function LessonsPage() {
   const router = useRouter()
@@ -18,12 +19,19 @@ export default function LessonsPage() {
   const [streak, setStreak] = useState(0)
   const [mounted, setMounted] = useState(false)
   const [activeGroups, setActiveGroups] = useState<PackGroupId[]>(DEFAULT_PACK_GROUPS)
+  const [sessionCounts, setSessionCounts] = useState({ blind: 0, noBackspace: 0 })
 
   useEffect(() => {
     const s = loadSettings()
     setActiveGroups(s.preferredPackGroups?.length ? s.preferredPackGroups : DEFAULT_PACK_GROUPS)
-    setProgress(getAllLessonProgress())
-    setStreak(calculateStreak(getSessions()))
+    const prog = getAllLessonProgress()
+    setProgress(prog)
+    const sessions = getSessions()
+    setStreak(calculateStreak(sessions))
+    setSessionCounts({
+      blind: sessions.filter(s => s.typingMode === 'blind' && s.stats.completionPercent >= 90).length,
+      noBackspace: sessions.filter(s => s.typingMode === 'no_backspace' && s.stats.completionPercent >= 90).length,
+    })
     setMounted(true)
   }, [])
 
@@ -39,12 +47,13 @@ export default function LessonsPage() {
   const visibleLessons = lessons.filter(l => activePacks.has(l.pack))
   const activeChapterIds = [...new Set(visibleLessons.map(l => l.chapterId))]
 
-  function startLesson(id: number) {
+  function startLesson(id: number, typingModeOverride?: TypingMode) {
     const lesson = lessons.find(l => l.id === id)
     if (!lesson) return
     try {
       localStorage.setItem('flowkeys_pending_lesson', JSON.stringify({
         id: lesson.id, text: lesson.text, mode: lesson.mode, title: lesson.title,
+        ...(typingModeOverride ? { typingMode: typingModeOverride } : {}),
       }))
     } catch {}
     router.push('/')
@@ -65,6 +74,59 @@ export default function LessonsPage() {
     ? lessons.find(l => l.id === lastPracticedEntry.lessonId && activePacks.has(l.pack))
     : null
 
+  // Ścieżki
+  const lastCompletedLesson = mounted
+    ? (Object.entries(progress)
+        .filter(([, p]) => p.completed)
+        .sort((a, b) => (b[1].lastAttemptAt ?? '').localeCompare(a[1].lastAttemptAt ?? ''))
+        .map(([id]) => lessons.find(l => l.id === Number(id)))
+        .find(Boolean) ?? nextLesson)
+    : null
+  const polishLessons = lessons.filter(l => l.pack === 'polishSigns')
+  const polishCompleted = polishLessons.filter(l => progress[l.id]?.completed).length
+  const nextPolishLesson = mounted
+    ? (polishLessons.find(l => !progress[l.id]?.completed) ?? null)
+    : null
+
+  const paths = [
+    {
+      id: 'normal', icon: '📚', label: 'Lekcje', mode: undefined as TypingMode | undefined,
+      desc: mounted ? `${completedCount} / ${visibleTotal} ukończonych` : '—',
+      cta: nextLesson ? 'Kontynuuj →' : 'Wszystkie zaliczone',
+      lesson: nextLesson,
+      card: 'bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20',
+      text: 'text-blue-700 dark:text-blue-400',
+      btn: 'bg-blue-500 hover:bg-blue-600',
+    },
+    {
+      id: 'blind', icon: '🙈', label: 'Blind Flow', mode: 'blind' as TypingMode,
+      desc: mounted ? (sessionCounts.blind > 0 ? `${sessionCounts.blind} sesji blind` : 'Jeszcze nie próbowałeś') : '—',
+      cta: 'Trenuj →',
+      lesson: lastCompletedLesson,
+      card: 'bg-purple-50 dark:bg-purple-500/10 border-purple-200 dark:border-purple-500/20',
+      text: 'text-purple-700 dark:text-purple-400',
+      btn: 'bg-purple-500 hover:bg-purple-600',
+    },
+    {
+      id: 'no_backspace', icon: '⌫', label: 'No Backspace', mode: 'no_backspace' as TypingMode,
+      desc: mounted ? (sessionCounts.noBackspace > 0 ? `${sessionCounts.noBackspace} sesji` : 'Jeszcze nie próbowałeś') : '—',
+      cta: 'Zacznij →',
+      lesson: nextLesson,
+      card: 'bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/20',
+      text: 'text-amber-700 dark:text-amber-400',
+      btn: 'bg-amber-500 hover:bg-amber-600',
+    },
+    {
+      id: 'polish', icon: '🇵🇱', label: 'Polskie znaki', mode: undefined as TypingMode | undefined,
+      desc: mounted ? `${polishCompleted} / ${polishLessons.length} ukończonych` : '—',
+      cta: nextPolishLesson ? 'Ćwicz →' : 'Zaliczone!',
+      lesson: nextPolishLesson,
+      card: 'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20',
+      text: 'text-red-700 dark:text-red-400',
+      btn: 'bg-red-500 hover:bg-red-600',
+    },
+  ]
+
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-[#0d0d0d] text-gray-900 dark:text-gray-100">
       <div className="max-w-4xl mx-auto px-4 py-10 sm:py-14">
@@ -76,6 +138,33 @@ export default function LessonsPage() {
           <p className="text-sm text-gray-500 dark:text-gray-500 mb-6">
             Każda lekcja to jeden krok. Nie ścig — rytm.
           </p>
+
+          {/* Ścieżki treningowe */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+            {paths.map(path => (
+              <div
+                key={path.id}
+                className={`flex flex-col gap-2 border rounded-2xl px-4 py-4 ${path.card}`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">{path.icon}</span>
+                  <span className={`text-xs font-bold ${path.text}`}>{path.label}</span>
+                </div>
+                <p className="text-[11px] text-gray-500 dark:text-gray-500 leading-tight flex-1">{path.desc}</p>
+                <button
+                  onClick={() => path.lesson && startLesson(path.lesson.id, path.mode)}
+                  disabled={!path.lesson}
+                  className={`text-xs font-semibold text-white px-3 py-1.5 rounded-xl transition-all ${
+                    path.lesson
+                      ? `${path.btn} hover:shadow-md active:scale-95`
+                      : 'bg-gray-300 dark:bg-gray-700 cursor-not-allowed opacity-50'
+                  }`}
+                >
+                  {path.cta}
+                </button>
+              </div>
+            ))}
+          </div>
 
           {/* Stats grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">

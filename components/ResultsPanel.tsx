@@ -83,14 +83,15 @@ function isPolishDiacriticLoss(expected: string, actual: string): boolean {
 
 // ── Components ────────────────────────────────────────────────────────────────
 
-interface StatCardProps { value: string | number; label: string; desc: string; badge?: string; color: string }
-function StatCard({ value, label, desc, badge, color }: StatCardProps) {
+interface StatCardProps { value: string | number; label: string; desc: string; badge?: string; color: string; secondary?: string }
+function StatCard({ value, label, desc, badge, color, secondary }: StatCardProps) {
   return (
     <div className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] rounded-2xl px-4 py-4 text-center flex flex-col items-center">
       <p className={`text-3xl font-black leading-none ${color}`}>{value}</p>
       <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 font-medium">{label}</p>
       {badge && <span className="mt-1.5 text-[9px] px-2 py-0.5 rounded-full bg-gray-100 dark:bg-[#252525] border border-gray-200 dark:border-[#2e2e2e] text-gray-500 dark:text-gray-500">{badge}</span>}
       <p className="text-[10px] text-gray-400 dark:text-gray-600 mt-1 leading-tight">{desc}</p>
+      {secondary && <p className="text-[10px] text-violet-500 dark:text-violet-400 mt-1 font-medium">{secondary}</p>}
     </div>
   )
 }
@@ -251,6 +252,10 @@ export default function ResultsPanel({
   const correctedPositions = replayData && replayData.length > 0
     ? computeCorrectedPositions(trainingText, replayData)
     : undefined
+  const correctedCount = correctedPositions?.size ?? 0
+  const firstHitAcc = correctedCount > 0 && stats.charsTyped > 0
+    ? Math.min(99, Math.round(((stats.charsTyped - correctedCount) / stats.charsTyped) * 100))
+    : acc
 
   const hero = isBlind
     ? { ...BLIND_STYLE, label: 'Blind Flow' }
@@ -387,7 +392,14 @@ export default function ResultsPanel({
       {/* ── STAT CARDS ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <StatCard value={stats.wpm} label="WPM" desc="słów na minutę" badge={wpmBadge(stats.wpm)} color="text-blue-600 dark:text-blue-400" />
-        <StatCard value={`${acc}%`} label="Dokładność" desc="poprawnych znaków" badge={accBadge(acc)} color={accColor} />
+        <StatCard
+          value={`${acc}%`}
+          label={correctedCount > 0 ? 'Dokładność końcowa' : 'Dokładność'}
+          desc={correctedCount > 0 ? 'po poprawkach backspace' : 'poprawnych znaków'}
+          badge={accBadge(acc)}
+          color={accColor}
+          secondary={correctedCount > 0 ? `pisanie: ${firstHitAcc}% (pierwsze uderzenie)` : undefined}
+        />
         <StatCard
           value={`${stats.completionPercent}%`}
           label="Ukończenie"

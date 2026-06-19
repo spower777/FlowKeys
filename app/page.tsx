@@ -59,12 +59,12 @@ export default function Home() {
       const raw = localStorage.getItem('flowkeys_pending_lesson')
       if (!raw) return
       localStorage.removeItem('flowkeys_pending_lesson')
-      const pending = JSON.parse(raw) as { id: number; text: string; mode: LessonMode; title: string }
+      const pending = JSON.parse(raw) as { id: number; text: string; mode: LessonMode; title: string; typingMode?: TypingMode }
       const lesson = lessons.find(l => l.id === pending.id) ?? null
       setSourceText(pending.text)
       setTrainingText(pending.text)
       setTransformMode('1to1')
-      setTypingMode(lessonModeToTypingMode(pending.mode))
+      setTypingMode(pending.typingMode ?? lessonModeToTypingMode(pending.mode))
       setCurrentLesson(lesson)
       setStep('typing')
     } catch {}
