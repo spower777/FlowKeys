@@ -315,6 +315,43 @@ export default function ResultsPanel({
         </p>
       </div>
 
+      {/* ── CO DALEJ? — zaraz po hero, zanim user zgubi uwagę ── */}
+      {(suggestions.length > 0 || hasNextLesson) && (
+        <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl overflow-hidden">
+          <div className="px-5 py-3.5 border-b border-gray-100 dark:border-[#1e1e1e]">
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-500 uppercase tracking-widest">Co dalej?</p>
+          </div>
+          <div className="divide-y divide-gray-100 dark:divide-[#1e1e1e]">
+            {suggestions.map((s, i) => (
+              <div key={i} className="flex items-center gap-3 px-5 py-3.5">
+                <span className="shrink-0 text-[var(--accent-500)] font-bold text-base">→</span>
+                <span className="flex-1 text-sm text-gray-700 dark:text-gray-300">{s.text}</span>
+                {s.action && onAction && (
+                  <button
+                    onClick={() => onAction(s.action!)}
+                    className="shrink-0 text-xs px-4 py-2 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white rounded-xl transition font-semibold hover:shadow-md active:scale-95"
+                  >
+                    Zacznij →
+                  </button>
+                )}
+              </div>
+            ))}
+            {hasNextLesson && onAction && (
+              <div className="flex items-center gap-3 px-5 py-3.5 bg-[var(--accent-50)]/50 dark:bg-[var(--accent-600)]/5">
+                <span className="shrink-0 text-[var(--accent-500)] font-bold text-base">★</span>
+                <span className="flex-1 text-sm font-medium text-gray-700 dark:text-gray-300">Następna lekcja</span>
+                <button
+                  onClick={() => onAction('next_lesson')}
+                  className="shrink-0 text-sm px-5 py-2 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white rounded-xl transition font-bold hover:shadow-md active:scale-95"
+                >
+                  Dalej →
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* ── STARS & BADGES ── */}
       {showBadgeSection && (
         <div className="space-y-3">
@@ -472,43 +509,6 @@ export default function ResultsPanel({
         isBlind={isBlind}
         correctedPositions={correctedPositions}
       />
-
-      {/* ── NEXT STEP ── */}
-      {(suggestions.length > 0 || hasNextLesson) && (
-        <div className="bg-[var(--accent-50)] dark:bg-[var(--accent-600)]/8 border border-[var(--accent-200)] dark:border-[var(--accent-500)]/20 rounded-2xl px-5 py-4">
-          <p className="text-xs font-semibold text-[var(--accent-600)] dark:text-[var(--accent-400)] uppercase tracking-widest mb-3">
-            Następna zalecana runda
-          </p>
-          <div className="space-y-2.5">
-            {suggestions.map((s, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <span className="shrink-0 text-[var(--accent-500)] font-bold">→</span>
-                <span className="flex-1 text-sm text-[var(--accent-700)] dark:text-[var(--accent-300)]">{s.text}</span>
-                {s.action && onAction && (
-                  <button
-                    onClick={() => onAction(s.action!)}
-                    className="shrink-0 text-xs px-3 py-1.5 bg-[var(--accent-500)] hover:bg-[var(--accent-400)] text-white rounded-lg transition font-medium"
-                  >
-                    Zacznij
-                  </button>
-                )}
-              </div>
-            ))}
-            {hasNextLesson && onAction && (
-              <div className="flex items-center gap-3 pt-1 border-t border-[var(--accent-200)] dark:border-[var(--accent-500)]/15">
-                <span className="shrink-0 text-[var(--accent-500)] font-bold">→</span>
-                <span className="flex-1 text-sm text-[var(--accent-700)] dark:text-[var(--accent-300)]">Przejdź do następnej lekcji</span>
-                <button
-                  onClick={() => onAction('next_lesson')}
-                  className="shrink-0 text-xs px-3 py-1.5 bg-[var(--accent-500)] hover:bg-[var(--accent-400)] text-white rounded-lg transition font-semibold"
-                >
-                  Następna →
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* ── ACTIONS ── */}
       <div className="flex gap-3">

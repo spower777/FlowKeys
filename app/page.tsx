@@ -10,14 +10,14 @@ import TypingSession from '@/components/TypingSession'
 import ResultsPanel from '@/components/ResultsPanel'
 import SettingsModal from '@/components/SettingsModal'
 import { analyzeTyping } from '@/lib/analyzeTyping'
-import { saveSession } from '@/lib/storage'
+import { saveSession, getSessions } from '@/lib/storage'
 import { EXAMPLE_TEXT } from '@/lib/transformPrompt'
 import { loadSettings, saveSettings, applySettingsToDOM, DEFAULTS } from '@/lib/settings'
 import { updateLessonProgress, checkAndUnlockBadges, lessonModeToTypingMode, calculateStars } from '@/lib/lessonProgress'
 import { badges } from '@/data/badges'
 import { lessons } from '@/data/lessons'
 import { chapters } from '@/data/chapters'
-import type { TransformMode, TypingMode, TypingStats, ReplayEvent } from '@/lib/types'
+import type { TransformMode, TypingMode, TypingStats, ReplayEvent, TypingSessionRecord } from '@/lib/types'
 import type { Settings } from '@/lib/settings'
 import type { FlowLesson, LessonMode } from '@/data/lessons'
 import type { BadgeSummary } from '@/components/ResultsPanel'
@@ -44,6 +44,14 @@ export default function Home() {
   const [newBadges, setNewBadges] = useState<BadgeSummary[]>([])
   const [earnedStars, setEarnedStars] = useState<0|1|2|3>(0)
   const [lastReplayData, setLastReplayData] = useState<ReplayEvent[]>([])
+  const [lastSession, setLastSession] = useState<TypingSessionRecord | null>(null)
+
+  // Load last session whenever returning to home
+  useEffect(() => {
+    if (step === 'home') {
+      try { setLastSession(getSessions()[0] ?? null) } catch {}
+    }
+  }, [step])
 
   // Launch lesson from /lessons page via localStorage signal
   useEffect(() => {
@@ -192,6 +200,28 @@ export default function Home() {
     }
   }
 
+  function handleContinue() {
+    if (!lastSession) return
+    if (lastSession.lessonId != null) {
+      const lesson = lessons.find(l => l.id === lastSession.lessonId) ?? null
+      if (lesson) {
+        setSourceText(lesson.text)
+        setTrainingText(lesson.text)
+        setTransformMode('1to1')
+        setTypingMode(lessonModeToTypingMode(lesson.mode))
+        setCurrentLesson(lesson)
+        setStep('typing')
+        return
+      }
+    }
+    setSourceText(lastSession.trainingText)
+    setTrainingText(lastSession.trainingText)
+    setTransformMode(lastSession.mode)
+    setTypingMode(lastSession.typingMode)
+    setCurrentLesson(null)
+    setStep('typing')
+  }
+
   function pickExample() {
     setSourceText(EXAMPLE_TEXT)
     setInputMethod('example')
@@ -208,6 +238,33 @@ export default function Home() {
         {/* ── HOME ── */}
         {step === 'home' && (
           <div className="space-y-5 relative">
+
+            {/* Kontynuuj — tylko dla powracających użytkowników */}
+            {lastSession && (() => {
+              const lessonTitle = lastSession.lessonId != null
+                ? (lessons.find(l => l.id === lastSession.lessonId)?.title ?? `Lekcja ${lastSession.lessonId}`)
+                : 'Twój ostatni tekst'
+              const dateStr = new Date(lastSession.createdAt).toLocaleDateString('pl-PL', { day: 'numeric', month: 'short' })
+              return (
+                <button
+                  onClick={handleContinue}
+                  className="animate-fade-up w-full flex items-center gap-4 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white rounded-2xl px-6 py-5 text-left transition-all duration-200 hover:shadow-xl hover:shadow-[var(--accent-600)]/30 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none group"
+                  style={{ animationDelay: '0ms' }}
+                >
+                  <div className="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center shrink-0 text-xl group-hover:scale-110 transition-transform duration-200">
+                    ▶
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[10px] font-bold uppercase tracking-widest opacity-65 mb-0.5">Kontynuuj gdzie skończyłeś</p>
+                    <p className="text-base font-bold leading-tight truncate">{lessonTitle}</p>
+                    <p className="text-xs opacity-60 mt-0.5">
+                      {lastSession.stats.wpm} WPM · {lastSession.stats.accuracy}% · {dateStr}
+                    </p>
+                  </div>
+                  <span className="shrink-0 text-2xl opacity-70 group-hover:translate-x-1 transition-transform duration-200">→</span>
+                </button>
+              )
+            })()}
 
             {/* Invisible cat trail — łapki pojawiają się sekwencyjnie */}
             {[
@@ -239,7 +296,7 @@ export default function Home() {
             {/* Big Logo / Brand */}
             <div
               className="animate-fade-up relative overflow-hidden rounded-3xl border border-[var(--accent-100)] dark:border-[var(--accent-600)]/20 bg-gradient-to-br from-[var(--accent-50)] via-white to-white dark:from-[var(--accent-600)]/10 dark:via-[#111] dark:to-[#0d0d0d] px-10 py-10"
-              style={{ animationDelay: '0ms' }}
+              style={{ animationDelay: '60ms' }}
             >
               {/* Decorative keyboard rows */}
               <div className="absolute right-4 top-0 bottom-0 flex flex-col justify-center gap-2 opacity-[0.07] dark:opacity-[0.10] pointer-events-none select-none" aria-hidden>
@@ -295,7 +352,7 @@ export default function Home() {
                   key={item.id}
                   onClick={item.action}
                   className="animate-fade-up w-full flex items-center gap-5 bg-white dark:bg-[#161616] hover:bg-[var(--accent-50)]/60 dark:hover:bg-[#1d1d1d] border border-gray-200 dark:border-[#242424] hover:border-[var(--accent-300)] dark:hover:border-[var(--accent-600)]/40 rounded-2xl px-6 py-5 text-left transition-all duration-200 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/30 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none group"
-                  style={{ animationDelay: `${80 + i * 70}ms` }}
+                  style={{ animationDelay: `${140 + i * 70}ms` }}
                 >
                   <span className="text-3xl shrink-0 group-hover:scale-110 transition-transform duration-200">{item.icon}</span>
                   <div className="flex-1 min-w-0">
@@ -311,28 +368,27 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Feature chips — klikalne skróty */}
+            {/* Odkryj — ciche linki, nie pitch deck */}
             <div
-              className="animate-fade-up flex flex-wrap gap-2"
-              style={{ animationDelay: '310ms' }}
+              className="animate-fade-up flex flex-wrap gap-x-4 gap-y-1.5 px-1"
+              style={{ animationDelay: '360ms' }}
             >
               {([
-                { label: '100+ lekcji',          icon: '📚', action: () => router.push('/lessons') },
-                { label: 'Blind Flow',            icon: '🙈', action: () => router.push('/lessons') },
-                { label: 'Whisper AI',            icon: '🎙️', action: () => { setInputMethod('voice'); setStep('input') } },
-                { label: 'Wirtualna klawiatura',  icon: '⌨️', action: () => { setInputMethod('paste'); setStep('input') } },
-                { label: 'Odznaki',               icon: '🏅', action: () => router.push('/badges') },
-                { label: 'Analiza błędów',        icon: '📊', action: () => router.push('/history') },
+                { label: '100+ lekcji',         icon: '📚', action: () => router.push('/lessons') },
+                { label: 'Blind Flow',           icon: '🙈', action: () => router.push('/lessons') },
+                { label: 'Nagraj głosem',        icon: '🎙️', action: () => { setInputMethod('voice'); setStep('input') } },
+                { label: 'Odznaki',              icon: '🏅', action: () => router.push('/badges') },
+                { label: 'Historia',             icon: '📊', action: () => router.push('/history') },
               ] as { label: string; icon: string; action: () => void }[]).map(feat => (
                 <button
                   key={feat.label}
                   onClick={feat.action}
-                  className="flex items-center gap-1.5 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#252525] rounded-full px-3.5 py-2 hover:bg-[var(--accent-50)] dark:hover:bg-[var(--accent-600)]/15 hover:border-[var(--accent-200)] dark:hover:border-[var(--accent-600)]/40 hover:text-[var(--accent-600)] dark:hover:text-[var(--accent-400)] hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 transition-all duration-150"
+                  className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-600 hover:text-[var(--accent-500)] dark:hover:text-[var(--accent-400)] transition-colors duration-150"
                 >
-                  <span className="text-[14px] leading-none">{feat.icon}</span>{feat.label}
+                  <span className="text-[11px]">{feat.icon}</span>{feat.label}
                 </button>
               ))}
-              <span className="text-gray-300 dark:text-gray-700 self-center ml-1 select-none text-sm">🐾</span>
+              <span className="text-gray-300 dark:text-gray-700 text-xs select-none">🐾</span>
             </div>
 
           </div>
