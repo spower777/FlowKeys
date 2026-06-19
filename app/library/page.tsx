@@ -75,8 +75,8 @@ function LibraryForm({ initialTitle = '', initialText = '', initialTags = [], in
           type="text"
           value={title}
           onChange={e => setTitle(e.target.value)}
-          placeholder="Np. Wspomnienie z Chorwacji, Moja afirmacja poranná..."
-          className="w-full bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-xl px-4 py-3 text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition"
+          placeholder="Np. Wspomnienie z Chorwacji, Moja afirmacja poranna..."
+          className="w-full bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-xl px-4 py-3 text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--accent-400)] focus:border-transparent transition"
         />
       </div>
 
@@ -87,7 +87,7 @@ function LibraryForm({ initialTitle = '', initialText = '', initialTags = [], in
           onChange={e => setText(e.target.value)}
           placeholder="Wklej tekst, który chcesz ćwiczyć... Notatka, wspomnienie, fragment książki, modlitwa, afirmacja."
           rows={8}
-          className="w-full bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-xl px-4 py-3 text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition resize-y leading-relaxed"
+          className="w-full bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-xl px-4 py-3 text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--accent-400)] focus:border-transparent transition resize-y leading-relaxed"
         />
         <p className="text-[10px] text-gray-400 dark:text-gray-600 mt-1">
           {wordCount} {plural(wordCount, 'słowo', 'słowa', 'słów')} · {text.length} znaków
@@ -109,8 +109,8 @@ function LibraryForm({ initialTitle = '', initialText = '', initialTags = [], in
               onClick={() => setMood(prev => prev === m ? '' : m)}
               className={`text-xs px-3 py-1.5 rounded-full border transition ${
                 mood === m
-                  ? 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border-violet-300 dark:border-violet-500/40'
-                  : 'bg-white dark:bg-[#161616] text-gray-500 dark:text-gray-500 border-gray-200 dark:border-[#2a2a2a] hover:border-violet-300 dark:hover:border-violet-500/30'
+                  ? 'bg-[var(--accent-100)] dark:bg-[var(--accent-600)]/20 text-[var(--accent-600)] dark:text-[var(--accent-400)] border-[var(--accent-200)] dark:border-[var(--accent-500)]/40'
+                  : 'bg-white dark:bg-[#161616] text-gray-500 dark:text-gray-500 border-gray-200 dark:border-[#2a2a2a] hover:border-[var(--accent-400)] dark:hover:border-[var(--accent-500)]/30'
               }`}
             >
               {MOOD_EMOJI[m]} {m}
@@ -129,8 +129,8 @@ function LibraryForm({ initialTitle = '', initialText = '', initialTags = [], in
               onClick={() => toggleTag(tag)}
               className={`text-xs px-3 py-1.5 rounded-full border transition ${
                 tags.includes(tag)
-                  ? 'bg-[var(--accent-100)] dark:bg-[var(--accent-600)]/20 text-[var(--accent-600)] dark:text-[var(--accent-300)] border-[var(--accent-300)] dark:border-[var(--accent-500)]/40'
-                  : 'bg-white dark:bg-[#161616] text-gray-500 dark:text-gray-500 border-gray-200 dark:border-[#2a2a2a] hover:border-[var(--accent-300)] dark:hover:border-[var(--accent-500)]/30'
+                  ? 'bg-[var(--accent-100)] dark:bg-[var(--accent-600)]/20 text-[var(--accent-600)] dark:text-[var(--accent-400)] border-[var(--accent-200)] dark:border-[var(--accent-500)]/40'
+                  : 'bg-white dark:bg-[#161616] text-gray-500 dark:text-gray-500 border-gray-200 dark:border-[#2a2a2a] hover:border-[var(--accent-400)] dark:hover:border-[var(--accent-500)]/30'
               }`}
             >
               {TAG_EMOJI[tag]} {tag}
@@ -150,7 +150,7 @@ function LibraryForm({ initialTitle = '', initialText = '', initialTags = [], in
         <button
           onClick={() => onSave({ title, text, tags, mood }, true)}
           disabled={!valid}
-          className="flex-1 py-3 bg-violet-500 hover:bg-violet-600 text-white text-sm font-bold rounded-xl transition hover:shadow-lg hover:shadow-violet-500/20 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex-1 py-3 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white text-sm font-bold rounded-xl transition hover:shadow-lg hover:shadow-[var(--accent-500)]/20 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Zapisz i ćwicz →
         </button>
@@ -159,7 +159,7 @@ function LibraryForm({ initialTitle = '', initialText = '', initialTags = [], in
   )
 }
 
-// ── Text Card ─────────────────────────────────────────────────────────────────
+// ── Text Card (Grid view) ─────────────────────────────────────────────────────
 
 function TextCard({
   text,
@@ -180,7 +180,7 @@ function TextCard({
     : (text.lastPracticedAt ? 'Kontynuuj →' : 'Ćwicz →')
 
   return (
-    <div className="group bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] hover:border-violet-300 dark:hover:border-violet-500/30 rounded-2xl p-5 transition-all duration-200 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/30 hover:-translate-y-0.5 flex flex-col">
+    <div className="group bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] hover:border-[var(--accent-400)] dark:hover:border-[var(--accent-500)]/30 rounded-2xl p-5 transition-all duration-200 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/30 hover:-translate-y-0.5 flex flex-col">
       {/* Header */}
       <div className="flex items-start justify-between gap-2 mb-2">
         <p className="text-sm font-bold text-gray-800 dark:text-gray-200 leading-snug flex-1 min-w-0">{text.title}</p>
@@ -206,7 +206,7 @@ function TextCard({
       {(text.mood || text.tags.length > 0) && (
         <div className="flex flex-wrap gap-1.5 mb-3">
           {text.mood && (
-            <span className="text-[9px] px-2 py-0.5 rounded-full bg-violet-100 dark:bg-violet-500/15 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-500/20">
+            <span className="text-[9px] px-2 py-0.5 rounded-full bg-[var(--accent-100)] dark:bg-[var(--accent-500)]/15 text-[var(--accent-600)] dark:text-[var(--accent-400)] border border-[var(--accent-200)] dark:border-[var(--accent-500)]/20">
               {MOOD_EMOJI[text.mood]} {text.mood}
             </span>
           )}
@@ -232,10 +232,10 @@ function TextCard({
       <div className="flex items-center gap-3 text-[10px] text-gray-400 dark:text-gray-600 mb-3">
         <span>{text.practiceCount} {plural(text.practiceCount, 'runda', 'rundy', 'rund')}</span>
         {text.bestWpm != null && (
-          <span className="text-blue-500 dark:text-blue-400 font-semibold">{text.bestWpm} WPM best</span>
+          <span className="text-[var(--accent-600)] dark:text-[var(--accent-400)] font-semibold">{text.bestWpm} WPM best</span>
         )}
         {chunks && (
-          <span className="ml-auto text-violet-500 dark:text-violet-400 font-medium">
+          <span className="ml-auto text-[var(--accent-500)] dark:text-[var(--accent-400)] font-medium">
             {allDone ? `✓ ${chunks.length} fragmentów` : `${nextChunk}/${chunks.length} fragmentów`}
           </span>
         )}
@@ -247,10 +247,70 @@ function TextCard({
       {/* Practice button */}
       <button
         onClick={onPractice}
-        className="w-full py-2.5 bg-violet-50 dark:bg-violet-500/10 hover:bg-violet-100 dark:hover:bg-violet-500/20 text-violet-700 dark:text-violet-400 text-xs font-bold rounded-xl border border-violet-200 dark:border-violet-500/20 transition group-hover:border-violet-300 dark:group-hover:border-violet-500/40"
+        className="w-full py-2.5 bg-[var(--accent-50)] dark:bg-[var(--accent-500)]/10 hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-500)]/20 text-[var(--accent-600)] dark:text-[var(--accent-400)] text-xs font-bold rounded-xl border border-[var(--accent-200)] dark:border-[var(--accent-500)]/20 transition group-hover:border-[var(--accent-400)] dark:group-hover:border-[var(--accent-500)]/40"
       >
         {practiceLabel}
       </button>
+    </div>
+  )
+}
+
+// ── Text Row (List view) ──────────────────────────────────────────────────────
+
+function TextRow({
+  text,
+  onPractice,
+  onEdit,
+  onDelete,
+}: {
+  text: CustomText
+  onPractice: () => void
+  onEdit: () => void
+  onDelete: () => void
+}) {
+  const chunks = text.text.length > CHUNK_THRESHOLD ? splitIntoChunks(text.text) : null
+  const nextChunk = chunks ? Math.min((text.lastChunkIndex ?? -1) + 1, chunks.length - 1) : 0
+  const allDone = chunks ? (text.lastChunkIndex ?? -1) >= chunks.length - 1 : false
+
+  return (
+    <div className="group flex items-center gap-3 bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] hover:border-[var(--accent-400)] dark:hover:border-[var(--accent-500)]/30 rounded-xl px-4 py-3 transition-all duration-200">
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{text.title}</p>
+        <div className="flex items-center gap-2 mt-0.5 text-[10px] text-gray-400 dark:text-gray-600">
+          <span>{text.practiceCount} {plural(text.practiceCount, 'runda', 'rundy', 'rund')}</span>
+          {text.bestWpm != null && (
+            <span className="text-[var(--accent-600)] dark:text-[var(--accent-400)] font-medium">{text.bestWpm} WPM</span>
+          )}
+          {chunks && (
+            <span>{allDone ? `✓ ${chunks.length} fr.` : `${nextChunk + 1}/${chunks.length} fr.`}</span>
+          )}
+          {text.lastPracticedAt && <span className="ml-auto">{formatDate(text.lastPracticedAt)}</span>}
+        </div>
+      </div>
+      <div className="flex items-center gap-1 shrink-0">
+        <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-0.5">
+          <button
+            onClick={onEdit}
+            className="p-1.5 hover:bg-gray-100 dark:hover:bg-[#2a2a2a] rounded-lg transition text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs"
+            title="Edytuj"
+          >
+            ✏️
+          </button>
+          <button
+            onClick={onDelete}
+            className="p-1.5 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition text-gray-400 hover:text-red-500 text-xs"
+            title="Usuń"
+          >
+            🗑
+          </button>
+        </div>
+        <button
+          onClick={onPractice}
+          className="text-xs px-3 py-1.5 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white rounded-lg transition font-medium ml-1"
+        >
+          {chunks && !allDone ? `Fr. ${nextChunk + 1}/${chunks.length} →` : 'Ćwicz →'}
+        </button>
+      </div>
     </div>
   )
 }
@@ -265,6 +325,7 @@ export default function LibraryPage() {
   const [view, setView] = useState<View>('list')
   const [editId, setEditId] = useState<string | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [listMode, setListMode] = useState(false)
 
   useEffect(() => { setTexts(getLibrary()) }, [])
 
@@ -361,43 +422,43 @@ export default function LibraryPage() {
 
         {/* Hero */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-1">
-            <h1 className="text-2xl font-bold">Moja Biblioteka</h1>
-            <button
-              onClick={() => setView('add')}
-              className="flex items-center gap-1.5 bg-violet-500 hover:bg-violet-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition hover:shadow-lg hover:shadow-violet-500/20 active:scale-[0.98]"
-            >
-              + Dodaj tekst
-            </button>
-          </div>
-          <p className="text-sm text-gray-500 dark:text-gray-500 mb-6">Teksty, do których warto wracać.</p>
-
-          {texts.length > 0 && (
-            <div className="grid grid-cols-3 gap-3 mb-5">
-              <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-4 py-4 text-center">
-                <p className="text-3xl font-black text-violet-500 dark:text-violet-400">{texts.length}</p>
-                <p className="text-[10px] text-gray-500 dark:text-gray-500 mt-1">
-                  {plural(texts.length, 'tekst', 'teksty', 'tekstów')}
+          <div className="flex items-start justify-between gap-3 mb-1">
+            <div>
+              <h1 className="text-2xl font-bold">Moja Biblioteka</h1>
+              {texts.length > 0 ? (
+                <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
+                  {texts.length} {plural(texts.length, 'tekst', 'teksty', 'tekstów')}
+                  {totalSessions > 0 ? ` · ${totalSessions} ${plural(totalSessions, 'runda', 'rundy', 'rund')}` : ''}
+                  {bestWpm > 0 ? ` · ${bestWpm} WPM best` : ''}
                 </p>
-              </div>
-              <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-4 py-4 text-center">
-                <p className="text-3xl font-black text-[var(--accent-600)] dark:text-[var(--accent-400)]">{totalSessions}</p>
-                <p className="text-[10px] text-gray-500 dark:text-gray-500 mt-1">
-                  {plural(totalSessions, 'runda', 'rundy', 'rund')}
-                </p>
-              </div>
-              <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-4 py-4 text-center">
-                <p className="text-3xl font-black text-blue-600 dark:text-blue-400">{bestWpm || '—'}</p>
-                <p className="text-[10px] text-gray-500 dark:text-gray-500 mt-1">WPM best</p>
-              </div>
+              ) : (
+                <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">Teksty, do których warto wracać.</p>
+              )}
             </div>
-          )}
+            <div className="flex items-center gap-2 shrink-0">
+              {texts.length > 0 && (
+                <button
+                  onClick={() => setListMode(v => !v)}
+                  title={listMode ? 'Widok kafelków' : 'Widok listy'}
+                  className="w-9 h-9 flex items-center justify-center rounded-xl bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] text-gray-500 hover:text-gray-800 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#252525] transition text-sm"
+                >
+                  {listMode ? '⊞' : '≡'}
+                </button>
+              )}
+              <button
+                onClick={() => setView('add')}
+                className="flex items-center gap-1.5 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white text-xs font-bold px-4 py-2.5 rounded-xl transition hover:shadow-lg hover:shadow-[var(--accent-500)]/20 active:scale-[0.98]"
+              >
+                + Dodaj tekst
+              </button>
+            </div>
+          </div>
 
           {/* Continue */}
           {continueText && continueText.lastPracticedAt && (
             <button
               onClick={() => practice(continueText)}
-              className="w-full flex items-center gap-4 bg-violet-500 hover:bg-violet-600 text-white rounded-2xl px-6 py-5 text-left transition-all hover:shadow-xl hover:shadow-violet-500/25 hover:-translate-y-0.5 active:translate-y-0 group"
+              className="w-full flex items-center gap-4 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white rounded-2xl px-6 py-5 text-left transition-all hover:shadow-xl hover:shadow-[var(--accent-500)]/25 hover:-translate-y-0.5 active:translate-y-0 group mt-5"
             >
               <div className="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center shrink-0 text-xl group-hover:scale-110 transition-transform">▶</div>
               <div className="flex-1 min-w-0">
@@ -433,7 +494,7 @@ export default function LibraryPage() {
             </p>
             <button
               onClick={() => setView('add')}
-              className="animate-fade-up bg-violet-500 hover:bg-violet-600 text-white text-sm font-bold px-6 py-3 rounded-xl transition hover:shadow-lg hover:shadow-violet-500/20 active:scale-[0.98]"
+              className="animate-fade-up bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white text-sm font-bold px-6 py-3 rounded-xl transition hover:shadow-lg hover:shadow-[var(--accent-500)]/20 active:scale-[0.98]"
               style={{ animationDelay: '180ms' }}
             >
               Dodaj pierwszy tekst
@@ -441,30 +502,48 @@ export default function LibraryPage() {
           </div>
         )}
 
-        {/* Grid */}
+        {/* Text grid / list */}
         {texts.length > 0 && (
-          <div className="space-y-4">
+          <div className="space-y-3">
             <p className="text-xs font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-widest">Moje teksty</p>
-            <div className="grid sm:grid-cols-2 gap-3">
-              {texts.map(text => (
-                <TextCard
-                  key={text.id}
-                  text={text}
-                  onPractice={() => practice(text)}
-                  onEdit={() => openEdit(text)}
-                  onDelete={() => setDeleteId(text.id)}
-                />
-              ))}
-
-              {/* Add card */}
-              <button
-                onClick={() => setView('add')}
-                className="border-2 border-dashed border-gray-200 dark:border-[#2a2a2a] hover:border-violet-300 dark:hover:border-violet-500/40 rounded-2xl p-5 flex flex-col items-center justify-center gap-3 text-gray-400 dark:text-gray-600 hover:text-violet-500 dark:hover:text-violet-400 transition-all duration-200 min-h-[180px] group"
-              >
-                <span className="text-4xl leading-none group-hover:scale-110 transition-transform duration-200">+</span>
-                <span className="text-xs font-medium">Dodaj nowy tekst</span>
-              </button>
-            </div>
+            {listMode ? (
+              <div className="space-y-1.5">
+                {texts.map(text => (
+                  <TextRow
+                    key={text.id}
+                    text={text}
+                    onPractice={() => practice(text)}
+                    onEdit={() => openEdit(text)}
+                    onDelete={() => setDeleteId(text.id)}
+                  />
+                ))}
+                <button
+                  onClick={() => setView('add')}
+                  className="w-full text-left px-4 py-3 rounded-xl border border-dashed border-gray-200 dark:border-[#2a2a2a] hover:border-[var(--accent-400)] dark:hover:border-[var(--accent-500)]/40 text-xs text-gray-400 dark:text-gray-600 hover:text-[var(--accent-500)] dark:hover:text-[var(--accent-400)] transition-all"
+                >
+                  + Dodaj nowy tekst
+                </button>
+              </div>
+            ) : (
+              <div className="grid sm:grid-cols-2 gap-3">
+                {texts.map(text => (
+                  <TextCard
+                    key={text.id}
+                    text={text}
+                    onPractice={() => practice(text)}
+                    onEdit={() => openEdit(text)}
+                    onDelete={() => setDeleteId(text.id)}
+                  />
+                ))}
+                <button
+                  onClick={() => setView('add')}
+                  className="border-2 border-dashed border-gray-200 dark:border-[#2a2a2a] hover:border-[var(--accent-400)] dark:hover:border-[var(--accent-500)]/40 rounded-2xl p-5 flex flex-col items-center justify-center gap-3 text-gray-400 dark:text-gray-600 hover:text-[var(--accent-500)] dark:hover:text-[var(--accent-400)] transition-all duration-200 min-h-[180px] group"
+                >
+                  <span className="text-4xl leading-none group-hover:scale-110 transition-transform duration-200">+</span>
+                  <span className="text-xs font-medium">Dodaj nowy tekst</span>
+                </button>
+              </div>
+            )}
           </div>
         )}
 

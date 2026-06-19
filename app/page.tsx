@@ -494,9 +494,16 @@ export default function Home() {
               </button>
               <div className="flex items-center gap-2">
                 <span className="text-[10px] text-gray-400 dark:text-gray-600 select-none">Esc — wyjdź</span>
-                <span className="text-xs text-gray-500 bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] px-3 py-1 rounded-full">
-                  {typingMode === 'normal' ? 'Normal' : typingMode === 'blind' ? 'Blind Flow' : 'No Backspace'}
-                </span>
+                {typingMode === 'blind' && (
+                  <span className="text-xs px-3 py-1 rounded-full border font-medium bg-purple-100 dark:bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-500/25">
+                    🙈 Blind Flow
+                  </span>
+                )}
+                {typingMode === 'no_backspace' && (
+                  <span className="text-xs px-3 py-1 rounded-full border font-medium bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-500/25">
+                    ⌫ No Backspace
+                  </span>
+                )}
               </div>
             </div>
 
