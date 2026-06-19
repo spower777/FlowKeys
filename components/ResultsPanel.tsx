@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import type { TypingStats, TypingMode, TransformMode } from '@/lib/types'
-import { align } from '@/lib/analyzeTyping'
+import type { TypingStats, TypingMode, TransformMode, ReplayEvent } from '@/lib/types'
+import { align, computeCorrectedPositions } from '@/lib/analyzeTyping'
 import { FINGER_LABELS, FINGER_COLORS } from '@/lib/fingerMap'
 
 const MODE_LABEL: Record<TransformMode, string> = {
@@ -95,10 +95,12 @@ function StatCard({ value, label, desc, badge, color }: StatCardProps) {
   )
 }
 
-function DiffView({ trainingText, typedText }: { trainingText: string; typedText: string }) {
+function DiffView({ trainingText, typedText, correctedPositions }: { trainingText: string; typedText: string; correctedPositions?: Set<number> }) {
   const ops = align(trainingText, typedText)
   const highDivergence = trainingText.length > 0 &&
     ops.filter(o => o.op !== 'match').length / Math.min(trainingText.length, typedText.length || 1) > 0.6
+
+  let srcPos = 0
 
   return (
     <div className="space-y-3">
@@ -109,9 +111,21 @@ function DiffView({ trainingText, typedText }: { trainingText: string; typedText
         <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-3">Różnice znak po znaku</p>
         <p className="text-sm leading-8 font-mono break-words whitespace-pre-wrap">
           {ops.map((op, i) => {
-            if (op.op === 'match') return <span key={i} className="text-gray-500 dark:text-gray-500">{op.ch}</span>
+            if (op.op === 'match') {
+              const wasCorrected = correctedPositions?.has(srcPos)
+              srcPos++
+              if (wasCorrected) {
+                return (
+                  <span key={i} className="text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-500/15 px-0.5 rounded" title="poprawione cofnięciem">
+                    {op.ch}
+                  </span>
+                )
+              }
+              return <span key={i} className="text-gray-500 dark:text-gray-500">{op.ch}</span>
+            }
             if (op.op === 'sub') {
               const isPolish = op.expected && op.actual ? isPolishDiacriticLoss(op.expected, op.actual) : false
+              srcPos++
               return (
                 <span
                   key={i}
@@ -126,11 +140,14 @@ function DiffView({ trainingText, typedText }: { trainingText: string; typedText
                 </span>
               )
             }
-            if (op.op === 'del') return (
-              <span key={i} className="text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-500/20 px-0.5 rounded" title="pominięto">
-                {op.expected}
-              </span>
-            )
+            if (op.op === 'del') {
+              srcPos++
+              return (
+                <span key={i} className="text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-500/20 px-0.5 rounded" title="pominięto">
+                  {op.expected}
+                </span>
+              )
+            }
             return (
               <span key={i} className="text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-500/20 px-0.5 rounded" title="dodatkowy znak">
                 {op.actual}
@@ -141,6 +158,7 @@ function DiffView({ trainingText, typedText }: { trainingText: string; typedText
       </div>
       <div className="flex flex-wrap gap-3 text-[10px] text-gray-500">
         <span><span className="text-gray-400">■</span> poprawnie</span>
+        <span><span className="text-violet-500">■</span> poprawione</span>
         <span><span className="text-red-500">■</span> zamiana</span>
         <span><span className="text-orange-500">■</span> zgubiony ogonek</span>
         <span><span className="text-amber-500">■</span> pominięcie</span>
@@ -156,8 +174,9 @@ interface ComparisonProps {
   incomplete: boolean
   charsTyped: number
   isBlind: boolean
+  correctedPositions?: Set<number>
 }
-function ComparisonSection({ trainingText, typedText, incomplete, charsTyped, isBlind }: ComparisonProps) {
+function ComparisonSection({ trainingText, typedText, incomplete, charsTyped, isBlind, correctedPositions }: ComparisonProps) {
   const [diffOpen, setDiffOpen] = useState(isBlind || incomplete)
   const relevantSource = incomplete ? trainingText.slice(0, charsTyped + 40) : trainingText
 
@@ -190,7 +209,7 @@ function ComparisonSection({ trainingText, typedText, incomplete, charsTyped, is
         <span className="ml-auto">{diffOpen ? 'zwiń' : 'rozwiń'}</span>
       </button>
 
-      {diffOpen && <DiffView trainingText={relevantSource} typedText={typedText} />}
+      {diffOpen && <DiffView trainingText={relevantSource} typedText={typedText} correctedPositions={correctedPositions} />}
     </div>
   )
 }
@@ -211,6 +230,7 @@ interface Props {
   earnedStars?: 0 | 1 | 2 | 3
   lessonId?: number
   hasNextLesson?: boolean
+  replayData?: ReplayEvent[]
   onNewRound: () => void
   onRepeat: () => void
   onAction?: (action: SuggestionAction) => void
@@ -218,7 +238,7 @@ interface Props {
 
 export default function ResultsPanel({
   stats, trainingText, typedText, transformMode, typingMode,
-  newBadges, earnedStars, lessonId, hasNextLesson,
+  newBadges, earnedStars, lessonId, hasNextLesson, replayData,
   onNewRound, onRepeat, onAction,
 }: Props) {
   const acc = stats.accuracy
@@ -228,6 +248,9 @@ export default function ResultsPanel({
   const incomplete = stats.completionPercent < 90
   const isBlind = typingMode === 'blind'
   const tier = getTier(acc, calm)
+  const correctedPositions = replayData && replayData.length > 0
+    ? computeCorrectedPositions(trainingText, replayData)
+    : undefined
 
   const hero = isBlind
     ? { ...BLIND_STYLE, label: 'Blind Flow' }
@@ -447,6 +470,7 @@ export default function ResultsPanel({
         incomplete={incomplete}
         charsTyped={stats.charsTyped}
         isBlind={isBlind}
+        correctedPositions={correctedPositions}
       />
 
       {/* ── NEXT STEP ── */}

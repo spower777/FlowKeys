@@ -43,6 +43,7 @@ export default function Home() {
   const [currentLesson, setCurrentLesson] = useState<FlowLesson | null>(null)
   const [newBadges, setNewBadges] = useState<BadgeSummary[]>([])
   const [earnedStars, setEarnedStars] = useState<0|1|2|3>(0)
+  const [lastReplayData, setLastReplayData] = useState<ReplayEvent[]>([])
 
   // Launch lesson from /lessons page via localStorage signal
   useEffect(() => {
@@ -126,6 +127,7 @@ export default function Home() {
     const s = analyzeTyping(trainingText, typed, start, end, backspaceCount)
     setTypedText(typed)
     setStats(s)
+    setLastReplayData(replayData)
     saveSession({
       id: Date.now().toString(),
       createdAt: new Date().toISOString(),
@@ -200,7 +202,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-[#0d0d0d] text-gray-900 dark:text-gray-100">
-      <div className={`mx-auto px-4 ${step === 'results' ? 'max-w-5xl py-10 sm:py-16' : isFocus ? 'max-w-4xl py-6' : 'max-w-3xl py-10 sm:py-16'}`}>
+      <div className={`mx-auto px-4 ${step === 'results' ? 'max-w-5xl py-10 sm:py-16' : isFocus ? 'max-w-4xl py-6' : step === 'home' ? 'max-w-4xl py-10 sm:py-16' : 'max-w-3xl py-10 sm:py-16'}`}>
         {!isFocus && <Header onHomeClick={reset} onSettingsClick={() => setSettingsOpen(true)} />}
 
         {/* ── HOME ── */}
@@ -208,23 +210,28 @@ export default function Home() {
           <div className="space-y-5">
 
             {/* Hero */}
-            <div className="relative overflow-hidden rounded-2xl border border-[var(--accent-100)] dark:border-[var(--accent-600)]/15 bg-gradient-to-br from-[var(--accent-50)] to-white dark:from-[var(--accent-600)]/8 dark:to-[#0d0d0d] px-6 py-8">
+            <div className="relative overflow-hidden rounded-3xl border border-[var(--accent-100)] dark:border-[var(--accent-600)]/20 bg-gradient-to-br from-[var(--accent-50)] via-white to-[var(--accent-50)]/30 dark:from-[var(--accent-600)]/10 dark:via-[#111] dark:to-[#0d0d0d] px-8 py-10">
               {/* Decorative keyboard rows */}
-              <div className="absolute right-2 top-0 bottom-0 flex flex-col justify-center gap-1.5 opacity-[0.06] dark:opacity-[0.09] pointer-events-none select-none" aria-hidden>
+              <div className="absolute right-4 top-0 bottom-0 flex flex-col justify-center gap-2 opacity-[0.07] dark:opacity-[0.10] pointer-events-none select-none" aria-hidden>
                 {['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'].map((row, i) => (
-                  <div key={i} className="flex gap-1" style={{ paddingLeft: `${i * 10}px` }}>
+                  <div key={i} className="flex gap-1.5" style={{ paddingLeft: `${i * 12}px` }}>
                     {row.split('').map(k => (
-                      <span key={k} className="text-[10px] font-mono border border-current rounded px-1 py-px leading-tight">{k}</span>
+                      <span key={k} className="text-[11px] font-mono border border-current rounded-md px-1.5 py-0.5 leading-tight">{k}</span>
                     ))}
                   </div>
                 ))}
               </div>
-              <div className="relative z-10 max-w-xs">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight mb-2">
+              {/* Subtle radial glow */}
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,var(--accent-100),transparent_70%)] dark:bg-[radial-gradient(ellipse_at_30%_50%,var(--accent-600)/12%,transparent_70%)] pointer-events-none" />
+              <div className="relative z-10 max-w-sm">
+                <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--accent-600)] dark:text-[var(--accent-400)] bg-[var(--accent-50)] dark:bg-[var(--accent-600)]/15 border border-[var(--accent-200)] dark:border-[var(--accent-600)]/30 rounded-full px-3 py-1 mb-4">
+                  <span>⌨️</span> Trening na klawiaturze z AI
+                </div>
+                <h1 className="text-3xl font-black text-gray-900 dark:text-gray-100 tracking-tight mb-3 leading-tight">
                   Pisz to, co ważne.
                 </h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                  Zamień własny tekst, wspomnienia i notatki w trening na klawiaturze. Z pomocą AI.
+                <p className="text-base text-gray-500 dark:text-gray-400 leading-relaxed">
+                  Zamień własny tekst, wspomnienia i notatki w&nbsp;trening na klawiaturze. Z pomocą AI.
                 </p>
               </div>
             </div>
@@ -257,23 +264,30 @@ export default function Home() {
                 <button
                   key={item.id}
                   onClick={item.action}
-                  className="w-full flex items-center gap-4 bg-white dark:bg-[#161616] hover:bg-gray-50 dark:hover:bg-[#1c1c1c] border border-gray-200 dark:border-[#242424] hover:border-[var(--accent-200)] dark:hover:border-[var(--accent-600)]/30 rounded-2xl px-5 py-5 text-left transition group"
+                  className="w-full flex items-center gap-5 bg-white dark:bg-[#161616] hover:bg-[var(--accent-50)]/60 dark:hover:bg-[#1d1d1d] border border-gray-200 dark:border-[#242424] hover:border-[var(--accent-300)] dark:hover:border-[var(--accent-600)]/40 rounded-2xl px-6 py-5 text-left transition-all duration-200 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/30 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none group"
                 >
-                  <span className="text-2xl shrink-0">{item.icon}</span>
+                  <span className="text-3xl shrink-0 group-hover:scale-110 transition-transform duration-200">{item.icon}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white transition">{item.label}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{item.sub}</p>
+                    <p className="text-sm font-bold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">{item.label}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">{item.sub}</p>
                   </div>
-                  <span className="text-gray-300 dark:text-gray-700 group-hover:text-[var(--accent-400)] transition shrink-0 text-lg">›</span>
+                  <span className="text-gray-300 dark:text-gray-700 group-hover:text-[var(--accent-400)] group-hover:translate-x-1 transition-all duration-200 shrink-0 text-xl font-light">›</span>
                 </button>
               ))}
             </div>
 
             {/* Feature chips */}
             <div className="flex flex-wrap gap-2 pt-1">
-              {['100+ lekcji', 'Blind Flow', 'Whisper AI', 'Wirtualna klawiatura', 'Odznaki', 'Analiza błędów'].map(feat => (
-                <span key={feat} className="text-[11px] text-gray-400 dark:text-gray-600 bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#252525] rounded-full px-3 py-1">
-                  {feat}
+              {[
+                { label: '100+ lekcji', icon: '📚' },
+                { label: 'Blind Flow', icon: '🙈' },
+                { label: 'Whisper AI', icon: '🎙️' },
+                { label: 'Wirtualna klawiatura', icon: '⌨️' },
+                { label: 'Odznaki', icon: '🏅' },
+                { label: 'Analiza błędów', icon: '📊' },
+              ].map(feat => (
+                <span key={feat.label} className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-500 bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#252525] rounded-full px-3 py-1.5 hover:border-[var(--accent-200)] dark:hover:border-[var(--accent-600)]/30 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-150 cursor-default">
+                  <span className="text-[13px]">{feat.icon}</span>{feat.label}
                 </span>
               ))}
             </div>
@@ -442,6 +456,7 @@ export default function Home() {
             earnedStars={earnedStars}
             lessonId={currentLesson?.id}
             hasNextLesson={!!currentLesson && !!lessons.find(l => l.id === (currentLesson.id + 1))}
+            replayData={lastReplayData}
             onNewRound={reset}
             onRepeat={repeatRound}
             onAction={handleResultAction}

@@ -1,4 +1,4 @@
-import type { TypingStats, CommonMistake } from './types'
+import type { TypingStats, CommonMistake, ReplayEvent } from './types'
 import { charToFinger } from './fingerMap'
 
 const POLISH_CHARS = new Set('ąćęłńóśźżĄĆĘŁŃÓŚŹŻ')
@@ -56,6 +56,25 @@ export function align(source: string, typed: string): AlignOp[] {
   }
 
   return ops
+}
+
+// Reconstructs which source positions had a wrong keystroke at any point during
+// typing, even if the user later backspaced and retyped correctly.
+export function computeCorrectedPositions(rawTrainingText: string, replayData: ReplayEvent[]): Set<number> {
+  const normalized = normalizeDashes(rawTrainingText)
+  const corrected = new Set<number>()
+  let pos = 0
+  for (const event of replayData) {
+    if (event.isBackspace) {
+      if (pos > 0) pos--
+    } else {
+      if (pos < normalized.length && event.char !== normalized[pos]) {
+        corrected.add(pos)
+      }
+      pos++
+    }
+  }
+  return corrected
 }
 
 export function analyzeTyping(
