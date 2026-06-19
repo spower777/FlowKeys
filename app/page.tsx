@@ -207,10 +207,10 @@ export default function Home() {
 
         {/* ── HOME ── */}
         {step === 'home' && (
-          <div className="space-y-5">
+          <div className="space-y-6">
 
-            {/* Hero */}
-            <div className="relative overflow-hidden rounded-3xl border border-[var(--accent-100)] dark:border-[var(--accent-600)]/20 bg-gradient-to-br from-[var(--accent-50)] via-white to-[var(--accent-50)]/30 dark:from-[var(--accent-600)]/10 dark:via-[#111] dark:to-[#0d0d0d] px-8 py-10">
+            {/* Big Logo / Brand */}
+            <div className="relative overflow-hidden rounded-3xl border border-[var(--accent-100)] dark:border-[var(--accent-600)]/20 bg-gradient-to-br from-[var(--accent-50)] via-white to-white dark:from-[var(--accent-600)]/10 dark:via-[#111] dark:to-[#0d0d0d] px-10 py-10">
               {/* Decorative keyboard rows */}
               <div className="absolute right-4 top-0 bottom-0 flex flex-col justify-center gap-2 opacity-[0.07] dark:opacity-[0.10] pointer-events-none select-none" aria-hidden>
                 {['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'].map((row, i) => (
@@ -221,16 +221,15 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-              {/* Subtle radial glow */}
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,var(--accent-100),transparent_70%)] dark:bg-[radial-gradient(ellipse_at_30%_50%,var(--accent-600)/12%,transparent_70%)] pointer-events-none" />
-              <div className="relative z-10 max-w-sm">
-                <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--accent-600)] dark:text-[var(--accent-400)] bg-[var(--accent-50)] dark:bg-[var(--accent-600)]/15 border border-[var(--accent-200)] dark:border-[var(--accent-600)]/30 rounded-full px-3 py-1 mb-4">
-                  <span>⌨️</span> Trening na klawiaturze z AI
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_60%,var(--accent-100),transparent_65%)] dark:bg-[radial-gradient(ellipse_at_20%_60%,var(--accent-600)/12%,transparent_65%)] pointer-events-none" />
+              <div className="relative z-10">
+                <div className="flex items-center gap-4 mb-4">
+                  <span className="text-5xl">⌨️</span>
+                  <h1 className="text-5xl font-black tracking-tight text-gray-900 dark:text-gray-100 leading-none">
+                    FlowKeys
+                  </h1>
                 </div>
-                <h1 className="text-3xl font-black text-gray-900 dark:text-gray-100 tracking-tight mb-3 leading-tight">
-                  Pisz to, co ważne.
-                </h1>
-                <p className="text-base text-gray-500 dark:text-gray-400 leading-relaxed">
+                <p className="text-base text-gray-500 dark:text-gray-400 leading-relaxed max-w-sm">
                   Zamień własny tekst, wspomnienia i notatki w&nbsp;trening na klawiaturze. Z pomocą AI.
                 </p>
               </div>
@@ -276,19 +275,23 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Feature chips */}
-            <div className="flex flex-wrap gap-2 pt-1">
-              {[
-                { label: '100+ lekcji', icon: '📚' },
-                { label: 'Blind Flow', icon: '🙈' },
-                { label: 'Whisper AI', icon: '🎙️' },
-                { label: 'Wirtualna klawiatura', icon: '⌨️' },
-                { label: 'Odznaki', icon: '🏅' },
-                { label: 'Analiza błędów', icon: '📊' },
-              ].map(feat => (
-                <span key={feat.label} className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-500 bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#252525] rounded-full px-3 py-1.5 hover:border-[var(--accent-200)] dark:hover:border-[var(--accent-600)]/30 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-150 cursor-default">
-                  <span className="text-[13px]">{feat.icon}</span>{feat.label}
-                </span>
+            {/* Feature chips — klikalne skróty */}
+            <div className="flex flex-wrap gap-2">
+              {([
+                { label: '100+ lekcji',       icon: '📚', action: () => router.push('/lessons') },
+                { label: 'Blind Flow',         icon: '🙈', action: () => router.push('/lessons') },
+                { label: 'Whisper AI',         icon: '🎙️', action: () => { setInputMethod('voice'); setStep('input') } },
+                { label: 'Wirtualna klawiatura', icon: '⌨️', action: () => { setInputMethod('paste'); setStep('input') } },
+                { label: 'Odznaki',            icon: '🏅', action: () => router.push('/badges') },
+                { label: 'Analiza błędów',     icon: '📊', action: () => router.push('/history') },
+              ] as { label: string; icon: string; action: () => void }[]).map(feat => (
+                <button
+                  key={feat.label}
+                  onClick={feat.action}
+                  className="flex items-center gap-1.5 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#252525] rounded-full px-3.5 py-2 hover:bg-[var(--accent-50)] dark:hover:bg-[var(--accent-600)]/15 hover:border-[var(--accent-200)] dark:hover:border-[var(--accent-600)]/40 hover:text-[var(--accent-600)] dark:hover:text-[var(--accent-400)] hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 transition-all duration-150 cursor-pointer"
+                >
+                  <span className="text-[14px] leading-none">{feat.icon}</span>{feat.label}
+                </button>
               ))}
             </div>
 
