@@ -7,11 +7,13 @@ import LessonTile from '@/components/LessonTile'
 import { lessons } from '@/data/lessons'
 import { chapters } from '@/data/chapters'
 import { PACK_GROUPS, DEFAULT_PACK_GROUPS, getPacksForGroups, type PackGroupId } from '@/data/packGroups'
+import type { FlowLesson } from '@/data/lessons'
 import { getAllLessonProgress, getLessonStatus, calculateStreak } from '@/lib/lessonProgress'
 import { loadSettings } from '@/lib/settings'
 import type { LessonProgress, LessonStatus } from '@/lib/lessonProgress'
 import { getSessions } from '@/lib/storage'
 import type { TypingMode } from '@/lib/types'
+import type { LessonPack } from '@/data/lessons'
 
 export default function LessonsPage() {
   const router = useRouter()
@@ -20,6 +22,9 @@ export default function LessonsPage() {
   const [mounted, setMounted] = useState(false)
   const [activeGroups, setActiveGroups] = useState<PackGroupId[]>(DEFAULT_PACK_GROUPS)
   const [sessionCounts, setSessionCounts] = useState({ blind: 0, noBackspace: 0 })
+  const [recommendation, setRecommendation] = useState<{
+    lesson: FlowLesson; mode?: TypingMode; label: string; desc: string
+  } | null>(null)
 
   useEffect(() => {
     const s = loadSettings()
@@ -32,6 +37,19 @@ export default function LessonsPage() {
       blind: sessions.filter(s => s.typingMode === 'blind' && s.stats.completionPercent >= 90).length,
       noBackspace: sessions.filter(s => s.typingMode === 'no_backspace' && s.stats.completionPercent >= 90).length,
     })
+    // Polecane dziś — na podstawie ostatniej sesji
+    const last = sessions[0]
+    if (last?.lessonId) {
+      const lastLsn = lessons.find(l => l.id === last.lessonId) ?? null
+      const acc = last.stats.accuracy
+      const bs = last.stats.backspaceCount ?? 0
+      const mode = last.typingMode
+      if (mode === 'normal' && acc >= 88 && lastLsn) {
+        setRecommendation({ lesson: lastLsn, mode: 'blind', label: 'Spróbuj Blind Flow', desc: `„${lastLsn.title}" — pisz z pamięci` })
+      } else if (mode === 'normal' && bs > 12 && lastLsn) {
+        setRecommendation({ lesson: lastLsn, mode: 'no_backspace', label: 'No Backspace', desc: `„${lastLsn.title}" — bez cofania` })
+      }
+    }
     setMounted(true)
   }, [])
 
@@ -74,58 +92,25 @@ export default function LessonsPage() {
     ? lessons.find(l => l.id === lastPracticedEntry.lessonId && activePacks.has(l.pack))
     : null
 
-  // Ścieżki
-  const lastCompletedLesson = mounted
-    ? (Object.entries(progress)
-        .filter(([, p]) => p.completed)
-        .sort((a, b) => (b[1].lastAttemptAt ?? '').localeCompare(a[1].lastAttemptAt ?? ''))
-        .map(([id]) => lessons.find(l => l.id === Number(id)))
-        .find(Boolean) ?? nextLesson)
-    : null
-  const polishLessons = lessons.filter(l => l.pack === 'polishSigns')
-  const polishCompleted = polishLessons.filter(l => progress[l.id]?.completed).length
-  const nextPolishLesson = mounted
-    ? (polishLessons.find(l => !progress[l.id]?.completed) ?? null)
-    : null
-
-  const paths = [
-    {
-      id: 'normal', icon: '📚', label: 'Lekcje', mode: undefined as TypingMode | undefined,
-      desc: mounted ? `${completedCount} / ${visibleTotal} ukończonych` : '—',
-      cta: nextLesson ? 'Kontynuuj →' : 'Wszystkie zaliczone',
-      lesson: nextLesson,
-      card: 'bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20',
-      text: 'text-blue-700 dark:text-blue-400',
-      btn: 'bg-blue-500 hover:bg-blue-600',
-    },
-    {
-      id: 'blind', icon: '🙈', label: 'Blind Flow', mode: 'blind' as TypingMode,
-      desc: mounted ? (sessionCounts.blind > 0 ? `${sessionCounts.blind} sesji blind` : 'Jeszcze nie próbowałeś') : '—',
-      cta: 'Trenuj →',
-      lesson: lastCompletedLesson,
-      card: 'bg-purple-50 dark:bg-purple-500/10 border-purple-200 dark:border-purple-500/20',
-      text: 'text-purple-700 dark:text-purple-400',
-      btn: 'bg-purple-500 hover:bg-purple-600',
-    },
-    {
-      id: 'no_backspace', icon: '⌫', label: 'No Backspace', mode: 'no_backspace' as TypingMode,
-      desc: mounted ? (sessionCounts.noBackspace > 0 ? `${sessionCounts.noBackspace} sesji` : 'Jeszcze nie próbowałeś') : '—',
-      cta: 'Zacznij →',
-      lesson: nextLesson,
-      card: 'bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/20',
-      text: 'text-amber-700 dark:text-amber-400',
-      btn: 'bg-amber-500 hover:bg-amber-600',
-    },
-    {
-      id: 'polish', icon: '🇵🇱', label: 'Polskie znaki', mode: undefined as TypingMode | undefined,
-      desc: mounted ? `${polishCompleted} / ${polishLessons.length} ukończonych` : '—',
-      cta: nextPolishLesson ? 'Ćwicz →' : 'Zaliczone!',
-      lesson: nextPolishLesson,
-      card: 'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20',
-      text: 'text-red-700 dark:text-red-400',
-      btn: 'bg-red-500 hover:bg-red-600',
-    },
+  // 8 ścieżek treningowych
+  const PATH_DEFS: { id: string; icon: string; label: string; packs: LessonPack[]; modeOverride?: TypingMode; isCustom?: boolean; color: string; text: string; btn: string }[] = [
+    { id: 'start',    icon: '📘', label: 'Start',          packs: ['start'],                                      color: 'bg-sky-50 dark:bg-sky-500/10 border-sky-200 dark:border-sky-500/20',         text: 'text-sky-700 dark:text-sky-400',     btn: 'bg-sky-500 hover:bg-sky-600' },
+    { id: 'fluency',  icon: '🌊', label: 'Płynność',       packs: ['mastery', 'motivation', 'mindfulness'],       color: 'bg-teal-50 dark:bg-teal-500/10 border-teal-200 dark:border-teal-500/20',     text: 'text-teal-700 dark:text-teal-400',   btn: 'bg-teal-500 hover:bg-teal-600' },
+    { id: 'polish',   icon: '🇵🇱', label: 'Polskie znaki', packs: ['polishSigns'],                                color: 'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20',         text: 'text-red-700 dark:text-red-400',     btn: 'bg-red-500 hover:bg-red-600' },
+    { id: 'no_bs',    icon: '⌫',  label: 'No Backspace',   packs: ['noBackspace'],  modeOverride: 'no_backspace', color: 'bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/20', text: 'text-amber-700 dark:text-amber-400', btn: 'bg-amber-500 hover:bg-amber-600' },
+    { id: 'blind',    icon: '🙈', label: 'Blind Flow',     packs: ['blindFlow'],    modeOverride: 'blind',        color: 'bg-purple-50 dark:bg-purple-500/10 border-purple-200 dark:border-purple-500/20', text: 'text-purple-700 dark:text-purple-400', btn: 'bg-purple-500 hover:bg-purple-600' },
+    { id: 'jade',     icon: '🍃', label: 'Jade Path',      packs: ['jadePath'],                                   color: 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20', text: 'text-emerald-700 dark:text-emerald-400', btn: 'bg-emerald-500 hover:bg-emerald-600' },
+    { id: 'gaming',   icon: '🎮', label: 'Gaming Flow',    packs: ['gaming'],                                     color: 'bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20',     text: 'text-blue-700 dark:text-blue-400',   btn: 'bg-blue-500 hover:bg-blue-600' },
+    { id: 'own',      icon: '✍️', label: 'Własne teksty',  packs: [], isCustom: true,                             color: 'bg-gray-50 dark:bg-[#1a1a1a] border-gray-200 dark:border-[#2a2a2a]',         text: 'text-gray-700 dark:text-gray-400',   btn: 'bg-gray-500 hover:bg-gray-600' },
   ]
+
+  const pathData = PATH_DEFS.map(def => {
+    if (def.isCustom) return { ...def, total: 0, done: 0, next: null as FlowLesson | null }
+    const pl = lessons.filter(l => def.packs.includes(l.pack))
+    const done = pl.filter(l => progress[l.id]?.completed).length
+    const next = pl.find(l => !progress[l.id]?.completed) ?? null
+    return { ...def, total: pl.length, done, next }
+  })
 
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-[#0d0d0d] text-gray-900 dark:text-gray-100">
@@ -134,33 +119,77 @@ export default function LessonsPage() {
 
         {/* Hero */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-1">Ścieżka FlowKeys</h1>
+          <h1 className="text-2xl font-bold mb-1">Lekcje</h1>
           <p className="text-sm text-gray-500 dark:text-gray-500 mb-6">
             Każda lekcja to jeden krok. Nie ścig — rytm.
           </p>
 
-          {/* Ścieżki treningowe */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-            {paths.map(path => (
+          {/* Dashboard: Kontynuuj + Polecane dziś */}
+          {mounted && (
+            <div className={`grid gap-3 mb-6 ${recommendation ? 'grid-cols-2' : 'grid-cols-1'}`}>
+              {nextLesson && (
+                <div className="bg-[var(--accent-500)] text-white rounded-2xl px-5 py-4 flex items-center gap-4">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[10px] font-bold uppercase tracking-widest opacity-65 mb-0.5">Kontynuuj ścieżkę</p>
+                    <p className="text-sm font-bold truncate">{nextLesson.title}</p>
+                    <p className="text-xs opacity-60 mt-0.5 font-mono">{String(nextLesson.id).padStart(3,'0')}</p>
+                  </div>
+                  <button
+                    onClick={() => startLesson(nextLesson.id)}
+                    className="shrink-0 bg-white/20 hover:bg-white/30 text-white text-xs font-bold px-4 py-2 rounded-xl transition active:scale-95"
+                  >
+                    Start →
+                  </button>
+                </div>
+              )}
+              {recommendation && (
+                <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-5 py-4 flex items-center gap-4">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-600 mb-0.5">Polecane dziś</p>
+                    <p className="text-sm font-bold text-gray-800 dark:text-gray-200 truncate">{recommendation.label}</p>
+                    <p className="text-xs text-gray-500 mt-0.5 truncate">{recommendation.desc}</p>
+                  </div>
+                  <button
+                    onClick={() => startLesson(recommendation.lesson.id, recommendation.mode)}
+                    className="shrink-0 bg-gray-900 dark:bg-white hover:bg-gray-700 dark:hover:bg-gray-200 text-white dark:text-gray-900 text-xs font-bold px-4 py-2 rounded-xl transition active:scale-95"
+                  >
+                    Zacznij →
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 8 ścieżek treningowych */}
+          <div className="mb-2">
+            <p className="text-[10px] text-gray-400 dark:text-gray-600 uppercase tracking-widest mb-3">Ścieżki treningowe</p>
+          </div>
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 mb-6 snap-x">
+            {pathData.map(path => (
               <div
                 key={path.id}
-                className={`flex flex-col gap-2 border rounded-2xl px-4 py-4 ${path.card}`}
+                className={`flex-none w-36 flex flex-col gap-2 border rounded-2xl px-3.5 py-3.5 snap-start ${path.color}`}
               >
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">{path.icon}</span>
-                  <span className={`text-xs font-bold ${path.text}`}>{path.label}</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-lg leading-none">{path.icon}</span>
+                  <span className={`text-[11px] font-bold leading-tight ${path.text}`}>{path.label}</span>
                 </div>
-                <p className="text-[11px] text-gray-500 dark:text-gray-500 leading-tight flex-1">{path.desc}</p>
+                <p className="text-[10px] text-gray-500 dark:text-gray-500 leading-tight flex-1">
+                  {path.isCustom ? 'Wklej swój tekst' : mounted ? `${path.done} / ${path.total}` : '—'}
+                </p>
                 <button
-                  onClick={() => path.lesson && startLesson(path.lesson.id, path.mode)}
-                  disabled={!path.lesson}
-                  className={`text-xs font-semibold text-white px-3 py-1.5 rounded-xl transition-all ${
-                    path.lesson
+                  onClick={() => {
+                    if (path.isCustom) { router.push('/') }
+                    else if (path.next) startLesson(path.next.id, path.modeOverride)
+                  }}
+                  disabled={!path.isCustom && !path.next}
+                  className={`text-[11px] font-semibold text-white px-2.5 py-1.5 rounded-lg transition-all ${
+                    (path.isCustom || path.next)
                       ? `${path.btn} hover:shadow-md active:scale-95`
-                      : 'bg-gray-300 dark:bg-gray-700 cursor-not-allowed opacity-50'
+                      : 'bg-gray-300 dark:bg-gray-700 cursor-not-allowed opacity-40'
                   }`}
                 >
-                  {path.cta}
+                  {path.isCustom ? 'Wklej →' : path.next ? 'Start →' : 'Gotowe ✓'}
                 </button>
               </div>
             ))}
@@ -181,40 +210,13 @@ export default function LessonsPage() {
             ))}
           </div>
 
-          {/* Next lesson CTA */}
-          {mounted && nextLesson && (
-            <div className="bg-white dark:bg-[#161616] border border-[var(--accent-200)] dark:border-[var(--accent-500)]/25 rounded-2xl px-5 py-4 flex items-center gap-4">
-              <div className="flex-1 min-w-0">
-                <p className="text-[10px] text-[var(--accent-600)] dark:text-[var(--accent-400)] font-semibold uppercase tracking-widest mb-0.5">
-                  {lastLesson ? 'Kontynuuj' : 'Zacznij tutaj'}
-                </p>
-                <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                  <span className="font-mono text-gray-400 dark:text-gray-600 mr-2">{String(nextLesson.id).padStart(3, '0')}</span>
-                  {nextLesson.title}
-                </p>
-                {nextLesson.subtitle && (
-                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 italic">{nextLesson.subtitle}</p>
-                )}
-              </div>
-              <button
-                onClick={() => startLesson(nextLesson.id)}
-                className="shrink-0 px-5 py-2.5 bg-[var(--accent-500)] hover:bg-[var(--accent-400)] text-white text-sm font-semibold rounded-xl transition"
-              >
-                Start →
-              </button>
-            </div>
-          )}
-
-          {/* Last practiced */}
+          {/* Ostatnio ćwiczone (jeśli inne niż następna) */}
           {mounted && lastLesson && lastLesson.id !== nextLesson?.id && (
-            <div className="mt-3 flex items-center gap-3 px-5 py-3 bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl">
-              <span className="text-[10px] text-gray-400 dark:text-gray-600">Ostatnio ćwiczyłeś</span>
+            <div className="mt-3 flex items-center gap-3 px-4 py-2.5 bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-xl">
+              <span className="text-[10px] text-gray-400 dark:text-gray-600">Ostatnio</span>
               <span className="font-mono text-xs text-gray-400 dark:text-gray-600">{String(lastLesson.id).padStart(3, '0')}</span>
-              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{lastLesson.title}</span>
-              <button
-                onClick={() => startLesson(lastLesson.id)}
-                className="ml-auto text-xs text-[var(--accent-600)] dark:text-[var(--accent-400)] hover:underline"
-              >
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400 flex-1 truncate">{lastLesson.title}</span>
+              <button onClick={() => startLesson(lastLesson.id)} className="text-xs text-[var(--accent-600)] dark:text-[var(--accent-400)] hover:underline shrink-0">
                 Powtórz
               </button>
             </div>
