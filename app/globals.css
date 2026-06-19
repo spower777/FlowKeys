@@ -77,6 +77,12 @@ body {
 .animate-fade-up { animation: fadeInUp 0.5s ease-out both; }
 .animate-paw-pop { animation: pawPop 0.25s ease-out both; }
 
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee { animation: marquee 40s linear infinite; }
+
 /* ── Cat paw cursor ─────────────────────────────────────────────────────────── */
 html {
   cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><text y='28' font-size='26'>🐾</text></svg>") 0 0, auto;

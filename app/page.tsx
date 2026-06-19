@@ -22,6 +22,7 @@ import type { TransformMode, TypingMode, TypingStats, ReplayEvent, TypingSession
 import type { Settings } from '@/lib/settings'
 import type { FlowLesson, LessonMode } from '@/data/lessons'
 import type { BadgeSummary } from '@/components/ResultsPanel'
+import MarqueeBanner from '@/components/MarqueeBanner'
 
 type Step = 'home' | 'input' | 'transform' | 'preview' | 'typing' | 'results'
 type InputMethod = 'paste' | 'voice' | 'example'
@@ -298,7 +299,36 @@ export default function Home() {
 
         {/* ── HOME ── */}
         {step === 'home' && (
-          <div className="space-y-3">
+          <div className="space-y-3 relative">
+
+            {/* Invisible cat trail */}
+            {[
+              { top: '4%',   right: '9%',  left: undefined, rot: -14, delay: 250  },
+              { top: '10%',  right: '3%',  left: undefined, rot: 22,  delay: 480  },
+              { top: '17%',  right: '13%', left: undefined, rot: -8,  delay: 710  },
+              { top: '23%',  right: undefined, left: '4%',  rot: 18,  delay: 940  },
+              { top: '30%',  right: undefined, left: '10%', rot: -22, delay: 1170 },
+              { top: '37%',  right: undefined, left: '2%',  rot: 14,  delay: 1400 },
+              { top: '45%',  right: '6%',  left: undefined, rot: -16, delay: 1630 },
+              { top: '53%',  right: '14%', left: undefined, rot: 20,  delay: 1860 },
+              { top: '61%',  right: undefined, left: '7%',  rot: -10, delay: 2090 },
+              { top: '68%',  right: undefined, left: '13%', rot: 18,  delay: 2320 },
+              { top: '76%',  right: '5%',  left: undefined, rot: -20, delay: 2550 },
+              { top: '83%',  right: '11%', left: undefined, rot: 12,  delay: 2780 },
+              { top: '90%',  right: undefined, left: '3%',  rot: -16, delay: 3010 },
+              { top: '96%',  right: undefined, left: '9%',  rot: 22,  delay: 3240 },
+            ].map((paw, i) => (
+              <div
+                key={i}
+                className="absolute pointer-events-none select-none z-30"
+                style={{ top: paw.top, right: paw.right, left: paw.left, transform: `rotate(${paw.rot}deg)` }}
+                aria-hidden
+              >
+                <span className="text-lg block" style={{ animation: `pawFadeIn 0.35s ease-out ${paw.delay}ms both` }}>🐾</span>
+              </div>
+            ))}
+
+            <MarqueeBanner />
 
             {/* Nowy użytkownik — nagłówek */}
             {!lastSession && (
