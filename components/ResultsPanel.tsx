@@ -254,6 +254,7 @@ export default function ResultsPanel({
   const [saveExpanded, setSaveExpanded] = useState(false)
   const [saveTitle, setSaveTitle] = useState('')
   const [savedToLib, setSavedToLib] = useState(false)
+  const [detailsOpen, setDetailsOpen] = useState(false)
 
   useEffect(() => {
     if (libraryTextId) setLibraryEntry(getCustomText(libraryTextId))
@@ -291,9 +292,11 @@ export default function ResultsPanel({
       {/* ── HERO BANNER ── */}
       <div className={`${hero.bg} ${hero.border} border rounded-3xl px-6 py-4`}>
         <div className="flex items-center gap-2 flex-wrap mb-3">
-          <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${hero.border} ${hero.text}`}>
-            {TYPING_LABEL[typingMode]}
-          </span>
+          {typingMode !== 'normal' && (
+            <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${hero.border} ${hero.text}`}>
+              {TYPING_LABEL[typingMode]}
+            </span>
+          )}
           <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${hero.border} ${hero.text}`}>
             {lessonId !== undefined && transformMode === '1to1'
               ? `Lekcja ${String(lessonId).padStart(3, '0')}`
@@ -405,149 +408,160 @@ export default function ResultsPanel({
         </div>
       )}
 
-      {/* ── STAT CARDS ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <StatCard value={stats.wpm} label="WPM" desc="słów na minutę" badge={wpmBadge(stats.wpm)} color="text-blue-600 dark:text-blue-400" />
-        <StatCard
-          value={`${acc}%`}
-          label={correctedCount > 0 ? 'Dokładność końcowa' : 'Dokładność'}
-          desc={correctedCount > 0 ? 'po poprawkach backspace' : 'poprawnych znaków'}
-          badge={accBadge(acc)}
-          color={accColor}
-          secondary={correctedCount > 0 ? `pisanie: ${firstHitAcc}% (pierwsze uderzenie)` : undefined}
-        />
-        <StatCard
-          value={`${stats.completionPercent}%`}
-          label="Ukończenie"
-          desc="tekstu przepisano"
-          badge={incomplete ? 'fragment' : 'pełny tekst'}
-          color={incomplete ? 'text-amber-600 dark:text-amber-400' : 'text-gray-700 dark:text-gray-300'}
-        />
-        <StatCard
-          value={stats.mistakesCount}
-          label="Błędy"
-          desc="zamian i wstawień"
-          badge={stats.mistakesCount === 0 ? 'idealnie' : stats.mistakesCount <= 3 ? 'świetnie' : undefined}
-          color={stats.mistakesCount > 0 ? 'text-red-500 dark:text-red-400' : 'text-green-600 dark:text-green-400'}
-        />
+      {/* ── 5-STAT ROW ── */}
+      <div className="grid grid-cols-5 divide-x divide-gray-100 dark:divide-[#242424] bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl overflow-hidden">
+        {([
+          { val: stats.wpm,                      label: 'WPM',        color: 'text-blue-600 dark:text-blue-400' },
+          { val: `${acc}%`,                      label: 'Dokładność', color: accColor },
+          { val: `${stats.completionPercent}%`,  label: 'Ukończenie', color: incomplete ? 'text-amber-600 dark:text-amber-400' : 'text-gray-700 dark:text-gray-300' },
+          { val: stats.mistakesCount,             label: 'Błędy',      color: stats.mistakesCount > 0 ? 'text-red-500 dark:text-red-400' : 'text-green-600 dark:text-green-400' },
+          { val: calm,                            label: 'Spokój',     color: calmColor },
+        ] as { val: string | number; label: string; color: string }[]).map(({ val, label, color }) => (
+          <div key={label} className="flex flex-col items-center justify-center px-2 py-4 text-center">
+            <p className={`text-2xl font-black leading-none ${color}`}>{val}</p>
+            <p className="text-[10px] text-gray-400 dark:text-gray-600 mt-1.5 leading-tight">{label}</p>
+          </div>
+        ))}
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
-        <StatCard value={calm} label="Indeks spokoju" desc="dokładność – Backspace" badge={calmBadge(calm)} color={calmColor} />
-        <StatCard value={bs} label="Backspace" desc="cofnięć podczas rundy" badge={bsBadge(bs)} color={bsColor} />
-        <StatCard
-          value={streak}
-          label="Najlepsza seria"
-          desc="znaków bez błędu"
-          badge={streak >= 20 ? 'świetna' : streak >= 10 ? 'dobra' : undefined}
-          color="text-gray-700 dark:text-gray-300"
-        />
-      </div>
+      {/* ── SZCZEGÓŁY ANALIZY — collapsible ── */}
+      {(hasFingerErrors || stats.commonMistakes.length > 0 || stats.difficultWords.length > 0 || stats.polishCharsMissed > 0 || bs > 0) && (
+        <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl overflow-hidden">
+          <button
+            onClick={() => setDetailsOpen(v => !v)}
+            className="flex items-center gap-2 w-full px-5 py-3.5 text-left text-xs font-semibold text-gray-500 dark:text-gray-500 uppercase tracking-widest hover:text-gray-700 dark:hover:text-gray-400 transition"
+          >
+            <span className={`text-base leading-none transition-transform duration-150 ${detailsOpen ? 'rotate-90' : ''}`}>›</span>
+            Szczegóły analizy
+            <span className="ml-auto text-xs font-normal normal-case tracking-normal">{detailsOpen ? 'zwiń' : 'rozwiń'}</span>
+          </button>
 
-      {/* ── FINGER ERRORS + MISTAKES ── */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="space-y-4">
-          {hasFingerErrors && (
-            <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-5 py-4">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">Błędy wg palca</p>
-              <div className="flex flex-wrap gap-2">
-                {Object.entries(fingerErrors).sort((a, b) => b[1] - a[1]).map(([f, c]) => (
-                  <span key={f} className={`text-xs px-3 py-1.5 rounded-xl font-medium ${FINGER_COLORS[f] ?? ''}`}>
-                    {FINGER_LABELS[f] ?? f} · {c}×
-                  </span>
+          {detailsOpen && (
+            <div className="border-t border-gray-100 dark:border-[#242424] px-5 pb-5 pt-4 space-y-4">
+
+              {/* secondary stats row */}
+              <div className="grid grid-cols-3 gap-3 text-center">
+                {[
+                  { val: bs,     label: 'Backspace',      color: bsColor,                        sub: bsBadge(bs) },
+                  { val: streak, label: 'Najlepsza seria', color: 'text-gray-700 dark:text-gray-300', sub: streak >= 20 ? 'świetna' : streak >= 10 ? 'dobra' : undefined },
+                  { val: correctedCount > 0 ? `${firstHitAcc}%` : '—', label: 'Pierwsze uderzenie', color: 'text-gray-500 dark:text-gray-500', sub: correctedCount > 0 ? `${correctedCount} poprawień` : 'brak danych' },
+                ].map(({ val, label, color, sub }) => (
+                  <div key={label} className="bg-gray-50 dark:bg-[#1a1a1a] rounded-xl px-3 py-3">
+                    <p className={`text-xl font-black leading-none ${color}`}>{val}</p>
+                    <p className="text-[10px] text-gray-500 dark:text-gray-500 mt-1">{label}</p>
+                    {sub && <p className="text-[9px] text-gray-400 dark:text-gray-600 mt-0.5">{sub}</p>}
+                  </div>
                 ))}
               </div>
-            </div>
-          )}
 
-          {stats.commonMistakes.length > 0 && (
-            <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl overflow-hidden">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest px-5 py-3 border-b border-gray-100 dark:border-[#242424]">Najczęstsze błędy</p>
-              <div className="divide-y divide-gray-100 dark:divide-[#1e1e1e]">
-                {stats.commonMistakes.slice(0, 5).map((m, i) => {
-                  const isPolish = isPolishDiacriticLoss(m.expected, m.actual)
-                  return (
-                    <div key={i} className="flex items-center gap-3 px-5 py-2">
-                      <span className={`font-mono text-sm w-6 text-center shrink-0 ${isPolish ? 'text-orange-600 dark:text-orange-400' : 'text-red-500 dark:text-red-400'}`}>
-                        {m.expected === ' ' ? '␣' : m.expected}
-                      </span>
-                      <span className="text-gray-400 text-xs">→</span>
-                      <span className="font-mono text-sm text-gray-600 dark:text-gray-400 w-6 text-center shrink-0">
-                        {m.actual === ' ' ? '␣' : m.actual}
-                      </span>
-                      {isPolish && <span className="text-[9px] text-orange-500 dark:text-orange-400 shrink-0">ogonek</span>}
-                      {m.count > 1 ? (
-                        <div className="flex-1 h-1 bg-gray-100 dark:bg-[#2a2a2a] rounded-full overflow-hidden">
-                          <div
-                            className={`h-1 ${isPolish ? 'bg-orange-300 dark:bg-orange-700' : 'bg-red-300 dark:bg-red-700'} rounded-full`}
-                            style={{ width: `${Math.min(100, (m.count / (stats.commonMistakes[0]?.count || 1)) * 100)}%` }}
-                          />
-                        </div>
-                      ) : <span className="flex-1" />}
-                      <span className="text-xs text-gray-400 dark:text-gray-600 shrink-0">{m.count}×</span>
+              {/* finger errors + mistakes */}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  {hasFingerErrors && (
+                    <div>
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Błędy wg palca</p>
+                      <div className="flex flex-wrap gap-2">
+                        {Object.entries(fingerErrors).sort((a, b) => b[1] - a[1]).map(([f, c]) => (
+                          <span key={f} className={`text-xs px-3 py-1.5 rounded-xl font-medium ${FINGER_COLORS[f] ?? ''}`}>
+                            {FINGER_LABELS[f] ?? f} · {c}×
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  )
-                })}
+                  )}
+
+                  {stats.commonMistakes.length > 0 && (
+                    <div className="border border-gray-100 dark:border-[#242424] rounded-xl overflow-hidden">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest px-4 py-2.5 border-b border-gray-100 dark:border-[#242424]">Najczęstsze błędy</p>
+                      <div className="divide-y divide-gray-100 dark:divide-[#1e1e1e]">
+                        {stats.commonMistakes.slice(0, 5).map((m, i) => {
+                          const isPolishErr = isPolishDiacriticLoss(m.expected, m.actual)
+                          return (
+                            <div key={i} className="flex items-center gap-3 px-4 py-2">
+                              <span className={`font-mono text-sm w-6 text-center shrink-0 ${isPolishErr ? 'text-orange-600 dark:text-orange-400' : 'text-red-500 dark:text-red-400'}`}>
+                                {m.expected === ' ' ? '␣' : m.expected}
+                              </span>
+                              <span className="text-gray-400 text-xs">→</span>
+                              <span className="font-mono text-sm text-gray-600 dark:text-gray-400 w-6 text-center shrink-0">
+                                {m.actual === ' ' ? '␣' : m.actual}
+                              </span>
+                              {isPolishErr && <span className="text-[9px] text-orange-500 dark:text-orange-400 shrink-0">ogonek</span>}
+                              {m.count > 1 ? (
+                                <div className="flex-1 h-1 bg-gray-100 dark:bg-[#2a2a2a] rounded-full overflow-hidden">
+                                  <div
+                                    className={`h-1 ${isPolishErr ? 'bg-orange-300 dark:bg-orange-700' : 'bg-red-300 dark:bg-red-700'} rounded-full`}
+                                    style={{ width: `${Math.min(100, (m.count / (stats.commonMistakes[0]?.count || 1)) * 100)}%` }}
+                                  />
+                                </div>
+                              ) : <span className="flex-1" />}
+                              <span className="text-xs text-gray-400 dark:text-gray-600 shrink-0">{m.count}×</span>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  {stats.polishCharsMissed > 0 && (() => {
+                    const POLISH = new Set('ąćęłńóśźżĄĆĘŁŃÓŚŹŻ')
+                    const missedChars = [...new Set(
+                      stats.commonMistakes.filter(m => POLISH.has(m.expected)).map(m => m.expected)
+                    )].slice(0, 6)
+                    return (
+                      <div className="bg-orange-50 dark:bg-orange-500/8 border border-orange-200 dark:border-orange-500/20 rounded-xl px-4 py-3">
+                        <p className="text-sm text-orange-700 dark:text-orange-400 font-medium">
+                          {stats.polishCharsMissed === 1 ? '1 błąd' : `${stats.polishCharsMissed} błędy`} w polskich znakach
+                        </p>
+                        {missedChars.length > 0 && (
+                          <p className="text-xs text-orange-600/70 dark:text-orange-400/70 mt-1 font-mono tracking-wider">
+                            {missedChars.join(', ')}
+                          </p>
+                        )}
+                      </div>
+                    )
+                  })()}
+
+                  {stats.difficultWords.length > 0 && (
+                    <div>
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Trudne słowa</p>
+                      <div className="flex flex-wrap gap-2">
+                        {stats.difficultWords.map((w, i) => (
+                          <span key={i} className="font-mono text-sm bg-gray-50 dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#2e2e2e] text-red-600 dark:text-red-300/80 px-3 py-1 rounded-lg">
+                            {w}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
+
+              {/* comparison */}
+              <ComparisonSection
+                trainingText={trainingText}
+                typedText={typedText}
+                incomplete={incomplete}
+                charsTyped={stats.charsTyped}
+                isBlind={isBlind}
+                correctedPositions={correctedPositions}
+              />
             </div>
           )}
         </div>
-
-        <div className="space-y-4">
-          {stats.polishCharsMissed > 0 && (() => {
-            const POLISH = new Set('ąćęłńóśźżĄĆĘŁŃÓŚŹŻ')
-            const missedChars = [...new Set(
-              stats.commonMistakes.filter(m => POLISH.has(m.expected)).map(m => m.expected)
-            )].slice(0, 6)
-            return (
-              <div className="bg-orange-50 dark:bg-orange-500/8 border border-orange-200 dark:border-orange-500/20 rounded-2xl px-5 py-4">
-                <p className="text-sm text-orange-700 dark:text-orange-400 font-medium">
-                  {stats.polishCharsMissed === 1 ? '1 błąd' : `${stats.polishCharsMissed} błędy`} w polskich znakach
-                </p>
-                {missedChars.length > 0 && (
-                  <p className="text-xs text-orange-600/70 dark:text-orange-400/70 mt-1 font-mono tracking-wider">
-                    {missedChars.join(', ')}
-                  </p>
-                )}
-              </div>
-            )
-          })()}
-
-          {stats.difficultWords.length > 0 && (
-            <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-5 py-4">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">Trudne słowa</p>
-              <div className="flex flex-wrap gap-2">
-                {stats.difficultWords.map((w, i) => (
-                  <span key={i} className="font-mono text-sm bg-gray-50 dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#2e2e2e] text-red-600 dark:text-red-300/80 px-3 py-1 rounded-lg">
-                    {w}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* ── COMPARISON ── */}
-      <ComparisonSection
-        trainingText={trainingText}
-        typedText={typedText}
-        incomplete={incomplete}
-        charsTyped={stats.charsTyped}
-        isBlind={isBlind}
-        correctedPositions={correctedPositions}
-      />
+      )}
 
       {/* ── TEN TEKST (library context) ── */}
       {libraryEntry && (
-        <div className="bg-violet-50 dark:bg-violet-500/8 border border-violet-200 dark:border-violet-500/20 rounded-2xl overflow-hidden">
-          <div className="px-5 py-3.5 border-b border-violet-100 dark:border-violet-500/15 flex items-center justify-between">
-            <p className="text-xs font-bold text-violet-600 dark:text-violet-400 uppercase tracking-widest">Ten tekst</p>
-            <p className="text-xs text-violet-500/70 dark:text-violet-400/60 truncate max-w-[60%] text-right">{libraryEntry.title}</p>
+        <div className="bg-[var(--accent-50)] dark:bg-[var(--accent-500)]/8 border border-[var(--accent-200)] dark:border-[var(--accent-500)]/20 rounded-2xl overflow-hidden">
+          <div className="px-5 py-3.5 border-b border-[var(--accent-100)] dark:border-[var(--accent-500)]/15 flex items-center justify-between">
+            <p className="text-xs font-bold text-[var(--accent-600)] dark:text-[var(--accent-400)] uppercase tracking-widest">Ten tekst</p>
+            <p className="text-xs text-[var(--accent-500)]/70 dark:text-[var(--accent-400)]/60 truncate max-w-[60%] text-right">{libraryEntry.title}</p>
           </div>
-          <div className="px-5 py-4 grid grid-cols-3 gap-4 border-b border-violet-100 dark:border-violet-500/15">
+          <div className="px-5 py-4 grid grid-cols-3 gap-4 border-b border-[var(--accent-100)] dark:border-[var(--accent-500)]/15">
             <div className="text-center">
-              <p className="text-2xl font-black text-violet-600 dark:text-violet-400">{libraryEntry.practiceCount}</p>
+              <p className="text-2xl font-black text-[var(--accent-600)] dark:text-[var(--accent-400)]">{libraryEntry.practiceCount}</p>
               <p className="text-[10px] text-gray-500 dark:text-gray-500 mt-0.5">
                 {libraryEntry.practiceCount === 1 ? 'runda' : libraryEntry.practiceCount < 5 ? 'rundy' : 'rund'}
               </p>
@@ -567,14 +581,14 @@ export default function ResultsPanel({
             {hasNextChunk && onNextChunk ? (
               <button
                 onClick={onNextChunk}
-                className="flex-1 py-2.5 bg-violet-500 hover:bg-violet-600 text-white text-xs font-bold rounded-xl transition"
+                className="flex-1 py-2.5 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white text-xs font-bold rounded-xl transition"
               >
                 Następny fragment →
               </button>
             ) : (
               <button
                 onClick={onRepeat}
-                className="flex-1 py-2.5 bg-violet-100 dark:bg-violet-500/15 hover:bg-violet-200 dark:hover:bg-violet-500/25 text-violet-700 dark:text-violet-300 text-xs font-bold rounded-xl transition"
+                className="flex-1 py-2.5 bg-[var(--accent-100)] dark:bg-[var(--accent-500)]/15 hover:bg-[var(--accent-200)] dark:hover:bg-[var(--accent-500)]/25 text-[var(--accent-600)] dark:text-[var(--accent-400)] text-xs font-bold rounded-xl transition"
               >
                 Powtórz tekst
               </button>
@@ -591,13 +605,13 @@ export default function ResultsPanel({
 
       {/* ── ZAPISZ DO BIBLIOTEKI (custom text, not lesson, not already in library) ── */}
       {!lessonId && !libraryTextId && onSaveToLibrary && (
-        <div className="bg-violet-50 dark:bg-violet-500/8 border border-violet-200 dark:border-violet-500/20 rounded-2xl p-5">
+        <div className="bg-[var(--accent-50)] dark:bg-[var(--accent-500)]/8 border border-[var(--accent-200)] dark:border-[var(--accent-500)]/20 rounded-2xl p-5">
           {savedToLib ? (
             <div className="flex items-center gap-3">
               <span className="text-xl">✅</span>
               <div>
-                <p className="text-sm font-semibold text-violet-700 dark:text-violet-300">Zapisano do Mojej Biblioteki</p>
-                <button onClick={() => router.push('/library')} className="text-xs text-violet-500 hover:text-violet-700 dark:hover:text-violet-300 underline mt-0.5 transition">
+                <p className="text-sm font-semibold text-[var(--accent-600)] dark:text-[var(--accent-400)]">Zapisano do Mojej Biblioteki</p>
+                <button onClick={() => router.push('/library')} className="text-xs text-[var(--accent-500)] hover:text-[var(--accent-600)] dark:hover:text-[var(--accent-400)] underline mt-0.5 transition">
                   Przejdź do biblioteki →
                 </button>
               </div>
@@ -609,14 +623,14 @@ export default function ResultsPanel({
             >
               <span className="text-xl shrink-0">📚</span>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-violet-700 dark:text-violet-300">Zapisz do Mojej Biblioteki</p>
-                <p className="text-xs text-violet-500/70 dark:text-violet-400/60 mt-0.5">Wróć do tego tekstu kiedy chcesz. Każda runda zostawia ślad.</p>
+                <p className="text-sm font-semibold text-[var(--accent-600)] dark:text-[var(--accent-400)]">Zapisz do Mojej Biblioteki</p>
+                <p className="text-xs text-[var(--accent-500)]/70 dark:text-[var(--accent-400)]/60 mt-0.5">Wróć do tego tekstu kiedy chcesz. Każda runda zostawia ślad.</p>
               </div>
-              <span className="text-violet-400 shrink-0 group-hover:translate-x-0.5 transition-transform">›</span>
+              <span className="text-[var(--accent-400)] shrink-0 group-hover:translate-x-0.5 transition-transform">›</span>
             </button>
           ) : (
             <div className="space-y-3">
-              <p className="text-sm font-semibold text-violet-700 dark:text-violet-300">Nadaj tytuł temu tekstowi</p>
+              <p className="text-sm font-semibold text-[var(--accent-600)] dark:text-[var(--accent-400)]">Nadaj tytuł temu tekstowi</p>
               <input
                 type="text"
                 value={saveTitle}
@@ -630,7 +644,7 @@ export default function ResultsPanel({
                 }}
                 placeholder="Np. Wspomnienie, Moja afirmacja..."
                 autoFocus
-                className="w-full bg-white dark:bg-[#161616] border border-violet-200 dark:border-violet-500/30 rounded-xl px-4 py-2.5 text-sm placeholder-violet-300 dark:placeholder-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-400 transition"
+                className="w-full bg-white dark:bg-[#161616] border border-[var(--accent-200)] dark:border-[var(--accent-500)]/30 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-400)] transition"
               />
               <div className="flex gap-2">
                 <button
@@ -647,7 +661,7 @@ export default function ResultsPanel({
                     }
                   }}
                   disabled={!saveTitle.trim()}
-                  className="flex-1 py-2 bg-violet-500 hover:bg-violet-600 text-white text-xs font-bold rounded-xl transition disabled:opacity-40"
+                  className="flex-1 py-2 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white text-xs font-bold rounded-xl transition disabled:opacity-40"
                 >
                   Zapisz →
                 </button>

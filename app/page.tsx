@@ -294,7 +294,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-[#0d0d0d] text-gray-900 dark:text-gray-100">
       <div className={`mx-auto px-4 ${step === 'results' ? 'max-w-5xl py-10 sm:py-16' : isFocus ? 'max-w-4xl py-6' : step === 'home' ? 'max-w-4xl py-10 sm:py-16' : 'max-w-3xl py-10 sm:py-16'}`}>
-        {!isFocus && <Header onHomeClick={reset} onSettingsClick={() => setSettingsOpen(true)} />}
+        <Header compact={isFocus} onHomeClick={reset} onSettingsClick={() => setSettingsOpen(true)} />
 
         {/* ── HOME ── */}
         {step === 'home' && (
@@ -483,7 +483,7 @@ export default function Home() {
                 }}
                 className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-400 transition"
               >
-                ← {currentLesson ? 'Lekcje' : currentLibraryTextId ? 'Biblioteka' : 'Porzuć rundę'}
+                ← {currentLesson ? 'Akademia' : currentLibraryTextId ? 'Biblioteka' : 'Porzuć rundę'}
               </button>
               <div className="flex items-center gap-2">
                 <span className="text-[10px] text-gray-400 dark:text-gray-600 select-none">Esc — wyjdź</span>
@@ -538,7 +538,7 @@ export default function Home() {
               <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-5 py-3.5">
                 <div className="flex items-center gap-3 flex-wrap">
                   <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate flex-1">{chunkTitle}</span>
-                  <span className="shrink-0 text-[10px] px-2.5 py-1 rounded-full bg-violet-100 dark:bg-violet-500/15 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-500/20 font-medium">
+                  <span className="shrink-0 text-[10px] px-2.5 py-1 rounded-full bg-[var(--accent-100)] dark:bg-[var(--accent-500)]/15 text-[var(--accent-600)] dark:text-[var(--accent-400)] border border-[var(--accent-200)] dark:border-[var(--accent-500)]/20 font-medium">
                     Fragment {chunkIndex + 1} / {totalChunks}
                   </span>
                 </div>

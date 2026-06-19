@@ -11,15 +11,17 @@ import type { Settings } from '@/lib/settings'
 interface Props {
   onHomeClick?: () => void
   onSettingsClick?: () => void
+  compact?: boolean
 }
 
 const NAV = [
-  { href: '/lessons', label: 'Akademia' },
-  { href: '/history', label: 'Historia' },
-  { href: '/badges',  label: 'Odznaki'  },
+  { href: '/library', label: 'Biblioteka' },
+  { href: '/lessons', label: 'Akademia'   },
+  { href: '/history', label: 'Historia'   },
+  { href: '/badges',  label: 'Odznaki'    },
 ]
 
-export default function Header({ onHomeClick, onSettingsClick }: Props) {
+export default function Header({ onHomeClick, onSettingsClick, compact }: Props) {
   const pathname = usePathname()
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [settings, setSettings] = useState<Settings>(loadSettings)
@@ -36,7 +38,7 @@ export default function Header({ onHomeClick, onSettingsClick }: Props) {
   const openSettings = onSettingsClick ?? (() => setSettingsOpen(true))
 
   return (
-    <div className="flex items-center justify-between mb-12">
+    <div className={`flex items-center justify-between ${compact ? 'mb-2' : 'mb-12'}`}>
       {/* Logo */}
       {onHomeClick ? (
         <button

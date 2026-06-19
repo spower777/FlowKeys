@@ -132,12 +132,22 @@ export default function VirtualKeyboard({ nextChar, showFingers, pressedKey }: P
 
       {/* Finger legend */}
       {showFingers && (
-        <div className="flex justify-center gap-2 pt-1 flex-wrap">
-          {Object.entries(FINGER_LABELS).filter(([id]) => id !== 'th').map(([id, label]) => (
-            <span key={id} className={`text-[9px] px-1.5 py-0.5 rounded-full ${FINGER_COLORS[id]}`}>
-              {label}
-            </span>
-          ))}
+        <div className="flex justify-center gap-1.5 pt-1 flex-wrap">
+          {Object.entries(FINGER_LABELS).filter(([id]) => id !== 'th').map(([id, label]) => {
+            const isActive = activeFinger === id
+            return (
+              <span
+                key={id}
+                className={`text-[9px] px-2 py-0.5 rounded-full border transition-all duration-100 ${
+                  isActive
+                    ? `${FINGER_COLORS[id]} border-current font-bold`
+                    : `${FINGER_COLORS[id]} border-transparent opacity-50`
+                }`}
+              >
+                {label}
+              </span>
+            )
+          })}
         </div>
       )}
     </div>
