@@ -28,11 +28,13 @@ export const metadata: Metadata = {
     url: 'https://flow-keys.vercel.app',
     siteName: 'FlowKeys',
     type: 'website',
+    images: [{ url: 'https://flow-keys.vercel.app/og.png', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'FlowKeys',
     description: 'Ucz się pisać na klawiaturze, przepisując własne historie.',
+    images: ['https://flow-keys.vercel.app/og.png'],
   },
   appleWebApp: {
     capable: true,
