@@ -524,12 +524,14 @@ export default function Home() {
                 <button
                   onClick={restartSession}
                   title="Od nowa (Tab)"
-                  className="text-[10px] text-gray-400 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 transition select-none flex items-center gap-1"
+                  className="flex items-center gap-1.5 text-xs px-3 py-1 rounded-full border font-medium transition-colors
+                    bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/25
+                    hover:bg-red-100 dark:hover:bg-red-500/20 hover:border-red-300 dark:hover:border-red-500/40 select-none"
                 >
                   ↺ Od nowa
+                  <span className="text-[9px] opacity-60 font-normal">Tab</span>
                 </button>
-                <span className="text-gray-300 dark:text-gray-700 select-none">·</span>
-                <span className="text-[10px] text-gray-400 dark:text-gray-600 select-none">Tab — restart · Esc — wyjdź</span>
+                <span className="text-[10px] text-gray-400 dark:text-gray-600 select-none">Esc — wyjdź</span>
                 {typingMode === 'blind' && (
                   <span className="text-xs px-3 py-1 rounded-full border font-medium bg-purple-100 dark:bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-500/25">
                     🙈 Blind Flow
