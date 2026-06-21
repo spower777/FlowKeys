@@ -12,6 +12,13 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* ── Cursor hide during typing ────────────────────────────────────────────── */
+body.fk-hide-cursor,
+body.fk-hide-cursor * {
+  cursor: none !important;
+}
+
+
 /* ── Accent color CSS custom properties ─────────────────────────────────────
    Used via bg-[var(--accent-600)] etc. in Tailwind arbitrary values.
    Default = blue (matches existing Tailwind blue-600 / blue-500 palette). */
@@ -83,11 +90,3 @@ body {
 }
 .animate-marquee { animation: marquee 40s linear infinite; }
 
-/* ── Cat paw cursor ─────────────────────────────────────────────────────────── */
-html {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><text y='28' font-size='26'>🐾</text></svg>") 0 0, auto;
-}
-a, button, [role='button'], select, summary, label,
-[tabindex]:not([tabindex='-1']), input[type='submit'], input[type='button'], input[type='reset'] {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><text y='28' font-size='26'>🐾</text></svg>") 0 0, pointer;
-}

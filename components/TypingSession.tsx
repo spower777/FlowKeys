@@ -117,9 +117,12 @@ export default function TypingSession({
   const [dropBlocked, setDropBlocked] = useState(false)
   const [backspaceCount, setBackspaceCount] = useState(0)
 
+  const [cursorHidden, setCursorHidden] = useState(false)
+
   const captureRef = useRef<HTMLDivElement>(null)
   const cursorSpanRef = useRef<HTMLSpanElement>(null)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const pasteToastRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const dropToastRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const replayRef = useRef<ReplayEvent[]>([])
@@ -133,6 +136,7 @@ export default function TypingSession({
     captureRef.current?.focus()
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
       if (pasteToastRef.current) clearTimeout(pasteToastRef.current)
       if (dropToastRef.current) clearTimeout(dropToastRef.current)
       window.speechSynthesis?.cancel()
@@ -148,6 +152,27 @@ export default function TypingSession({
 
   useEffect(() => { if (textHidden) captureRef.current?.focus() }, [textHidden])
 
+  // Sync cursor-hidden state to body class (fixed dep array size)
+  useEffect(() => {
+    if (cursorHidden) {
+      document.body.classList.add('fk-hide-cursor')
+    } else {
+      document.body.classList.remove('fk-hide-cursor')
+    }
+    return () => { document.body.classList.remove('fk-hide-cursor') }
+  }, [cursorHidden])
+
+  function showCursor() {
+    setCursorHidden(false)
+    if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
+    hideTimerRef.current = setTimeout(() => setCursorHidden(true), 1200)
+  }
+
+  function hideCursor() {
+    setCursorHidden(true)
+    if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
+  }
+
   function startTimer() {
     const t = Date.now()
     setStartTime(t)
@@ -161,6 +186,7 @@ export default function TypingSession({
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    hideCursor()
     if (blockPaste && (e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
       e.preventDefault(); showPasteToast(); return
     }
@@ -299,7 +325,7 @@ export default function TypingSession({
   // ── render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" onMouseMove={showCursor} onMouseDown={showCursor}>
       {/* Mode badges */}
       {isNoBackspace && (
         <div className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-400/10 border border-amber-200 dark:border-amber-400/20 rounded-xl px-4 py-2.5 text-center">
@@ -347,7 +373,7 @@ export default function TypingSession({
         onDragOver={(e) => e.preventDefault()}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        className={`relative bg-gray-100 dark:bg-[#141414] border rounded-2xl px-5 py-5 cursor-text outline-none transition-colors ${
+        className={`relative bg-gray-100 dark:bg-[#141414] border rounded-2xl px-5 py-5 outline-none transition-colors ${
           focused ? 'border-[var(--accent-400)] dark:border-[var(--accent-600)]/40' : 'border-gray-200 dark:border-[#242424]'
         }`}
       >
@@ -365,8 +391,8 @@ export default function TypingSession({
           </div>
         ) : (
           /* Source text display — max-height in full mode keeps keyboard on-screen */
-          <div className={`text-base leading-8 font-mono break-words whitespace-pre-wrap select-none ${
-            textViewMode === 'full' ? 'max-h-[220px] overflow-y-auto' : ''
+          <div className={`text-xl leading-loose font-mono break-words whitespace-pre-wrap select-none ${
+            textViewMode === 'full' ? 'max-h-[300px] overflow-y-auto' : ''
           }`}>
             {textContent}
             {cursorPos >= trainingText.length && trainingText.length > 0 && (

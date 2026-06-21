@@ -57,28 +57,30 @@ export default function Header({ onHomeClick, onSettingsClick, compact }: Props)
       )}
 
       {/* Nav */}
-      <nav className="flex items-center gap-6">
-        {NAV.map(link => {
-          const active = pathname === link.href
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`text-sm font-medium transition-colors duration-150 ${
-                active
-                  ? 'text-gray-900 dark:text-gray-100'
-                  : 'text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
-              }`}
-            >
-              {link.label}
-            </Link>
-          )
-        })}
-      </nav>
+      {!compact && (
+        <nav className="flex items-center gap-6">
+          {NAV.map(link => {
+            const active = pathname === link.href
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`text-sm font-medium transition-colors duration-150 ${
+                  active
+                    ? 'text-gray-900 dark:text-gray-100'
+                    : 'text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                }`}
+              >
+                {link.label}
+              </Link>
+            )
+          })}
+        </nav>
+      )}
 
       {/* Controls */}
       <div className="flex items-center gap-2">
-        <ThemeToggle />
+        {!compact && <ThemeToggle />}
         <button
           onClick={openSettings}
           title="Ustawienia"

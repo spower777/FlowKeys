@@ -111,6 +111,7 @@ export default function Home() {
     return () => mq.removeEventListener('change', handler)
   }, [])
 
+
   // Esc exits focus mode (typing → preview)
   const handleEsc = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') setStep('preview')
@@ -555,11 +556,6 @@ export default function Home() {
                         </span>
                       )}
                     </div>
-                  </div>
-                  <div className="flex items-center gap-4 mt-2 text-[10px] text-gray-400 dark:text-gray-600 select-none">
-                    <span>★ &nbsp;acc 85%</span>
-                    <span>★★ acc 94% + spokój 80</span>
-                    <span>★★★ acc 98% + spokój 90</span>
                   </div>
                 </div>
               )
