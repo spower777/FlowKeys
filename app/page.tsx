@@ -35,6 +35,7 @@ export default function Home() {
   const [trainingText, setTrainingText] = useState('')
   const [transformMode, setTransformMode] = useState<TransformMode>('exercise')
   const [typingMode, setTypingMode] = useState<TypingMode>('normal')
+  const [sessionKey, setSessionKey] = useState(0)
   const [stats, setStats] = useState<TypingStats | null>(null)
   const [typedText, setTypedText] = useState('')
   const [loading, setLoading] = useState(false)
@@ -112,15 +113,18 @@ export default function Home() {
   }, [])
 
 
-  // Esc exits focus mode (typing → preview)
-  const handleEsc = useCallback((e: KeyboardEvent) => {
+  function restartSession() { setSessionKey(k => k + 1) }
+
+  // Esc exits focus mode (typing → preview), Tab restarts from scratch
+  const handleTypingKeys = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') setStep('preview')
+    if (e.key === 'Tab') { e.preventDefault(); setSessionKey(k => k + 1) }
   }, [])
   useEffect(() => {
     if (step !== 'typing') return
-    window.addEventListener('keydown', handleEsc)
-    return () => window.removeEventListener('keydown', handleEsc)
-  }, [step, handleEsc])
+    window.addEventListener('keydown', handleTypingKeys)
+    return () => window.removeEventListener('keydown', handleTypingKeys)
+  }, [step, handleTypingKeys])
 
   function handleSettingsChange(partial: Partial<Settings>) {
     setSettings(prev => {
@@ -517,7 +521,15 @@ export default function Home() {
                 ← {currentLesson ? 'Akademia' : currentLibraryTextId ? 'Biblioteka' : 'Porzuć rundę'}
               </button>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] text-gray-400 dark:text-gray-600 select-none">Esc — wyjdź</span>
+                <button
+                  onClick={restartSession}
+                  title="Od nowa (Tab)"
+                  className="text-[10px] text-gray-400 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 transition select-none flex items-center gap-1"
+                >
+                  ↺ Od nowa
+                </button>
+                <span className="text-gray-300 dark:text-gray-700 select-none">·</span>
+                <span className="text-[10px] text-gray-400 dark:text-gray-600 select-none">Tab — restart · Esc — wyjdź</span>
                 {typingMode === 'blind' && (
                   <span className="text-xs px-3 py-1 rounded-full border font-medium bg-purple-100 dark:bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-500/25">
                     🙈 Blind Flow
@@ -571,6 +583,7 @@ export default function Home() {
               </div>
             )}
             <TypingSession
+              key={sessionKey}
               trainingText={trainingText}
               typingMode={typingMode}
               textViewMode={settings.textViewMode}
