@@ -152,7 +152,7 @@ export default function TypingSession({
 
   useEffect(() => { if (textHidden) captureRef.current?.focus() }, [textHidden])
 
-  // Sync cursor-hidden state to body class (fixed dep array size)
+  // Sync cursor-hidden state to body class
   useEffect(() => {
     if (cursorHidden) {
       document.body.classList.add('fk-hide-cursor')
@@ -162,15 +162,24 @@ export default function TypingSession({
     return () => { document.body.classList.remove('fk-hide-cursor') }
   }, [cursorHidden])
 
-  function showCursor() {
+  // Show cursor on any mouse movement anywhere on the page
+  const showCursor = useCallback(() => {
     setCursorHidden(false)
-    if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
-    hideTimerRef.current = setTimeout(() => setCursorHidden(true), 1200)
-  }
+    if (hideTimerRef.current) { clearTimeout(hideTimerRef.current); hideTimerRef.current = null }
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('mousemove', showCursor)
+    window.addEventListener('mousedown', showCursor)
+    return () => {
+      window.removeEventListener('mousemove', showCursor)
+      window.removeEventListener('mousedown', showCursor)
+    }
+  }, [showCursor])
 
   function hideCursor() {
     setCursorHidden(true)
-    if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
+    if (hideTimerRef.current) { clearTimeout(hideTimerRef.current); hideTimerRef.current = null }
   }
 
   function startTimer() {
@@ -325,7 +334,7 @@ export default function TypingSession({
   // ── render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="space-y-4" onMouseMove={showCursor} onMouseDown={showCursor}>
+    <div className="space-y-4">
       {/* Mode badges */}
       {isNoBackspace && (
         <div className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-400/10 border border-amber-200 dark:border-amber-400/20 rounded-xl px-4 py-2.5 text-center">
