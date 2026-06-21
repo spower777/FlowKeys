@@ -18,9 +18,22 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://flow-keys.vercel.app'),
   title: 'FlowKeys',
   description: 'Ucz się pisać na klawiaturze, przepisując własne historie.',
   manifest: '/manifest.webmanifest',
+  openGraph: {
+    title: 'FlowKeys',
+    description: 'Ucz się pisać na klawiaturze, przepisując własne historie.',
+    url: 'https://flow-keys.vercel.app',
+    siteName: 'FlowKeys',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'FlowKeys',
+    description: 'Ucz się pisać na klawiaturze, przepisując własne historie.',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
