@@ -1,6 +1,6 @@
 import type { LessonPack } from './lessons'
 
-export type PackGroupId = 'zen' | 'gaming' | 'self' | 'spirit' | 'story' | 'polish' | 'basics' | 'keyboard'
+export type PackGroupId = 'zen' | 'gaming' | 'self' | 'spirit' | 'story' | 'polish' | 'basics' | 'keyboard' | 'ancient'
 
 export interface PackGroup {
   id: PackGroupId
@@ -74,6 +74,14 @@ export const PACK_GROUPS: PackGroup[] = [
     description: 'Cisza, prowadzenie, modlitwa bez słów.',
     icon: '✦',
     packs: ['spirituality'],
+    defaultEnabled: false,
+  },
+  {
+    id: 'ancient',
+    label: 'Teksty Starożytne',
+    description: 'Tablice Szmaragdowe, Bhagavad Gita, Tao Te Ching.',
+    icon: '📜',
+    packs: ['emeraldTablets', 'bhagavadGita', 'taoTeching'],
     defaultEnabled: false,
   },
 ]

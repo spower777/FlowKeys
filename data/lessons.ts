@@ -3,6 +3,7 @@ export type LessonPack =
   | 'relationships' | 'spirituality' | 'visualization' | 'stories' | 'mastery'
   | 'blindFlow' | 'noBackspace' | 'jadePath' | 'gaming' | 'homerow'
   | 'numbers' | 'symbols'
+  | 'emeraldTablets' | 'bhagavadGita' | 'taoTeching'
 
 export type LessonMode = 'normal' | 'blindFlow' | 'noBackspace' | 'hardSigns'
 
@@ -30,6 +31,9 @@ export const PACK_LABEL: Record<LessonPack, string> = {
   homerow: 'Podstawy',
   numbers: 'Cyfry',
   symbols: 'Symbole',
+  emeraldTablets: 'Tablice Szmaragdowe',
+  bhagavadGita: 'Bhagavad Gita',
+  taoTeching: 'Tao Te Ching',
 }
 
 export const MODE_LABEL: Record<LessonMode, string> = {
@@ -1503,5 +1507,281 @@ export const lessons: FlowLesson[] = [
     subtitle: 'pełna klawiatura — rytm wszystkich rzędów', difficulty: 3, mode: 'normal',
     text: 'ryba mamy bazy przy tryb veto mix nami tory pory quiz pal las jak dal',
     tags: ['podstawy', 'trzy-rzędy'],
+  },
+
+  // ── Rozdział 23 · Tablice Szmaragdowe Thotha ──────────────────────────────
+  {
+    id: 273, chapterId: 23, pack: 'emeraldTablets', title: 'Ja, Thoth, Atlantyda',
+    difficulty: 2, mode: 'normal',
+    text: 'Ja, Thoth, Atlantyda, mistrz tajemnic, piszę te słowa dla tych, którzy szukają Światła w ciemności wieków.',
+    tags: ['hermetyzm', 'tablice-szmaragdowe'],
+  },
+  {
+    id: 274, chapterId: 23, pack: 'emeraldTablets', title: 'Ciało Jest Pojemnikiem',
+    difficulty: 2, mode: 'normal',
+    text: 'Ciało jest pojemnikiem dla duszy, nie samą duszą. Gdy ciało się starzeje, dusza pozostaje młoda i nienaruszona.',
+    tags: ['hermetyzm', 'tablice-szmaragdowe'],
+  },
+  {
+    id: 275, chapterId: 23, pack: 'emeraldTablets', title: 'Komnaty Amenti',
+    difficulty: 2, mode: 'normal',
+    text: 'Głęboko w Ziemi leżą Komnaty Amenti, gdzie Wielcy Mistrzowie ważą dusze i mierzą Światło ukryte w każdej istocie.',
+    tags: ['hermetyzm', 'tablice-szmaragdowe'],
+  },
+  {
+    id: 276, chapterId: 23, pack: 'emeraldTablets', title: 'Śmierć Jest Iluzją',
+    difficulty: 2, mode: 'normal',
+    text: 'Śmierć jest tylko przejściem, nie końcem. Dusza przechodzi z formy w formę, jakby zmieniała szatę, nie siebie.',
+    tags: ['hermetyzm', 'tablice-szmaragdowe'],
+  },
+  {
+    id: 277, chapterId: 23, pack: 'emeraldTablets', title: 'Klucz Do Mądrości',
+    difficulty: 2, mode: 'normal',
+    text: 'Mądrość nie jest gromadzona jak złoto. Jest Światłem, które zapala się w duszy, gdy umysł przestaje walczyć z ciszą.',
+    tags: ['hermetyzm', 'tablice-szmaragdowe'],
+  },
+  {
+    id: 278, chapterId: 23, pack: 'emeraldTablets', title: 'Myśl Tworzy',
+    difficulty: 2, mode: 'normal',
+    text: 'Czego szukasz całym sercem, to przyciągasz do swojego życia. Myśl jest siłą, która kształtuje materię i zdarzenia.',
+    tags: ['hermetyzm', 'tablice-szmaragdowe'],
+  },
+  {
+    id: 279, chapterId: 23, pack: 'emeraldTablets', title: 'Starsi Bracia',
+    difficulty: 2, mode: 'normal',
+    text: 'Starsi Bracia istnieją w przestrzeni poza widzialnym. Czuwają nad tymi, którzy szukają Drogi z czystym sercem.',
+    tags: ['hermetyzm', 'tablice-szmaragdowe'],
+  },
+  {
+    id: 280, chapterId: 23, pack: 'emeraldTablets', title: 'Trzy Wielkie Prawa',
+    difficulty: 3, mode: 'normal',
+    text: 'Trzy Wielkie Prawa rządzą wszystkim: Prawo Wibracji, Prawo Polaryzacji i Prawo Rytmu. Poznaj je, a zrozumiesz wszystko.',
+    tags: ['hermetyzm', 'tablice-szmaragdowe'],
+  },
+  {
+    id: 281, chapterId: 23, pack: 'emeraldTablets', title: 'Siła Słowa',
+    difficulty: 2, mode: 'normal',
+    text: 'Słowo wypowiedziane z intencją ma moc przekształcania rzeczywistości. Nie mów bezwiednie. Każde słowo siej jak ziarno.',
+    tags: ['hermetyzm', 'tablice-szmaragdowe'],
+  },
+  {
+    id: 282, chapterId: 23, pack: 'emeraldTablets', title: 'Siedmiu Panów Czasu',
+    difficulty: 3, mode: 'normal',
+    text: 'Siedmiu Panów Czasu strzeże bram pomiędzy wymiarami. Każdy z nich naucza innej lekcji na drodze do doskonałości.',
+    tags: ['hermetyzm', 'tablice-szmaragdowe'],
+  },
+  {
+    id: 283, chapterId: 23, pack: 'emeraldTablets', title: 'Klucz Do Tajemnic',
+    difficulty: 2, mode: 'normal',
+    text: 'W sercu tajemnic leży prostota. To, czego szukasz od tysiącleci, mieszka w ciszy twojego własnego oddechu.',
+    tags: ['hermetyzm', 'tablice-szmaragdowe'],
+  },
+  {
+    id: 284, chapterId: 23, pack: 'emeraldTablets', title: 'Klucz Do Wolności',
+    difficulty: 2, mode: 'normal',
+    text: 'Wolność nie jest na zewnątrz. Jest stanem duszy, która nie przywiązuje się do skutków ani nie lęka się zmiany.',
+    tags: ['hermetyzm', 'tablice-szmaragdowe'],
+  },
+  {
+    id: 285, chapterId: 23, pack: 'emeraldTablets', title: 'Czas Jest Spiralą',
+    difficulty: 2, mode: 'normal',
+    text: 'Czas nie jest linią prostą. Jest spiralą, która powraca do podobnych punktów na wyższym poziomie zrozumienia.',
+    tags: ['hermetyzm', 'tablice-szmaragdowe'],
+  },
+  {
+    id: 286, chapterId: 23, pack: 'emeraldTablets', title: 'Jak Górze, Tak I Dole',
+    difficulty: 3, mode: 'normal',
+    text: 'Co jest powyżej, to i poniżej. Co wewnątrz, to i na zewnątrz. Makrokosmos i mikrokosmos mają ten sam rytm i tę samą naturę.',
+    tags: ['hermetyzm', 'tablice-szmaragdowe'],
+  },
+  {
+    id: 287, chapterId: 23, pack: 'emeraldTablets', title: 'Nie Ma Przypadku',
+    difficulty: 2, mode: 'normal',
+    text: 'Każde zdarzenie ma przyczynę, a każda przyczyna rodzi skutek. Nie ma przypadku — jest tylko Prawo niewidzialne dla oczu.',
+    tags: ['hermetyzm', 'tablice-szmaragdowe'],
+  },
+
+  // ── Rozdział 24 · Bhagavad Gita ───────────────────────────────────────────
+  {
+    id: 288, chapterId: 24, pack: 'bhagavadGita', title: 'Dusza Nigdy Nie Umiera',
+    difficulty: 2, mode: 'normal',
+    text: 'Dusza nigdy się nie rodzi i nigdy nie umiera. Jest wieczna. To, co wygląda jak śmierć, jest tylko zmianą formy.',
+    tags: ['bhagavad-gita', 'wedanta'],
+  },
+  {
+    id: 289, chapterId: 24, pack: 'bhagavadGita', title: 'Działaj Bez Przywiązania',
+    difficulty: 2, mode: 'normal',
+    text: 'Wypełniaj swój obowiązek, nie przywiązując się do owoców. Działanie bez żądzy nagrody jest najwyższą mądrością.',
+    tags: ['bhagavad-gita', 'wedanta'],
+  },
+  {
+    id: 290, chapterId: 24, pack: 'bhagavadGita', title: 'Jestem We Wszystkim',
+    difficulty: 2, mode: 'normal',
+    text: 'Jestem w ogniu, w wodzie, w sercu każdej istoty. Kto widzi Mnie we wszystkim, ten nigdy nie jest sam.',
+    tags: ['bhagavad-gita', 'wedanta'],
+  },
+  {
+    id: 291, chapterId: 24, pack: 'bhagavadGita', title: 'Własna Dharma',
+    difficulty: 2, mode: 'normal',
+    text: 'Lepiej spełniać własną dharmę wadliwie niż cudzą doskonale. Swoja droga, nawet z potknięciami, jest twoja droga.',
+    tags: ['bhagavad-gita', 'wedanta'],
+  },
+  {
+    id: 292, chapterId: 24, pack: 'bhagavadGita', title: 'Spokojny Umysł',
+    difficulty: 2, mode: 'normal',
+    text: 'Spokojny umysł jest jak jezioro w bezwietrzny dzień. Widzi prawdę wyraźnie, bez zniekształceń strachu i pożądania.',
+    tags: ['bhagavad-gita', 'wedanta'],
+  },
+  {
+    id: 293, chapterId: 24, pack: 'bhagavadGita', title: 'Ponad Śmiercią I Żalem',
+    difficulty: 2, mode: 'normal',
+    text: 'Wznieś swój umysł ponad śmierć i żal. Jesteś nieśmiertelną duszą, nie tylko ciałem, które kiedyś przeminie.',
+    tags: ['bhagavad-gita', 'wedanta'],
+  },
+  {
+    id: 294, chapterId: 24, pack: 'bhagavadGita', title: 'Narzędzie Bożej Woli',
+    difficulty: 2, mode: 'normal',
+    text: 'Nie myśl o sobie jak o sprawcy. Bądź narzędziem. Działaj pełnią sił, lecz wynik złóż w ręce wyższej mądrości.',
+    tags: ['bhagavad-gita', 'wedanta'],
+  },
+  {
+    id: 295, chapterId: 24, pack: 'bhagavadGita', title: 'Wiedza I Działanie',
+    difficulty: 2, mode: 'normal',
+    text: 'Wiedza bez działania jest martwa. Działanie bez wiedzy jest ślepe. Tylko razem prowadzą do wyzwolenia.',
+    tags: ['bhagavad-gita', 'wedanta'],
+  },
+  {
+    id: 296, chapterId: 24, pack: 'bhagavadGita', title: 'Wolny Od Lęku',
+    difficulty: 2, mode: 'normal',
+    text: 'Ten, kto nie lęka się bólu i nie pożąda przyjemności, jest wolny od złudzeń i bliski prawdziwej mądrości.',
+    tags: ['bhagavad-gita', 'wedanta'],
+  },
+  {
+    id: 297, chapterId: 24, pack: 'bhagavadGita', title: 'Trzy Filary Wojownika',
+    difficulty: 2, mode: 'normal',
+    text: 'Wytrwałość, spokój i odwaga — to trzy filary wojownika ducha. Każdy z nich wzmacnia pozostałe dwa.',
+    tags: ['bhagavad-gita', 'wedanta'],
+  },
+  {
+    id: 298, chapterId: 24, pack: 'bhagavadGita', title: 'Wszystkie Rzeki',
+    difficulty: 2, mode: 'normal',
+    text: 'Jak rzeki wpływają do morza, tak wszystkie ścieżki prowadzą do Jedności. Droga nie jest ważna — kierunek tak.',
+    tags: ['bhagavad-gita', 'wedanta'],
+  },
+  {
+    id: 299, chapterId: 24, pack: 'bhagavadGita', title: 'Strzeż Myśli',
+    difficulty: 2, mode: 'normal',
+    text: 'Gdzie jest twoja myśl, tam jest twoje życie. Strzeż umysłu jak skarbu. To twój najważniejszy ogród.',
+    tags: ['bhagavad-gita', 'wedanta'],
+  },
+  {
+    id: 300, chapterId: 24, pack: 'bhagavadGita', title: 'Złóż Wszystko',
+    difficulty: 2, mode: 'normal',
+    text: 'Złóż wszystko u moich stóp. Zostań wolnym od obaw o przeszłość i przyszłość. Żyj pełnią tej jednej chwili.',
+    tags: ['bhagavad-gita', 'wedanta'],
+  },
+  {
+    id: 301, chapterId: 24, pack: 'bhagavadGita', title: 'Wewnętrzna Walka',
+    difficulty: 2, mode: 'normal',
+    text: 'Prawdziwa walka nie toczy się na polu bitwy. Toczy się w umyśle, między strachem a mądrością, między ego a duszą.',
+    tags: ['bhagavad-gita', 'wedanta'],
+  },
+  {
+    id: 302, chapterId: 24, pack: 'bhagavadGita', title: 'Kriszna Mówi',
+    difficulty: 3, mode: 'normal',
+    text: 'Jestem początkiem i końcem. Jestem śmiercią i nieśmiertelnością. Jestem drogą dla tych, którzy szukają drogi.',
+    tags: ['bhagavad-gita', 'wedanta'],
+  },
+
+  // ── Rozdział 25 · Tao Te Ching ────────────────────────────────────────────
+  {
+    id: 303, chapterId: 25, pack: 'taoTeching', title: 'Tao, Które Można Nazwać',
+    difficulty: 2, mode: 'normal',
+    text: 'Tao, które można wyrazić słowami, nie jest wiecznym Tao. Imię, które można wymówić, nie jest wiecznym Imieniem.',
+    tags: ['taoizm', 'tao-te-ching'],
+  },
+  {
+    id: 304, chapterId: 25, pack: 'taoTeching', title: 'Piękno I Brzydota',
+    difficulty: 2, mode: 'normal',
+    text: 'Gdy wszyscy wiedzą, że piękne jest pięknem, pojawia się już brzydota. To dwa oblicza tej samej rzeczy.',
+    tags: ['taoizm', 'tao-te-ching'],
+  },
+  {
+    id: 305, chapterId: 25, pack: 'taoTeching', title: 'Woda I Kamień',
+    difficulty: 2, mode: 'normal',
+    text: 'Woda jest miękka i ustępliwa, lecz drąży każdy kamień. Tak działa Tao — przez cierpliwość, nie przez siłę.',
+    tags: ['taoizm', 'tao-te-ching'],
+  },
+  {
+    id: 306, chapterId: 25, pack: 'taoTeching', title: 'Prostota',
+    difficulty: 1, mode: 'normal',
+    text: 'Powróć do prostoty. Ograniczaj pragnienia. Miej mało — pragnij mało. W prostocie jest wolność i spokój.',
+    tags: ['taoizm', 'tao-te-ching'],
+  },
+  {
+    id: 307, chapterId: 25, pack: 'taoTeching', title: 'Kto Zna Siebie',
+    difficulty: 2, mode: 'normal',
+    text: 'Kto zna innych, jest mądry. Kto zna siebie, jest oświecony. Kto pokona innych, jest silny. Kto pokona siebie — potężny.',
+    tags: ['taoizm', 'tao-te-ching'],
+  },
+  {
+    id: 308, chapterId: 25, pack: 'taoTeching', title: 'Działaj Niedziałaniem',
+    difficulty: 2, mode: 'normal',
+    text: 'Działaj bez działania. Czyń wszystko bez wysiłku. Smakuj bez smaku. W niedziałaniu kryje się największa moc.',
+    tags: ['taoizm', 'tao-te-ching'],
+  },
+  {
+    id: 309, chapterId: 25, pack: 'taoTeching', title: 'Wielki Obraz',
+    difficulty: 2, mode: 'normal',
+    text: 'Wielki kwadrat nie ma narożników. Wielki dźwięk jest milczeniem. Wielki obraz nie ma kształtu. Tao jest ukryte.',
+    tags: ['taoizm', 'tao-te-ching'],
+  },
+  {
+    id: 310, chapterId: 25, pack: 'taoTeching', title: 'Najwyższe Dobro',
+    difficulty: 2, mode: 'normal',
+    text: 'Najwyższe dobro jest jak woda. Woda przynosi korzyść wszystkim bez walki. Trwa w miejscach, których inni unikają.',
+    tags: ['taoizm', 'tao-te-ching'],
+  },
+  {
+    id: 311, chapterId: 25, pack: 'taoTeching', title: 'Kto Staje Na Palcach',
+    difficulty: 2, mode: 'normal',
+    text: 'Kto staje na palcach, traci równowagę. Kto robi wielkie kroki, nie nadąża. Spokojny krok dociera najdalej.',
+    tags: ['taoizm', 'tao-te-ching'],
+  },
+  {
+    id: 312, chapterId: 25, pack: 'taoTeching', title: 'Prawdziwe Słowa',
+    difficulty: 2, mode: 'normal',
+    text: 'Prawdziwe słowa nie zawsze są piękne. Piękne słowa nie zawsze są prawdziwe. Mędrzec mówi rzadko, lecz celnie.',
+    tags: ['taoizm', 'tao-te-ching'],
+  },
+  {
+    id: 313, chapterId: 25, pack: 'taoTeching', title: 'Pustka Koła',
+    difficulty: 2, mode: 'normal',
+    text: 'Trzydzieści szprych zbiega się w piaście. Pustka pośrodku czyni koło użytecznym. Tak i pustka w nas jest siłą.',
+    tags: ['taoizm', 'tao-te-ching'],
+  },
+  {
+    id: 314, chapterId: 25, pack: 'taoTeching', title: 'Wielka Droga',
+    difficulty: 2, mode: 'normal',
+    text: 'Wielka droga jest prosta, lecz ludzie lubią boczne ścieżki. Im więcej zasad, tym więcej przestępców. Wróć do prostoty.',
+    tags: ['taoizm', 'tao-te-ching'],
+  },
+  {
+    id: 315, chapterId: 25, pack: 'taoTeching', title: 'Droga Nieba',
+    difficulty: 2, mode: 'normal',
+    text: 'Droga nieba nie walczy, a jednak zawsze zwycięża. Nie mówi, a jednak wszystkim odpowiada. Nie woła, a wszystko przychodzi.',
+    tags: ['taoizm', 'tao-te-ching'],
+  },
+  {
+    id: 316, chapterId: 25, pack: 'taoTeching', title: 'Im Więcej Masz',
+    difficulty: 2, mode: 'normal',
+    text: 'Im więcej masz, tym więcej tracisz. Mędrzec nie gromadzi, lecz im więcej daje innym, tym więcej sam posiada.',
+    tags: ['taoizm', 'tao-te-ching'],
+  },
+  {
+    id: 317, chapterId: 25, pack: 'taoTeching', title: 'Bądź Cichy',
+    difficulty: 1, mode: 'normal',
+    text: 'Bądź cichy, a Tao przemówi w tobie. Bądź pusty, a Tao napełni cię. Bądź spokojny, a Tao poruszy przez ciebie.',
+    tags: ['taoizm', 'tao-te-ching'],
   },
 ]

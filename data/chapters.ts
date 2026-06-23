@@ -27,5 +27,8 @@ export const chapters: Chapter[] = [
   { id: 19, title: 'Cyfry',              range: '233–242', description: '1 2 3 4 5 6 7 8 9 0 — rząd numeryczny od podstaw.' },
   { id: 20, title: 'Symbole',            range: '243–252', description: '. , ! ? : ; - ( ) " % @ / — interpunkcja i znaki specjalne.' },
   { id: 21, title: 'Górny Rząd',         range: '253–262', description: 'q w e r t y u i o p — kompletny górny rząd krok po kroku.' },
-  { id: 22, title: 'Dolny Rząd',         range: '263–272', description: 'z x c v b n m — dolny rząd i łączenie wszystkich trzech.' },
+  { id: 22, title: 'Dolny Rząd',                 range: '263–272', description: 'z x c v b n m — dolny rząd i łączenie wszystkich trzech.' },
+  { id: 23, title: 'Tablice Szmaragdowe Thotha', range: '273–287', description: 'Hermetyczne mądrości Atlantydy — dusza, czas i Światło.' },
+  { id: 24, title: 'Bhagavad Gita',              range: '288–302', description: 'Dialog Arjuny z Krishną — dharma, działanie i wieczność.' },
+  { id: 25, title: 'Tao Te Ching',               range: '303–317', description: 'Laozi — 81 wersów o wodzie, ciszy i drodze bez drogi.' },
 ]

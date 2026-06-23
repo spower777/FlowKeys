@@ -51,6 +51,18 @@ function computeCurrentValues(progress: Record<number, LessonProgress>): Record<
     const lesson = lessons.find(l => l.id === Number(id))
     return lesson?.pack === 'polishSigns' && p.bestAccuracy >= 90
   }).length
+  const quietRounds = sessions.filter(s =>
+    (s.stats.calmScore ?? s.stats.accuracy) >= 90 &&
+    (s.stats.backspaceCount ?? 0) <= 10 &&
+    s.stats.completionPercent >= 90
+  ).length
+  const cleanRounds = sessions.filter(s =>
+    (s.stats.backspaceCount ?? 0) <= 5 &&
+    s.stats.completionPercent >= 90
+  ).length
+  const customTextSessions = sessions.filter(s =>
+    !s.lessonId && s.stats.completionPercent >= 90
+  ).length
 
   return {
     lessonsCompleted: completedLessons,
@@ -62,6 +74,9 @@ function computeCurrentValues(progress: Record<number, LessonProgress>): Record<
     wpm: sessions.length > 0 ? Math.max(...sessions.map(s => s.stats.wpm)) : 0,
     calmIndex: sessions.length > 0 ? Math.max(...sessions.map(s => s.stats.calmScore ?? s.stats.accuracy)) : 0,
     daysStreak: calculateStreak(sessions),
+    quietRound: quietRounds,
+    cleanRound: cleanRounds,
+    customTextSession: customTextSessions,
   }
 }
 
