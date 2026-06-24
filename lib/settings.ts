@@ -6,6 +6,7 @@ export type AccentColor = 'blue' | 'green' | 'purple' | 'orange'
 export type Density = 'comfortable' | 'compact'
 export type VoiceRate = 0.75 | 1 | 1.25 | 1.5
 export type VoiceMode = 'all' | 'sentence'
+export type SoundProfile = 'off' | 'mechanical' | 'soft' | 'typewriter' | 'deep'
 
 export interface Settings {
   theme: Theme
@@ -14,7 +15,7 @@ export interface Settings {
   textViewMode: TextViewMode
   showFingers: boolean
   showKeyboard: boolean
-  keyboardSounds: boolean
+  soundProfile: SoundProfile
   blockPaste: boolean
   calmMode: boolean
   voiceRate: VoiceRate
@@ -31,7 +32,7 @@ export const DEFAULTS: Settings = {
   textViewMode: 'sentence',
   showFingers: false,
   showKeyboard: false,
-  keyboardSounds: false,
+  soundProfile: 'off',
   blockPaste: true,
   calmMode: false,
   voiceRate: 1,
@@ -47,8 +48,10 @@ export function loadSettings(): Settings {
   if (typeof window === 'undefined') return DEFAULTS
   try {
     const raw = localStorage.getItem(KEY)
-    const stored: Partial<Settings> = raw ? JSON.parse(raw) : {}
+    const stored: Partial<Settings> & { keyboardSounds?: boolean } = raw ? JSON.parse(raw) : {}
     // Migrate legacy keys written before unified settings existed
+    if (stored.keyboardSounds === true && !stored.soundProfile) stored.soundProfile = 'mechanical'
+    delete stored.keyboardSounds
     if (!stored.theme) {
       const t = localStorage.getItem('flowkeys_theme') as Theme | null
       if (t) stored.theme = t

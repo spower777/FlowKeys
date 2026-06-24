@@ -7,6 +7,7 @@ import VirtualKeyboard from './VirtualKeyboard'
 import { playKeySound } from '@/lib/keyboardSounds'
 import { normalizeDashes } from '@/lib/analyzeTyping'
 import type { TypingMode, TextViewMode, ReplayEvent } from '@/lib/types'
+import type { SoundProfile } from '@/lib/settings'
 
 interface Props {
   trainingText: string
@@ -16,7 +17,7 @@ interface Props {
   onFinish: (typed: string, startTime: number, endTime: number, backspaceCount: number, replayData: ReplayEvent[]) => void
   showKeyboard?: boolean
   showFingers?: boolean
-  keyboardSounds?: boolean
+  soundProfile?: SoundProfile
   blockPaste?: boolean
   calmMode?: boolean
   blindHint?: boolean
@@ -104,7 +105,7 @@ function wordAt(text: string, pos: number) {
 
 export default function TypingSession({
   trainingText: trainingText_raw, typingMode, textViewMode, onTextViewModeChange, onFinish,
-  showKeyboard = false, showFingers = false, keyboardSounds = false,
+  showKeyboard = false, showFingers = false, soundProfile = 'off',
   blockPaste = true, calmMode = false, blindHint = true,
   voiceRate = 1, voiceMode = 'all',
 }: Props) {
@@ -203,17 +204,17 @@ export default function TypingSession({
     if (isNoBackspace && e.key === 'Backspace') { e.preventDefault(); return }
     if (e.key === 'Backspace') {
       e.preventDefault()
-      if (keyboardSounds) playKeySound('backspace')
+      if (soundProfile && soundProfile !== 'off') playKeySound('backspace', soundProfile)
       replayRef.current.push({ ts: Date.now(), char: 'Backspace', isBackspace: true })
       setTyped(prev => prev.slice(0, -1)); setBackspaceCount(c => c + 1); return
     }
     if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
       e.preventDefault()
       if (!startTime) { startTimer(); if (isBlind) setTextHidden(true) }
-      if (keyboardSounds) {
-        if (e.key === ' ') playKeySound('space')
-        else if (e.key === trainingText[typed.length]) playKeySound('normal')
-        else playKeySound('error')
+      if (soundProfile && soundProfile !== 'off') {
+        if (e.key === ' ') playKeySound('space', soundProfile)
+        else if (e.key === trainingText[typed.length]) playKeySound('normal', soundProfile)
+        else playKeySound('error', soundProfile)
       }
       replayRef.current.push({ ts: Date.now(), char: e.key, isBackspace: false })
       setTyped(prev => prev + e.key)

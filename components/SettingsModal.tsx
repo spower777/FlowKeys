@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { clearSessions } from '@/lib/storage'
 import { DEFAULTS, applySettingsToDOM } from '@/lib/settings'
-import type { Settings, Theme, AccentColor, Density, VoiceRate, VoiceMode } from '@/lib/settings'
+import type { Settings, Theme, AccentColor, Density, VoiceRate, VoiceMode, SoundProfile } from '@/lib/settings'
 import type { TextViewMode } from '@/lib/types'
 import { PACK_GROUPS, type PackGroupId } from '@/data/packGroups'
 
@@ -249,8 +249,18 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
             <Row label="Strefy palców" sub="Koloruje klawisze wg palca">
               <Toggle value={settings.showFingers} onChange={v => set('showFingers', v)} />
             </Row>
-            <Row label="Dźwięki klawiatury" sub="Klik mechaniczny przy każdym naciśnięciu">
-              <Toggle value={settings.keyboardSounds} onChange={v => set('keyboardSounds', v)} />
+            <Row label="Dźwięki klawiatury" sub="Styl brzmienia przy każdym naciśnięciu">
+              <Pills<SoundProfile>
+                value={settings.soundProfile}
+                onChange={v => set('soundProfile', v)}
+                options={[
+                  { value: 'off', label: 'Wył.' },
+                  { value: 'mechanical', label: 'Mech.' },
+                  { value: 'soft', label: 'Cichy' },
+                  { value: 'typewriter', label: 'Retro' },
+                  { value: 'deep', label: 'Głęboki' },
+                ]}
+              />
             </Row>
             <Row label="Blokuj wklejanie" sub="Zapobiega nabijaniu wyników">
               <Toggle value={settings.blockPaste} onChange={v => set('blockPaste', v)} />

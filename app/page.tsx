@@ -592,7 +592,7 @@ export default function Home() {
               onTextViewModeChange={v => handleSettingsChange({ textViewMode: v })}
               showKeyboard={settings.showKeyboard}
               showFingers={settings.showFingers}
-              keyboardSounds={settings.keyboardSounds}
+              soundProfile={settings.soundProfile}
               blockPaste={settings.blockPaste}
               calmMode={settings.calmMode}
               blindHint={settings.blindHint}
