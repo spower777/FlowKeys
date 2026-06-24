@@ -430,7 +430,7 @@ export default function Home() {
         {/* ── INPUT ── */}
         {step === 'input' && (
           <div className="space-y-5">
-            <button onClick={reset} className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-400 transition">← Wróć</button>
+            <button onClick={reset} className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 px-3 py-1.5 rounded-full border border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:border-gray-300 dark:hover:border-[#383838] transition-all duration-150">← Wróć</button>
             <h2 className="text-lg font-semibold">Twój tekst</h2>
             {inputMethod === 'voice' && (
               <VoiceInput onTranscript={t => setSourceText(prev => prev ? prev + ' ' + t : t)} />
@@ -446,7 +446,7 @@ export default function Home() {
         {/* ── TRANSFORM ── */}
         {step === 'transform' && (
           <div className="space-y-5">
-            <button onClick={() => setStep(inputMethod === 'example' ? 'home' : 'input')} className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-400 transition">← Wróć</button>
+            <button onClick={() => setStep(inputMethod === 'example' ? 'home' : 'input')} className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 px-3 py-1.5 rounded-full border border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:border-gray-300 dark:hover:border-[#383838] transition-all duration-150">← Wróć</button>
             <div>
               <h2 className="text-lg font-semibold">Tryb transformacji</h2>
               <p className="text-sm text-gray-500 mt-1">Jak AI ma przetworzyć Twój tekst?</p>
@@ -469,7 +469,7 @@ export default function Home() {
         {step === 'preview' && (
           <div className="space-y-5">
             <div className="flex items-center justify-between">
-              <button onClick={() => setStep('transform')} className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-400 transition">← Wróć</button>
+              <button onClick={() => setStep('transform')} className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 px-3 py-1.5 rounded-full border border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:border-gray-300 dark:hover:border-[#383838] transition-all duration-150">← Wróć</button>
               {isMock && (
                 <span className="text-[10px] font-medium bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/25 px-2.5 py-1 rounded-full">
                   Mock mode — brak OPENAI_API_KEY
@@ -516,7 +516,7 @@ export default function Home() {
                   else if (currentLibraryTextId) router.push('/library')
                   else reset()
                 }}
-                className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-400 transition"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 px-3 py-1.5 rounded-full border border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:border-gray-300 dark:hover:border-[#383838] transition-all duration-150"
               >
                 ← {currentLesson ? 'Akademia' : currentLibraryTextId ? 'Biblioteka' : 'Porzuć rundę'}
               </button>
@@ -524,12 +524,12 @@ export default function Home() {
                 <button
                   onClick={restartSession}
                   title="Od nowa (Tab)"
-                  className="flex items-center gap-1.5 text-xs px-3 py-1 rounded-full border font-medium transition-colors
-                    bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/25
-                    hover:bg-red-100 dark:hover:bg-red-500/20 hover:border-red-300 dark:hover:border-red-500/40 select-none"
+                  className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border font-medium transition-all duration-150
+                    text-gray-500 dark:text-gray-400 border-gray-200 dark:border-[#2a2a2a]
+                    hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-[#383838] select-none"
                 >
                   ↺ Od nowa
-                  <span className="text-[9px] opacity-60 font-normal">Tab</span>
+                  <span className="text-[9px] opacity-50 font-normal">Tab</span>
                 </button>
                 <span className="text-[10px] text-gray-400 dark:text-gray-600 select-none">Esc — wyjdź</span>
                 {typingMode === 'blind' && (

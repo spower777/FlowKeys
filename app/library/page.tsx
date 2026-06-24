@@ -66,7 +66,7 @@ function LibraryForm({ initialTitle = '', initialText = '', initialTags = [], in
 
   return (
     <div className="space-y-6">
-      <button onClick={onBack} className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-400 transition">← Wróć do biblioteki</button>
+      <button onClick={onBack} className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 px-3 py-1.5 rounded-full border border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:border-gray-300 dark:hover:border-[#383838] transition-all duration-150">← Wróć do biblioteki</button>
       <h2 className="text-xl font-bold">{isEdit ? 'Edytuj tekst' : 'Dodaj nowy tekst'}</h2>
 
       <div>
