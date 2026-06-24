@@ -143,9 +143,16 @@ export default function ResultsPanel({
 
         {/* Stars */}
         {(earnedStars ?? 0) > 0 && (
-          <div className="flex justify-center gap-2 mb-5">
+          <div className="flex justify-center gap-3 mb-5">
             {[1, 2, 3].map(i => (
-              <span key={i} className={`text-5xl leading-none ${i <= (earnedStars ?? 0) ? 'text-amber-400' : 'text-gray-200 dark:text-gray-800'}`}>★</span>
+              <span
+                key={i}
+                className={`leading-none transition-transform ${
+                  i <= (earnedStars ?? 0)
+                    ? 'text-5xl text-amber-400 drop-shadow-[0_2px_8px_rgba(251,191,36,0.5)]'
+                    : 'text-4xl text-gray-200 dark:text-gray-800 opacity-50'
+                }`}
+              >★</span>
             ))}
           </div>
         )}
@@ -220,21 +227,27 @@ export default function ResultsPanel({
 
       {/* ── SECONDARY STATS ── */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-3 py-4 text-center">
+        <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-3 py-4 text-center relative overflow-hidden">
+          <div className={`absolute top-0 inset-x-0 h-1 ${bs <= 10 ? 'bg-green-400' : bs <= 30 ? 'bg-amber-400' : 'bg-red-400'}`} />
+          <p className="text-xl mt-1 mb-1">⌫</p>
           <p className={`text-2xl font-black leading-none ${bsColor}`}>{bs}</p>
-          <p className="text-[10px] text-gray-400 dark:text-gray-600 mt-1.5">Backspace</p>
+          <p className="text-[10px] text-gray-500 dark:text-gray-500 mt-1.5 font-medium">Backspace</p>
           <p className="text-[9px] text-gray-400 dark:text-gray-600 mt-0.5">{bsBadge(bs)}</p>
         </div>
-        <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-3 py-4 text-center">
+        <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-3 py-4 text-center relative overflow-hidden">
+          <div className={`absolute top-0 inset-x-0 h-1 ${streak >= 20 ? 'bg-green-400' : streak >= 10 ? 'bg-amber-400' : 'bg-gray-300 dark:bg-[#333]'}`} />
+          <p className="text-xl mt-1 mb-1">🔥</p>
           <p className="text-2xl font-black leading-none text-gray-700 dark:text-gray-300">{streak}</p>
-          <p className="text-[10px] text-gray-400 dark:text-gray-600 mt-1.5">Najlepsza seria</p>
+          <p className="text-[10px] text-gray-500 dark:text-gray-500 mt-1.5 font-medium">Najlepsza seria</p>
           <p className="text-[9px] text-gray-400 dark:text-gray-600 mt-0.5">{streak >= 20 ? 'świetna' : streak >= 10 ? 'dobra' : 'ćwiczymy'}</p>
         </div>
-        <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-3 py-4 text-center">
+        <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-3 py-4 text-center relative overflow-hidden">
+          <div className={`absolute top-0 inset-x-0 h-1 ${stats.mistakesCount === 0 ? 'bg-green-400' : stats.mistakesCount <= 3 ? 'bg-amber-400' : 'bg-red-400'}`} />
+          <p className="text-xl mt-1 mb-1">{stats.mistakesCount === 0 ? '✓' : '✕'}</p>
           <p className={`text-2xl font-black leading-none ${stats.mistakesCount === 0 ? 'text-green-600 dark:text-green-400' : stats.mistakesCount <= 3 ? 'text-amber-600 dark:text-amber-400' : 'text-red-500 dark:text-red-400'}`}>
             {stats.mistakesCount}
           </p>
-          <p className="text-[10px] text-gray-400 dark:text-gray-600 mt-1.5">Błędy</p>
+          <p className="text-[10px] text-gray-500 dark:text-gray-500 mt-1.5 font-medium">Błędy</p>
           <p className="text-[9px] text-gray-400 dark:text-gray-600 mt-0.5">
             {stats.mistakesCount === 0 ? 'czysto!' : stats.mistakesCount <= 3 ? 'mało' : 'ćwiczymy'}
           </p>
@@ -275,11 +288,11 @@ export default function ResultsPanel({
               const isPolish = isPolishDiacriticLoss(m.expected, m.actual)
               return (
                 <div key={i} className="flex items-center gap-3 px-5 py-2.5">
-                  <span className={`font-mono text-base font-bold w-5 text-center shrink-0 ${isPolish ? 'text-orange-600 dark:text-orange-400' : 'text-red-500 dark:text-red-400'}`}>
+                  <span className={`font-mono text-sm font-bold px-2 py-1 rounded-lg border min-w-[28px] text-center shrink-0 ${isPolish ? 'bg-orange-50 dark:bg-orange-500/10 border-orange-200 dark:border-orange-500/30 text-orange-600 dark:text-orange-400' : 'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/30 text-red-500 dark:text-red-400'}`}>
                     {m.expected === ' ' ? '␣' : m.expected}
                   </span>
-                  <span className="text-gray-300 dark:text-gray-700 text-xs shrink-0">→</span>
-                  <span className="font-mono text-base text-gray-500 dark:text-gray-500 w-5 text-center shrink-0">
+                  <span className="text-gray-400 dark:text-gray-600 text-xs shrink-0">→</span>
+                  <span className="font-mono text-sm text-gray-600 dark:text-gray-400 px-2 py-1 rounded-lg border border-gray-200 dark:border-[#2e2e2e] bg-gray-50 dark:bg-[#1e1e1e] min-w-[28px] text-center shrink-0">
                     {m.actual === ' ' ? '␣' : m.actual}
                   </span>
                   {isPolish && <span className="text-[9px] bg-orange-100 dark:bg-orange-500/15 text-orange-500 dark:text-orange-400 px-1.5 py-0.5 rounded shrink-0">ogonek</span>}
@@ -420,14 +433,16 @@ export default function ResultsPanel({
       <div className="flex gap-3">
         <button
           onClick={onRepeat}
-          className="flex-1 py-3 bg-gray-100 dark:bg-[#1e1e1e] hover:bg-gray-200 dark:hover:bg-[#282828] border border-gray-200 dark:border-[#2e2e2e] text-gray-700 dark:text-gray-300 text-sm font-medium rounded-xl transition"
+          className="flex-1 py-3.5 bg-gray-100 dark:bg-[#1e1e1e] hover:bg-gray-200 dark:hover:bg-[#252525] border border-gray-200 dark:border-[#2e2e2e] text-gray-600 dark:text-gray-400 text-sm font-medium rounded-xl transition flex items-center justify-center gap-2"
         >
+          <span>↩</span>
           {isBlind && incomplete ? 'Spróbuj jeszcze raz' : 'Powtórz'}
         </button>
         <button
           onClick={onNewRound}
-          className="flex-1 py-3 bg-gray-100 dark:bg-[#1e1e1e] hover:bg-gray-200 dark:hover:bg-[#282828] border border-gray-200 dark:border-[#2e2e2e] text-gray-600 dark:text-gray-400 text-sm font-medium rounded-xl transition"
+          className="flex-1 py-3.5 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white text-sm font-semibold rounded-xl transition flex items-center justify-center gap-2 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"
         >
+          <span>✦</span>
           Nowa runda
         </button>
       </div>
