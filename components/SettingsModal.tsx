@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { clearSessions } from '@/lib/storage'
 import { DEFAULTS, applySettingsToDOM } from '@/lib/settings'
-import type { Settings, Theme, AccentColor, Density, VoiceRate, VoiceMode, SoundProfile } from '@/lib/settings'
+import type { Settings, Theme, ThemePreset, Density, VoiceRate, VoiceMode, SoundProfile } from '@/lib/settings'
 import type { TextViewMode } from '@/lib/types'
 import { PACK_GROUPS, type PackGroupId } from '@/data/packGroups'
 
@@ -15,30 +15,17 @@ interface Props {
 
 // ── theme / color data ────────────────────────────────────────────────────────
 
-const ACCENT_COLORS: { value: AccentColor; color: string; label: string }[] = [
-  { value: 'blue',    color: '#3b82f6', label: 'Niebieski' },
-  { value: 'teal',    color: '#14b8a6', label: 'Morski'    },
-  { value: 'green',   color: '#22c55e', label: 'Zielony'   },
-  { value: 'emerald', color: '#10b981', label: 'Szmaragd'  },
-  { value: 'indigo',  color: '#6366f1', label: 'Indygo'    },
-  { value: 'purple',  color: '#a855f7', label: 'Fioletowy' },
-  { value: 'fuchsia', color: '#d946ef', label: 'Fuksja'    },
-  { value: 'rose',    color: '#f43f5e', label: 'Różowy'    },
-  { value: 'orange',  color: '#f97316', label: 'Pomarańcz' },
-  { value: 'amber',   color: '#f59e0b', label: 'Bursztyn'  },
-]
-
-const THEME_PRESETS: { id: string; label: string; accent: AccentColor; theme: Theme; from: string; to: string }[] = [
-  { id: 'classic',  label: 'Classic',  accent: 'blue',    theme: 'light', from: '#3b82f6', to: '#1d4ed8' },
-  { id: 'ocean',    label: 'Ocean',    accent: 'teal',    theme: 'dark',  from: '#06b6d4', to: '#0369a1' },
-  { id: 'cyber',    label: 'Cyber',    accent: 'emerald', theme: 'dark',  from: '#10b981', to: '#065f46' },
-  { id: 'aurora',   label: 'Aurora',   accent: 'fuchsia', theme: 'dark',  from: '#d946ef', to: '#7c3aed' },
-  { id: 'retro',    label: 'Retro',    accent: 'amber',   theme: 'light', from: '#f59e0b', to: '#78350f' },
-  { id: 'sunset',   label: 'Sunset',   accent: 'orange',  theme: 'dark',  from: '#f97316', to: '#9f1239' },
-  { id: 'zen',      label: 'Zen',      accent: 'green',   theme: 'light', from: '#22c55e', to: '#166534' },
-  { id: 'midnight', label: 'Midnight', accent: 'indigo',  theme: 'dark',  from: '#6366f1', to: '#1e1b4b' },
-  { id: 'sakura',   label: 'Sakura',   accent: 'rose',    theme: 'light', from: '#fb7185', to: '#881337' },
-  { id: 'cosmos',   label: 'Cosmos',   accent: 'purple',  theme: 'dark',  from: '#a855f7', to: '#1e1b4b' },
+const THEME_PRESETS: { id: ThemePreset; label: string; theme: Theme; from: string; to: string }[] = [
+  { id: 'classic',  label: 'Classic',  theme: 'light', from: '#3b82f6', to: '#1d4ed8' },
+  { id: 'ocean',    label: 'Ocean',    theme: 'dark',  from: '#06b6d4', to: '#0369a1' },
+  { id: 'cyber',    label: 'Cyber',    theme: 'dark',  from: '#10b981', to: '#065f46' },
+  { id: 'aurora',   label: 'Aurora',   theme: 'dark',  from: '#d946ef', to: '#7c3aed' },
+  { id: 'retro',    label: 'Retro',    theme: 'light', from: '#f59e0b', to: '#78350f' },
+  { id: 'sunset',   label: 'Sunset',   theme: 'dark',  from: '#f97316', to: '#9f1239' },
+  { id: 'zen',      label: 'Zen',      theme: 'light', from: '#22c55e', to: '#166534' },
+  { id: 'midnight', label: 'Midnight', theme: 'dark',  from: '#6366f1', to: '#1e1b4b' },
+  { id: 'sakura',   label: 'Sakura',   theme: 'light', from: '#fb7185', to: '#881337' },
+  { id: 'cosmos',   label: 'Cosmos',   theme: 'dark',  from: '#a855f7', to: '#1e1b4b' },
 ]
 
 // ── small UI helpers ──────────────────────────────────────────────────────────
@@ -216,33 +203,30 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
           {/* ── A. Wygląd ── */}
           <Section title="A. Wygląd" icon="🎨">
 
-            {/* Motywy gotowe */}
+            {/* Motyw */}
             <div className="px-4 pt-3.5 pb-4">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2.5">Motywy gotowe</p>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2.5">Motyw</p>
               <div className="grid grid-cols-5 gap-2">
-                {THEME_PRESETS.map(preset => {
-                  const isActive = settings.accentColor === preset.accent && settings.theme === preset.theme
-                  return (
-                    <button
-                      key={preset.id}
-                      onClick={() => onChange({ accentColor: preset.accent, theme: preset.theme })}
-                      title={preset.label}
-                      style={{ background: `linear-gradient(135deg, ${preset.from}, ${preset.to})` }}
-                      className={`h-12 rounded-xl flex items-end justify-center pb-1.5 transition-all duration-200 ${
-                        isActive
-                          ? 'ring-2 ring-offset-2 ring-gray-400 dark:ring-gray-500 shadow-lg scale-105'
-                          : 'opacity-70 hover:opacity-100 hover:scale-105 hover:shadow-md'
-                      }`}
-                    >
-                      <span className="text-[8px] font-bold text-white drop-shadow-sm leading-none">{preset.label}</span>
-                    </button>
-                  )
-                })}
+                {THEME_PRESETS.map(preset => (
+                  <button
+                    key={preset.id}
+                    onClick={() => onChange({ themePreset: preset.id, theme: preset.theme })}
+                    title={preset.label}
+                    style={{ background: `linear-gradient(135deg, ${preset.from}, ${preset.to})` }}
+                    className={`h-12 rounded-xl flex items-end justify-center pb-1.5 transition-all duration-200 ${
+                      settings.themePreset === preset.id
+                        ? 'ring-2 ring-offset-2 ring-gray-400 dark:ring-gray-500 shadow-lg scale-105'
+                        : 'opacity-70 hover:opacity-100 hover:scale-105 hover:shadow-md'
+                    }`}
+                  >
+                    <span className="text-[8px] font-bold text-white drop-shadow-sm leading-none">{preset.label}</span>
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Motyw */}
-            <Row label="Motyw">
+            {/* Dark / light override */}
+            <Row label="Jasność">
               <Pills<Theme>
                 value={settings.theme}
                 onChange={v => set('theme', v)}
@@ -253,35 +237,6 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
                 ]}
               />
             </Row>
-
-            {/* Kolor akcentu */}
-            <div className="px-4 pt-3 pb-4">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-3">Kolor akcentu</p>
-              <div className="grid grid-cols-5 gap-y-3 gap-x-1">
-                {ACCENT_COLORS.map(a => (
-                  <button
-                    key={a.value}
-                    onClick={() => set('accentColor', a.value)}
-                    title={a.label}
-                    className="flex flex-col items-center gap-1 group"
-                  >
-                    <div
-                      className={`w-8 h-8 rounded-full border-[3px] transition-all duration-150 ${
-                        settings.accentColor === a.value
-                          ? 'border-gray-900 dark:border-white shadow-md scale-110'
-                          : 'border-transparent opacity-65 group-hover:opacity-100 group-hover:scale-110'
-                      }`}
-                      style={{ backgroundColor: a.color }}
-                    />
-                    <span className={`text-[9px] leading-none text-center ${
-                      settings.accentColor === a.value
-                        ? 'text-gray-700 dark:text-gray-300 font-semibold'
-                        : 'text-gray-400 dark:text-gray-600'
-                    }`}>{a.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
 
             <Row label="Gęstość UI">
               <Pills<Density>

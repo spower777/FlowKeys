@@ -57,7 +57,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: `(function(){var t=localStorage.getItem('flowkeys_theme')||'system';var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.documentElement.classList.add('dark');})();` }} />
+        <script dangerouslySetInnerHTML={{ __html: `(function(){var t=localStorage.getItem('flowkeys_theme')||'system';var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.documentElement.classList.add('dark');var p=localStorage.getItem('flowkeys_preset')||'classic';document.documentElement.setAttribute('data-preset',p);})();` }} />
         <script dangerouslySetInnerHTML={{ __html: `if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');` }} />
       </head>
       <body className="min-h-full flex flex-col bg-gray-50 dark:bg-[#0d0d0d] text-gray-900 dark:text-gray-100">

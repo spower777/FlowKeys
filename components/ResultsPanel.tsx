@@ -217,7 +217,7 @@ export default function ResultsPanel({
       {hasNextLesson && onAction && (
         <button
           onClick={() => onAction('next_lesson')}
-          className="w-full py-5 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white rounded-2xl font-bold text-lg transition-all hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:shadow-none flex items-center justify-center gap-3 group"
+          className="fk-btn w-full py-5 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white rounded-2xl font-bold text-lg hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:shadow-none flex items-center justify-center gap-3 group"
         >
           <span>Następna lekcja</span>
           <span className="group-hover:translate-x-1 transition-transform">→</span>
@@ -440,7 +440,7 @@ export default function ResultsPanel({
         </button>
         <button
           onClick={onNewRound}
-          className="flex-1 py-3.5 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white text-sm font-semibold rounded-xl transition flex items-center justify-center gap-2 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"
+          className="fk-btn flex-1 py-3.5 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"
         >
           <span>✦</span>
           Nowa runda

@@ -356,7 +356,7 @@ export default function Home() {
               return (
                 <button
                   onClick={handleContinue}
-                  className="animate-fade-up w-full flex items-center gap-4 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white rounded-2xl px-7 py-6 text-left transition-all duration-200 hover:shadow-lg hover:shadow-[var(--accent-600)]/30 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none group"
+                  className="fk-btn animate-fade-up w-full flex items-center gap-4 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white rounded-2xl px-7 py-6 text-left hover:shadow-lg hover:shadow-[var(--accent-600)]/30 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none group"
                 >
                   <div className="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center shrink-0 text-xl group-hover:scale-110 transition-transform duration-200">▶</div>
                   <div className="flex-1 min-w-0">

@@ -187,7 +187,7 @@ export default function LessonsPage() {
                   disabled={!path.isCustom && !path.next}
                   className={`text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition-all ${
                     (path.isCustom || path.next)
-                      ? 'bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white active:scale-95'
+                      ? 'fk-btn bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white active:scale-95'
                       : 'bg-gray-100 dark:bg-[#222] text-gray-400 dark:text-gray-600 cursor-not-allowed'
                   }`}
                 >
