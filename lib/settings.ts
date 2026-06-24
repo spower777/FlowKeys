@@ -2,7 +2,7 @@ import type { TextViewMode } from './types'
 import { type PackGroupId, DEFAULT_PACK_GROUPS } from '@/data/packGroups'
 
 export type Theme = 'light' | 'dark' | 'system'
-export type AccentColor = 'blue' | 'green' | 'purple' | 'orange'
+export type AccentColor = 'blue' | 'green' | 'purple' | 'orange' | 'rose' | 'teal' | 'amber' | 'indigo' | 'emerald' | 'fuchsia'
 export type Density = 'comfortable' | 'compact'
 export type VoiceRate = 0.75 | 1 | 1.25 | 1.5
 export type VoiceMode = 'all' | 'sentence'

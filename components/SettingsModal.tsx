@@ -13,13 +13,44 @@ interface Props {
   onChange: (partial: Partial<Settings>) => void
 }
 
+// ── theme / color data ────────────────────────────────────────────────────────
+
+const ACCENT_COLORS: { value: AccentColor; color: string; label: string }[] = [
+  { value: 'blue',    color: '#3b82f6', label: 'Niebieski' },
+  { value: 'teal',    color: '#14b8a6', label: 'Morski'    },
+  { value: 'green',   color: '#22c55e', label: 'Zielony'   },
+  { value: 'emerald', color: '#10b981', label: 'Szmaragd'  },
+  { value: 'indigo',  color: '#6366f1', label: 'Indygo'    },
+  { value: 'purple',  color: '#a855f7', label: 'Fioletowy' },
+  { value: 'fuchsia', color: '#d946ef', label: 'Fuksja'    },
+  { value: 'rose',    color: '#f43f5e', label: 'Różowy'    },
+  { value: 'orange',  color: '#f97316', label: 'Pomarańcz' },
+  { value: 'amber',   color: '#f59e0b', label: 'Bursztyn'  },
+]
+
+const THEME_PRESETS: { id: string; label: string; accent: AccentColor; theme: Theme; from: string; to: string }[] = [
+  { id: 'classic',  label: 'Classic',  accent: 'blue',    theme: 'light', from: '#3b82f6', to: '#1d4ed8' },
+  { id: 'ocean',    label: 'Ocean',    accent: 'teal',    theme: 'dark',  from: '#06b6d4', to: '#0369a1' },
+  { id: 'cyber',    label: 'Cyber',    accent: 'emerald', theme: 'dark',  from: '#10b981', to: '#065f46' },
+  { id: 'aurora',   label: 'Aurora',   accent: 'fuchsia', theme: 'dark',  from: '#d946ef', to: '#7c3aed' },
+  { id: 'retro',    label: 'Retro',    accent: 'amber',   theme: 'light', from: '#f59e0b', to: '#78350f' },
+  { id: 'sunset',   label: 'Sunset',   accent: 'orange',  theme: 'dark',  from: '#f97316', to: '#9f1239' },
+  { id: 'zen',      label: 'Zen',      accent: 'green',   theme: 'light', from: '#22c55e', to: '#166534' },
+  { id: 'midnight', label: 'Midnight', accent: 'indigo',  theme: 'dark',  from: '#6366f1', to: '#1e1b4b' },
+  { id: 'sakura',   label: 'Sakura',   accent: 'rose',    theme: 'light', from: '#fb7185', to: '#881337' },
+  { id: 'cosmos',   label: 'Cosmos',   accent: 'purple',  theme: 'dark',  from: '#a855f7', to: '#1e1b4b' },
+]
+
 // ── small UI helpers ──────────────────────────────────────────────────────────
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, icon, children }: { title: string; icon?: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-600 mb-2">{title}</p>
-      <div className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] rounded-xl divide-y divide-gray-100 dark:divide-[#242424]">
+      <div className="flex items-center gap-1.5 mb-2">
+        {icon && <span className="text-sm">{icon}</span>}
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">{title}</p>
+      </div>
+      <div className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] rounded-xl divide-y divide-gray-100 dark:divide-[#242424] shadow-sm dark:shadow-none overflow-hidden">
         {children}
       </div>
     </div>
@@ -30,7 +61,7 @@ function Row({ label, sub, children }: { label: string; sub?: string; children: 
   return (
     <div className="flex items-center justify-between px-4 py-3 gap-4">
       <div className="min-w-0">
-        <p className="text-sm text-gray-800 dark:text-gray-200">{label}</p>
+        <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{label}</p>
         {sub && <p className="text-xs text-gray-400 dark:text-gray-600 mt-0.5 leading-snug">{sub}</p>}
       </div>
       <div className="shrink-0">{children}</div>
@@ -183,7 +214,34 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
         <div className="px-5 py-5 space-y-6">
 
           {/* ── A. Wygląd ── */}
-          <Section title="A. Wygląd">
+          <Section title="A. Wygląd" icon="🎨">
+
+            {/* Motywy gotowe */}
+            <div className="px-4 pt-3.5 pb-4">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2.5">Motywy gotowe</p>
+              <div className="grid grid-cols-5 gap-2">
+                {THEME_PRESETS.map(preset => {
+                  const isActive = settings.accentColor === preset.accent && settings.theme === preset.theme
+                  return (
+                    <button
+                      key={preset.id}
+                      onClick={() => onChange({ accentColor: preset.accent, theme: preset.theme })}
+                      title={preset.label}
+                      style={{ background: `linear-gradient(135deg, ${preset.from}, ${preset.to})` }}
+                      className={`h-12 rounded-xl flex items-end justify-center pb-1.5 transition-all duration-200 ${
+                        isActive
+                          ? 'ring-2 ring-offset-2 ring-gray-400 dark:ring-gray-500 shadow-lg scale-105'
+                          : 'opacity-70 hover:opacity-100 hover:scale-105 hover:shadow-md'
+                      }`}
+                    >
+                      <span className="text-[8px] font-bold text-white drop-shadow-sm leading-none">{preset.label}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Motyw */}
             <Row label="Motyw">
               <Pills<Theme>
                 value={settings.theme}
@@ -195,28 +253,36 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
                 ]}
               />
             </Row>
-            <Row label="Kolor akcentu">
-              <div className="flex gap-2">
-                {([
-                  { value: 'blue' as AccentColor, color: '#2563eb' },
-                  { value: 'green' as AccentColor, color: '#16a34a' },
-                  { value: 'purple' as AccentColor, color: '#9333ea' },
-                  { value: 'orange' as AccentColor, color: '#ea580c' },
-                ] as const).map(a => (
+
+            {/* Kolor akcentu */}
+            <div className="px-4 pt-3 pb-4">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-3">Kolor akcentu</p>
+              <div className="grid grid-cols-5 gap-y-3 gap-x-1">
+                {ACCENT_COLORS.map(a => (
                   <button
                     key={a.value}
                     onClick={() => set('accentColor', a.value)}
-                    title={a.value}
-                    className={`w-7 h-7 rounded-full border-2 transition ${
+                    title={a.label}
+                    className="flex flex-col items-center gap-1 group"
+                  >
+                    <div
+                      className={`w-8 h-8 rounded-full border-[3px] transition-all duration-150 ${
+                        settings.accentColor === a.value
+                          ? 'border-gray-900 dark:border-white shadow-md scale-110'
+                          : 'border-transparent opacity-65 group-hover:opacity-100 group-hover:scale-110'
+                      }`}
+                      style={{ backgroundColor: a.color }}
+                    />
+                    <span className={`text-[9px] leading-none text-center ${
                       settings.accentColor === a.value
-                        ? 'border-gray-800 dark:border-white scale-110'
-                        : 'border-transparent opacity-60 hover:opacity-100'
-                    }`}
-                    style={{ backgroundColor: a.color }}
-                  />
+                        ? 'text-gray-700 dark:text-gray-300 font-semibold'
+                        : 'text-gray-400 dark:text-gray-600'
+                    }`}>{a.label}</span>
+                  </button>
                 ))}
               </div>
-            </Row>
+            </div>
+
             <Row label="Gęstość UI">
               <Pills<Density>
                 value={settings.density}
@@ -230,7 +296,7 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
           </Section>
 
           {/* ── B. Pisanie ── */}
-          <Section title="B. Pisanie">
+          <Section title="B. Pisanie" icon="⌨️">
             <Row label="Widok tekstu">
               <Pills<TextViewMode>
                 value={settings.textViewMode}
@@ -271,7 +337,7 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
           </Section>
 
           {/* ── C. Audio / Blind Flow ── */}
-          <Section title="C. Audio / Blind Flow">
+          <Section title="C. Audio / Blind Flow" icon="🔊">
             <Row label="Prędkość lektora">
               <Pills<VoiceRate>
                 value={settings.voiceRate}
@@ -300,7 +366,7 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
           </Section>
 
           {/* ── D. Nagrywanie ── */}
-          <Section title="D. Nagrywanie">
+          <Section title="D. Nagrywanie" icon="🎙️">
             <div className="px-4 py-3 space-y-3">
               <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
                 <span className="text-gray-400 dark:text-gray-600">Web Speech API</span>
@@ -340,7 +406,7 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
           </Section>
 
           {/* ── E. Dane ── */}
-          <Section title="E. Dane">
+          <Section title="E. Dane" icon="🗄️">
             <div className="px-4 py-3 space-y-3">
               {cleared ? (
                 <p className="text-xs text-green-600 dark:text-green-400">Historia sesji wyczyszczona.</p>
@@ -401,7 +467,7 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
           </Section>
 
           {/* ── Klimat tekstów ── */}
-          <Section title="E. Klimat tekstów">
+          <Section title="F. Klimat tekstów" icon="📚">
             <div className="px-4 py-3">
               <p className="text-[11px] text-gray-400 dark:text-gray-600 mb-3">
                 Wybierz styl lekcji. Domyślny widok na mapie lekcji.
