@@ -356,12 +356,12 @@ export default function Home() {
               return (
                 <button
                   onClick={handleContinue}
-                  className="animate-fade-up w-full flex items-center gap-4 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white rounded-2xl px-6 py-5 text-left transition-all duration-200 hover:shadow-lg hover:shadow-[var(--accent-600)]/30 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none group"
+                  className="animate-fade-up w-full flex items-center gap-4 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white rounded-2xl px-7 py-6 text-left transition-all duration-200 hover:shadow-lg hover:shadow-[var(--accent-600)]/30 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none group"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center shrink-0 text-lg group-hover:scale-110 transition-transform duration-200">▶</div>
+                  <div className="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center shrink-0 text-xl group-hover:scale-110 transition-transform duration-200">▶</div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] font-bold uppercase tracking-widest opacity-65 mb-0.5">Kontynuuj</p>
-                    <p className="text-sm font-bold leading-tight truncate">{lessonTitle}</p>
+                    <p className="text-base font-bold leading-tight truncate">{lessonTitle}</p>
                     <p className="text-xs opacity-60 mt-0.5">{lastSession.stats.wpm} WPM · {lastSession.stats.accuracy}% · {dateStr}</p>
                   </div>
                   <span className="shrink-0 opacity-70 group-hover:translate-x-1 transition-transform duration-200">→</span>
@@ -373,11 +373,11 @@ export default function Home() {
             <div className="space-y-2 animate-fade-up" style={{ animationDelay: '60ms' }}>
               <button
                 onClick={() => { setInputMethod('paste'); setStep('input') }}
-                className="w-full flex items-center gap-4 bg-white dark:bg-[#161616] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] border border-gray-200 dark:border-[#242424] hover:border-[var(--accent-400)] dark:hover:border-[var(--accent-500)]/50 rounded-2xl px-6 py-5 text-left transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 group"
+                className="w-full flex items-center gap-4 bg-white dark:bg-[#161616] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] border border-gray-200 dark:border-[#242424] hover:border-[var(--accent-400)] dark:hover:border-[var(--accent-500)]/50 rounded-2xl px-7 py-6 text-left transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 group"
               >
-                <span className="text-2xl shrink-0">✍️</span>
+                <span className="text-3xl shrink-0">✍️</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-gray-800 dark:text-gray-200">Wklej własny tekst</p>
+                  <p className="text-base font-bold text-gray-800 dark:text-gray-200">Wklej własny tekst</p>
                   <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">Notatka, wspomnienie, fragment czegokolwiek</p>
                 </div>
                 <span className="text-gray-400 dark:text-gray-600 group-hover:text-[var(--accent-500)] transition-colors">›</span>
@@ -385,11 +385,11 @@ export default function Home() {
 
               <button
                 onClick={() => router.push('/library')}
-                className="w-full flex items-center gap-4 bg-white dark:bg-[#161616] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] border border-gray-200 dark:border-[#242424] hover:border-[var(--accent-400)] dark:hover:border-[var(--accent-500)]/50 rounded-2xl px-6 py-5 text-left transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 group"
+                className="w-full flex items-center gap-4 bg-white dark:bg-[#161616] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] border border-gray-200 dark:border-[#242424] hover:border-[var(--accent-400)] dark:hover:border-[var(--accent-500)]/50 rounded-2xl px-7 py-6 text-left transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 group"
               >
-                <span className="text-2xl shrink-0">📚</span>
+                <span className="text-3xl shrink-0">📚</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-gray-800 dark:text-gray-200">Moja Biblioteka</p>
+                  <p className="text-base font-bold text-gray-800 dark:text-gray-200">Moja Biblioteka</p>
                   <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
                     {libraryCount > 0
                       ? `${libraryCount} ${libraryCount === 1 ? 'tekst' : libraryCount < 5 ? 'teksty' : 'tekstów'} · Wróć do swoich materiałów`
@@ -403,12 +403,12 @@ export default function Home() {
             {/* Głos — drugorzędne */}
             <button
               onClick={() => { setInputMethod('voice'); setStep('input') }}
-              className="animate-fade-up w-full flex items-center gap-4 bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-[#1e1e1e] hover:border-gray-300 dark:hover:border-[#2a2a2a] rounded-2xl px-6 py-4 text-left transition-all duration-200 group"
+              className="animate-fade-up w-full flex items-center gap-4 bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-[#1e1e1e] hover:border-gray-300 dark:hover:border-[#2a2a2a] rounded-2xl px-7 py-5 text-left transition-all duration-200 group"
               style={{ animationDelay: '120ms' }}
             >
-              <span className="text-xl shrink-0">🎙️</span>
+              <span className="text-2xl shrink-0">🎙️</span>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Nagraj historię głosem</p>
+                <p className="text-base font-medium text-gray-700 dark:text-gray-300">Nagraj historię głosem</p>
                 <p className="text-xs text-gray-400 dark:text-gray-600 mt-0.5">Transkrypcja przez Whisper AI</p>
               </div>
               <span className="text-gray-300 dark:text-gray-700 group-hover:text-gray-500 dark:group-hover:text-gray-500 transition-colors text-sm">›</span>
