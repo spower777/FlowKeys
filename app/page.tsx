@@ -115,10 +115,9 @@ export default function Home() {
 
   function restartSession() { setSessionKey(k => k + 1) }
 
-  // Esc exits focus mode (typing → preview), Tab restarts from scratch
+  // Esc exits focus mode (typing → preview)
   const handleTypingKeys = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') setStep('preview')
-    if (e.key === 'Tab') { e.preventDefault(); setSessionKey(k => k + 1) }
   }, [])
   useEffect(() => {
     if (step !== 'typing') return
@@ -523,13 +522,12 @@ export default function Home() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={restartSession}
-                  title="Od nowa (Tab)"
+                  title="Od nowa"
                   className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border font-medium transition-all duration-150
                     text-gray-500 dark:text-gray-400 border-gray-200 dark:border-[#2a2a2a]
                     hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-[#383838] select-none"
                 >
                   ↺ Od nowa
-                  <span className="text-[9px] opacity-50 font-normal">Tab</span>
                 </button>
                 <span className="text-[10px] text-gray-400 dark:text-gray-600 select-none">Esc — wyjdź</span>
                 {typingMode === 'blind' && (
