@@ -47,6 +47,7 @@ export default function Home() {
   const [newBadges, setNewBadges] = useState<BadgeSummary[]>([])
   const [earnedStars, setEarnedStars] = useState<0|1|2|3>(0)
   const [lastReplayData, setLastReplayData] = useState<ReplayEvent[]>([])
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
   const [lastSession, setLastSession] = useState<TypingSessionRecord | null>(null)
   const [currentLibraryTextId, setCurrentLibraryTextId] = useState<string | null>(null)
   const [chunkIndex, setChunkIndex] = useState(0)
@@ -167,6 +168,7 @@ export default function Home() {
     setStats(s)
     setLastReplayData(replayData)
     const sessionId = Date.now().toString()
+    setCurrentSessionId(sessionId)
     saveSession({
       id: sessionId,
       createdAt: new Date().toISOString(),
@@ -614,6 +616,7 @@ export default function Home() {
             lessonId={currentLesson?.id}
             hasNextLesson={!!currentLesson && !!lessons.find(l => l.id === (currentLesson.id + 1))}
             replayData={lastReplayData}
+            currentSessionId={currentSessionId ?? undefined}
             libraryTextId={currentLibraryTextId}
             onSaveToLibrary={handleSaveToLibrary}
             hasNextChunk={!!currentLibraryTextId && chunkIndex + 1 < totalChunks}

@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import type { TypingStats, TypingMode, TransformMode, ReplayEvent } from '@/lib/types'
+import type { TypingStats, TypingMode, TransformMode, ReplayEvent, TypingSessionRecord } from '@/lib/types'
 import { FINGER_LABELS, FINGER_COLORS } from '@/lib/fingerMap'
 import { getCustomText, type CustomText } from '@/lib/library'
+import { getSessions } from '@/lib/storage'
 import ReplayModal from './ReplayModal'
 
 const TYPING_LABEL: Record<TypingMode, string> = {
@@ -65,6 +66,64 @@ function isPolishDiacriticLoss(expected: string, actual: string): boolean {
   return !!(expected && actual && POLISH_STRIPPED[expected]?.toLowerCase() === actual.toLowerCase())
 }
 
+function fmtShortDate(iso: string) {
+  return new Date(iso).toLocaleDateString('pl', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+}
+
+interface ChartPoint { wpm: number; acc: number; current?: boolean }
+
+function ProgressChart({ points }: { points: ChartPoint[] }) {
+  if (points.length < 2) return null
+  const W = 500, H = 100
+  const PL = 10, PR = 10, PT = 18, PB = 20
+  const iW = W - PL - PR, iH = H - PT - PB
+  const n = points.length
+  const maxWpm = Math.max(40, ...points.map(p => p.wpm)) * 1.08
+
+  const xOf = (i: number) => PL + (n < 2 ? iW / 2 : (i / (n - 1)) * iW)
+  const yW = (v: number) => PT + (1 - Math.min(v / maxWpm, 1)) * iH
+  const yA = (v: number) => PT + (1 - v / 100) * iH
+
+  const wPath = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${xOf(i)},${yW(p.wpm)}`).join(' ')
+  const aPath = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${xOf(i)},${yA(p.acc)}`).join(' ')
+  const last = points[n - 1]
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: H }}>
+      {/* grid */}
+      {[25, 50, 75].map(pct => (
+        <line key={pct} x1={PL} x2={W - PR}
+          y1={PT + (1 - pct / 100) * iH} y2={PT + (1 - pct / 100) * iH}
+          stroke="currentColor" strokeOpacity={0.05} strokeWidth={1} />
+      ))}
+      {/* acc fill */}
+      <path d={`${aPath} L${xOf(n - 1)},${H - PB} L${xOf(0)},${H - PB}Z`} fill="#10b981" fillOpacity={0.07} />
+      {/* wpm fill */}
+      <path d={`${wPath} L${xOf(n - 1)},${H - PB} L${xOf(0)},${H - PB}Z`} fill="var(--accent-500)" fillOpacity={0.05} />
+      {/* lines */}
+      <path d={aPath} fill="none" stroke="#10b981" strokeWidth={1.5} strokeOpacity={0.7} strokeLinejoin="round" />
+      <path d={wPath} fill="none" stroke="var(--accent-500)" strokeWidth={2} strokeLinejoin="round" />
+      {/* dots */}
+      {points.map((p, i) => (
+        <g key={i}>
+          <circle cx={xOf(i)} cy={yW(p.wpm)} r={p.current ? 4.5 : 2.5} fill="var(--accent-500)" />
+          <circle cx={xOf(i)} cy={yA(p.acc)} r={p.current ? 3.5 : 2} fill="#10b981" />
+        </g>
+      ))}
+      {/* current labels */}
+      <text x={xOf(n - 1)} y={yW(last.wpm) - 8} textAnchor="middle" fontSize={9} fill="var(--accent-500)" fontWeight="bold">{last.wpm}</text>
+      <text x={xOf(n - 1)} y={yA(last.acc) - 8} textAnchor="middle" fontSize={9} fill="#10b981" fontWeight="bold">{last.acc}%</text>
+      {/* legend */}
+      <g>
+        <circle cx={PL} cy={6} r={3} fill="var(--accent-500)" />
+        <text x={PL + 6} y={9.5} fontSize={8} fill="currentColor" fillOpacity={0.45}>WPM</text>
+        <circle cx={PL + 38} cy={6} r={2.5} fill="#10b981" />
+        <text x={PL + 44} y={9.5} fontSize={8} fill="currentColor" fillOpacity={0.45}>Dokładność</text>
+      </g>
+    </svg>
+  )
+}
+
 export interface BadgeSummary { icon: string; title: string; description: string }
 
 type SuggestionAction = 'blind' | 'no_backspace' | 'next_lesson'
@@ -80,6 +139,7 @@ interface Props {
   lessonId?: number
   hasNextLesson?: boolean
   replayData?: ReplayEvent[]
+  currentSessionId?: string
   libraryTextId?: string | null
   onSaveToLibrary?: (title: string) => void
   hasNextChunk?: boolean
@@ -92,7 +152,7 @@ interface Props {
 export default function ResultsPanel({
   stats, trainingText, typedText, typingMode,
   newBadges, earnedStars, lessonId, hasNextLesson,
-  replayData, libraryTextId, onSaveToLibrary, hasNextChunk, onNextChunk,
+  replayData, currentSessionId, libraryTextId, onSaveToLibrary, hasNextChunk, onNextChunk,
   onNewRound, onRepeat, onAction,
 }: Props) {
   const router = useRouter()
@@ -101,6 +161,8 @@ export default function ResultsPanel({
   const [saveTitle, setSaveTitle] = useState('')
   const [savedToLib, setSavedToLib] = useState(false)
   const [replayOpen, setReplayOpen] = useState(false)
+  const [prevSessions, setPrevSessions] = useState<TypingSessionRecord[]>([])
+  const [historyReplay, setHistoryReplay] = useState<TypingSessionRecord | null>(null)
 
   useEffect(() => {
     if (libraryTextId) setLibraryEntry(getCustomText(libraryTextId))
@@ -118,6 +180,15 @@ export default function ResultsPanel({
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [hasNextLesson, onAction, hasNextChunk, onNextChunk])
+
+  useEffect(() => {
+    if (lessonId === undefined && !libraryTextId) return
+    const all = getSessions()
+    const matching = all.filter(s =>
+      lessonId !== undefined ? s.lessonId === lessonId : s.libraryTextId === libraryTextId
+    ).filter(s => s.id !== currentSessionId)
+    setPrevSessions(matching)
+  }, [lessonId, libraryTextId, currentSessionId])
 
   const acc   = stats.accuracy
   const calm  = stats.calmScore ?? acc
@@ -292,6 +363,50 @@ export default function ResultsPanel({
           </div>
         </div>
       )}
+
+      {/* ── SESSION HISTORY ── */}
+      {prevSessions.length > 0 && (() => {
+        const chartPoints: ChartPoint[] = [...prevSessions].reverse().map(s => ({
+          wpm: s.stats.wpm,
+          acc: s.stats.accuracy,
+        }))
+        chartPoints.push({ wpm: stats.wpm, acc: stats.accuracy, current: true })
+        return (
+          <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl overflow-hidden">
+            <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-widest px-5 py-3 border-b border-gray-100 dark:border-[#1e1e1e]">
+              Postęp · {prevSessions.length + 1} {prevSessions.length + 1 === 1 ? 'próba' : prevSessions.length + 1 < 5 ? 'próby' : 'prób'}
+            </p>
+            <div className="px-4 pt-3 pb-1">
+              <ProgressChart points={chartPoints} />
+            </div>
+            <div className="divide-y divide-gray-100 dark:divide-[#1e1e1e]">
+              {prevSessions.slice(0, 8).map((s, i) => {
+                const isFirst = i === 0
+                return (
+                  <div key={s.id} className={`flex items-center gap-3 px-5 py-2.5 ${isFirst ? 'bg-gray-50/50 dark:bg-white/[0.015]' : ''}`}>
+                    <span className="text-[10px] text-gray-400 dark:text-gray-600 w-24 shrink-0 tabular-nums">{fmtShortDate(s.createdAt)}</span>
+                    <span className="text-sm font-bold text-[var(--accent-500)] tabular-nums w-10 shrink-0">{s.stats.wpm}</span>
+                    <span className="text-[10px] text-gray-400 dark:text-gray-600 shrink-0">wpm</span>
+                    <span className={`text-sm font-semibold tabular-nums w-12 shrink-0 ${s.stats.accuracy >= 95 ? 'text-green-600 dark:text-green-400' : s.stats.accuracy >= 80 ? 'text-amber-600 dark:text-amber-400' : 'text-red-500 dark:text-red-400'}`}>{s.stats.accuracy}%</span>
+                    <span className="text-[10px] text-gray-400 dark:text-gray-600 shrink-0">acc</span>
+                    <div className="flex-1" />
+                    {s.replayData?.length ? (
+                      <button
+                        onClick={() => setHistoryReplay(s)}
+                        className="text-[10px] font-semibold text-[var(--accent-500)] hover:text-[var(--accent-600)] flex items-center gap-1 shrink-0 transition-colors"
+                      >
+                        ▶ odtwórz
+                      </button>
+                    ) : (
+                      <span className="text-[10px] text-gray-300 dark:text-gray-700 shrink-0">—</span>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )
+      })()}
 
       {/* ── BADGE: show only first, hint at rest ── */}
       {(newBadges?.length ?? 0) > 0 && (() => {
@@ -503,6 +618,13 @@ export default function ResultsPanel({
           replayData={replayData}
           trainingText={trainingText}
           onClose={() => setReplayOpen(false)}
+        />
+      )}
+      {historyReplay && historyReplay.replayData && (
+        <ReplayModal
+          replayData={historyReplay.replayData}
+          trainingText={historyReplay.trainingText}
+          onClose={() => setHistoryReplay(null)}
         />
       )}
 
