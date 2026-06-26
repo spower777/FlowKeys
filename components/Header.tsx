@@ -43,14 +43,14 @@ export default function Header({ onHomeClick, onSettingsClick, compact }: Props)
       {onHomeClick ? (
         <button
           onClick={onHomeClick}
-          className="select-none cursor-pointer text-2xl font-black tracking-tight text-gray-900 dark:text-gray-100 hover:text-[var(--accent-500)] transition-colors duration-200"
+          className="select-none cursor-pointer text-2xl font-black tracking-tight text-[var(--accent-500)] hover:text-[var(--accent-600)] transition-colors duration-200"
         >
           FlowKeys
         </button>
       ) : (
         <Link
           href="/"
-          className="select-none text-2xl font-black tracking-tight text-gray-900 dark:text-gray-100 hover:text-[var(--accent-500)] transition-colors duration-200"
+          className="select-none text-2xl font-black tracking-tight text-[var(--accent-500)] hover:text-[var(--accent-600)] transition-colors duration-200"
         >
           FlowKeys
         </Link>

@@ -280,21 +280,32 @@ export default function ResultsPanel({
       {/* ── MISTAKES ── */}
       {stats.commonMistakes.length > 0 && (
         <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl overflow-hidden">
-          <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-widest px-5 py-3 border-b border-gray-100 dark:border-[#1e1e1e]">
-            Najczęstsze błędy
-          </p>
+          <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 dark:border-[#1e1e1e]">
+            <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-widest">
+              Najczęstsze błędy
+            </p>
+            <p className="text-[9px] text-gray-400 dark:text-gray-600">
+              <span className="text-red-400 dark:text-red-500">cel</span> → wpisano
+            </p>
+          </div>
           <div className="divide-y divide-gray-100 dark:divide-[#1e1e1e]">
             {stats.commonMistakes.slice(0, 4).map((m, i) => {
               const isPolish = isPolishDiacriticLoss(m.expected, m.actual)
               return (
                 <div key={i} className="flex items-center gap-3 px-5 py-2.5">
-                  <span className={`font-mono text-sm font-bold px-2 py-1 rounded-lg border min-w-[28px] text-center shrink-0 ${isPolish ? 'bg-orange-50 dark:bg-orange-500/10 border-orange-200 dark:border-orange-500/30 text-orange-600 dark:text-orange-400' : 'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/30 text-red-500 dark:text-red-400'}`}>
-                    {m.expected === ' ' ? '␣' : m.expected}
-                  </span>
+                  <div className="flex flex-col items-center shrink-0">
+                    <span className={`font-mono text-sm font-bold px-2 py-1 rounded-lg border min-w-[28px] text-center ${isPolish ? 'bg-orange-50 dark:bg-orange-500/10 border-orange-200 dark:border-orange-500/30 text-orange-600 dark:text-orange-400' : 'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/30 text-red-500 dark:text-red-400'}`}>
+                      {m.expected === ' ' ? '␣' : m.expected}
+                    </span>
+                    <span className="text-[8px] text-gray-400 dark:text-gray-600 mt-0.5 leading-none">cel</span>
+                  </div>
                   <span className="text-gray-400 dark:text-gray-600 text-xs shrink-0">→</span>
-                  <span className="font-mono text-sm text-gray-600 dark:text-gray-400 px-2 py-1 rounded-lg border border-gray-200 dark:border-[#2e2e2e] bg-gray-50 dark:bg-[#1e1e1e] min-w-[28px] text-center shrink-0">
-                    {m.actual === ' ' ? '␣' : m.actual}
-                  </span>
+                  <div className="flex flex-col items-center shrink-0">
+                    <span className="font-mono text-sm text-gray-600 dark:text-gray-400 px-2 py-1 rounded-lg border border-gray-200 dark:border-[#2e2e2e] bg-gray-50 dark:bg-[#1e1e1e] min-w-[28px] text-center">
+                      {m.actual === ' ' ? '␣' : m.actual}
+                    </span>
+                    <span className="text-[8px] text-gray-400 dark:text-gray-600 mt-0.5 leading-none">błąd</span>
+                  </div>
                   {isPolish && <span className="text-[9px] bg-orange-100 dark:bg-orange-500/15 text-orange-500 dark:text-orange-400 px-1.5 py-0.5 rounded shrink-0">ogonek</span>}
                   <div className="flex-1 h-1 bg-gray-100 dark:bg-[#2a2a2a] rounded-full overflow-hidden mx-2">
                     <div
