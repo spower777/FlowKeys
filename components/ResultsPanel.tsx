@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import type { TypingStats, TypingMode, TransformMode, ReplayEvent } from '@/lib/types'
 import { FINGER_LABELS, FINGER_COLORS } from '@/lib/fingerMap'
 import { getCustomText, type CustomText } from '@/lib/library'
+import ReplayModal from './ReplayModal'
 
 const TYPING_LABEL: Record<TypingMode, string> = {
   normal: 'Normal', blind: 'Blind Flow', no_backspace: 'No Backspace',
@@ -89,9 +90,9 @@ interface Props {
 }
 
 export default function ResultsPanel({
-  stats, typingMode,
+  stats, trainingText, typedText, typingMode,
   newBadges, earnedStars, lessonId, hasNextLesson,
-  libraryTextId, onSaveToLibrary, hasNextChunk, onNextChunk,
+  replayData, libraryTextId, onSaveToLibrary, hasNextChunk, onNextChunk,
   onNewRound, onRepeat, onAction,
 }: Props) {
   const router = useRouter()
@@ -99,6 +100,7 @@ export default function ResultsPanel({
   const [saveExpanded, setSaveExpanded] = useState(false)
   const [saveTitle, setSaveTitle] = useState('')
   const [savedToLib, setSavedToLib] = useState(false)
+  const [replayOpen, setReplayOpen] = useState(false)
 
   useEffect(() => {
     if (libraryTextId) setLibraryEntry(getCustomText(libraryTextId))
@@ -253,6 +255,43 @@ export default function ResultsPanel({
           </p>
         </div>
       </div>
+
+      {/* ── TEXT DIFF ── */}
+      {trainingText && typedText && (
+        <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 dark:border-[#1e1e1e]">
+            <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-widest">
+              Tekst z błędami
+            </p>
+            {(replayData?.length ?? 0) > 0 && (
+              <button
+                onClick={() => setReplayOpen(true)}
+                className="flex items-center gap-1.5 text-[10px] font-semibold text-[var(--accent-500)] hover:text-[var(--accent-600)] transition-colors"
+              >
+                <span>▶</span> Odtwórz
+              </button>
+            )}
+          </div>
+          <div className="px-5 py-4">
+            <p className="text-sm leading-8 font-mono break-words whitespace-pre-wrap select-none">
+              {trainingText.split('').map((ch, i) => {
+                const typed = typedText[i]
+                if (typed === undefined) {
+                  return <span key={i} className="text-gray-300 dark:text-gray-700">{ch === ' ' ? ' ' : ch}</span>
+                }
+                if (typed === ch) {
+                  return <span key={i} className="text-gray-600 dark:text-gray-400">{ch === ' ' ? ' ' : ch}</span>
+                }
+                return (
+                  <span key={i} className="relative inline-block">
+                    <span className="text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded px-0.5">{ch === ' ' ? '·' : ch}</span>
+                  </span>
+                )
+              })}
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* ── BADGE: show only first, hint at rest ── */}
       {(newBadges?.length ?? 0) > 0 && (() => {
@@ -457,6 +496,15 @@ export default function ResultsPanel({
           Nowa runda
         </button>
       </div>
+
+      {/* ── REPLAY MODAL ── */}
+      {replayOpen && replayData && replayData.length > 0 && (
+        <ReplayModal
+          replayData={replayData}
+          trainingText={trainingText}
+          onClose={() => setReplayOpen(false)}
+        />
+      )}
 
     </div>
   )
