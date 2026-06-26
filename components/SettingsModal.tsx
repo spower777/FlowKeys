@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { clearSessions } from '@/lib/storage'
 import { DEFAULTS, applySettingsToDOM } from '@/lib/settings'
-import type { Settings, Theme, ThemePreset, Density, VoiceRate, VoiceMode, SoundProfile } from '@/lib/settings'
+import type { Settings, Theme, ThemePreset, Density, VoiceRate, VoiceMode, SoundProfile, KeyboardLayout } from '@/lib/settings'
+import { LAYOUTS } from '@/lib/keyboardLayouts'
 import type { TextViewMode } from '@/lib/types'
 import { PACK_GROUPS, type PackGroupId } from '@/data/packGroups'
 
@@ -261,6 +262,14 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
                   { value: 'word', label: 'Słowo' },
                   { value: 'full', label: 'Pełny' },
                 ]}
+              />
+            </Row>
+
+            <Row label="Układ klawiatury" sub="Zmienia wizualny układ klawiszy i przypisanie palców">
+              <Pills<KeyboardLayout>
+                value={settings.keyboardLayout}
+                onChange={v => set('keyboardLayout', v)}
+                options={(Object.keys(LAYOUTS) as KeyboardLayout[]).map(id => ({ value: id, label: LAYOUTS[id].label }))}
               />
             </Row>
 

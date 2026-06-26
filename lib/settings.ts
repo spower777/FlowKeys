@@ -1,6 +1,8 @@
 import type { TextViewMode } from './types'
 import { type PackGroupId, DEFAULT_PACK_GROUPS } from '@/data/packGroups'
+import type { KeyboardLayout } from './keyboardLayouts'
 
+export type { KeyboardLayout }
 export type Theme = 'light' | 'dark' | 'system'
 export type ThemePreset = 'classic' | 'ocean' | 'cyber' | 'aurora' | 'retro' | 'sunset' | 'zen' | 'midnight' | 'sakura' | 'cosmos'
 export type Density = 'comfortable' | 'compact'
@@ -30,6 +32,7 @@ export interface Settings {
   blindHint: boolean
   devUnlockAll: boolean
   preferredPackGroups: PackGroupId[]
+  keyboardLayout: KeyboardLayout
 }
 
 export const DEFAULTS: Settings = {
@@ -47,6 +50,7 @@ export const DEFAULTS: Settings = {
   blindHint: true,
   devUnlockAll: false,
   preferredPackGroups: DEFAULT_PACK_GROUPS,
+  keyboardLayout: 'qwerty',
 }
 
 const KEY = 'flowkeys_settings'

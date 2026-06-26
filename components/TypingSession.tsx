@@ -7,7 +7,7 @@ import VirtualKeyboard from './VirtualKeyboard'
 import { playKeySound } from '@/lib/keyboardSounds'
 import { normalizeDashes } from '@/lib/analyzeTyping'
 import type { TypingMode, TextViewMode, ReplayEvent } from '@/lib/types'
-import type { SoundProfile } from '@/lib/settings'
+import type { SoundProfile, KeyboardLayout } from '@/lib/settings'
 
 interface Props {
   trainingText: string
@@ -23,6 +23,7 @@ interface Props {
   blindHint?: boolean
   voiceRate?: number
   voiceMode?: 'all' | 'sentence'
+  keyboardLayout?: KeyboardLayout
 }
 
 // ── sentence helper ──────────────────────────────────────────────────────────
@@ -107,7 +108,7 @@ export default function TypingSession({
   trainingText: trainingText_raw, typingMode, textViewMode, onTextViewModeChange, onFinish,
   showKeyboard = false, showFingers = false, soundProfile = 'off',
   blockPaste = true, calmMode = false, blindHint = true,
-  voiceRate = 1, voiceMode = 'all',
+  voiceRate = 1, voiceMode = 'all', keyboardLayout = 'qwerty',
 }: Props) {
   const [typed, setTyped] = useState('')
   const [startTime, setStartTime] = useState<number | null>(null)
@@ -424,6 +425,7 @@ export default function TypingSession({
         <VirtualKeyboard
           nextChar={trainingText[cursorPos] ?? ''}
           showFingers={showFingers}
+          layout={keyboardLayout}
         />
       )}
 

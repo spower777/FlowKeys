@@ -1,6 +1,7 @@
 'use client'
 
-import { FINGER, POLISH_BASE, FINGER_COLORS, FINGER_LABELS } from '@/lib/fingerMap'
+import { POLISH_BASE, FINGER_COLORS, FINGER_LABELS } from '@/lib/fingerMap'
+import { LAYOUTS, type KeyboardLayout } from '@/lib/keyboardLayouts'
 import HandsDisplay from './HandsDisplay'
 
 // ── Row definitions ───────────────────────────────────────────────────────────
@@ -8,26 +9,15 @@ import HandsDisplay from './HandsDisplay'
 type SpecialKey = { id: string; label: string; w: string }
 type KeySpec = string | SpecialKey
 
-const ROWS: KeySpec[][] = [
-  [
-    '1','2','3','4','5','6','7','8','9','0',
-    { id: 'Backspace', label: '⌫', w: 'w-[52px]' },
-  ],
-  [
-    { id: 'Tab', label: '⇥ Tab', w: 'w-[52px]' },
-    'q','w','e','r','t','y','u','i','o','p',
-  ],
-  [
-    { id: 'Caps', label: '⇪', w: 'w-[52px]' },
-    'a','s','d','f','g','h','j','k','l',
-    { id: 'Enter', label: '↵ Enter', w: 'w-[58px]' },
-  ],
-  [
-    { id: 'ShiftL', label: '⇧ Shift', w: 'w-[70px]' },
-    'z','x','c','v','b','n','m',
-    { id: 'ShiftR', label: '⇧', w: 'w-[52px]' },
-  ],
-]
+function buildRows(layout: KeyboardLayout): KeySpec[][] {
+  const [numRow, topRow, homeRow, bottomRow] = LAYOUTS[layout].rows
+  return [
+    [...numRow, { id: 'Backspace', label: '⌫', w: 'w-[52px]' }],
+    [{ id: 'Tab', label: '⇥ Tab', w: 'w-[52px]' }, ...topRow],
+    [{ id: 'Caps', label: '⇪', w: 'w-[52px]' }, ...homeRow, { id: 'Enter', label: '↵ Enter', w: 'w-[58px]' }],
+    [{ id: 'ShiftL', label: '⇧ Shift', w: 'w-[70px]' }, ...bottomRow, { id: 'ShiftR', label: '⇧', w: 'w-[52px]' }],
+  ]
+}
 
 // ── Styles ────────────────────────────────────────────────────────────────────
 
@@ -46,11 +36,14 @@ interface Props {
   nextChar: string
   showFingers: boolean
   pressedKey?: string
+  layout?: KeyboardLayout
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function VirtualKeyboard({ nextChar, showFingers, pressedKey }: Props) {
+export default function VirtualKeyboard({ nextChar, showFingers, pressedKey, layout = 'qwerty' }: Props) {
+  const ROWS = buildRows(layout)
+  const FINGER = LAYOUTS[layout].finger
   const ch = pressedKey ?? nextChar
 
   const isBackspace = ch === 'Backspace'

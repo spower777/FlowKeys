@@ -163,7 +163,7 @@ export default function Home() {
   }
 
   function handleFinish(typed: string, start: number, end: number, backspaceCount: number, replayData: ReplayEvent[]) {
-    const s = analyzeTyping(trainingText, typed, start, end, backspaceCount)
+    const s = analyzeTyping(trainingText, typed, start, end, backspaceCount, settings.keyboardLayout)
     setTypedText(typed)
     setStats(s)
     setLastReplayData(replayData)
@@ -598,6 +598,7 @@ export default function Home() {
               blindHint={settings.blindHint}
               voiceRate={settings.voiceRate}
               voiceMode={settings.voiceMode}
+              keyboardLayout={settings.keyboardLayout}
               onFinish={handleFinish}
             />
           </div>

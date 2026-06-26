@@ -1,5 +1,6 @@
 import type { TypingStats, CommonMistake, ReplayEvent } from './types'
 import { charToFinger } from './fingerMap'
+import type { KeyboardLayout } from './keyboardLayouts'
 
 const POLISH_CHARS = new Set('ąćęłńóśźżĄĆĘŁŃÓŚŹŻ')
 const MAX_ALIGN = 600
@@ -82,7 +83,8 @@ export function analyzeTyping(
   typedText: string,
   startTime: number,
   endTime: number,
-  backspaceCount = 0
+  backspaceCount = 0,
+  layout: KeyboardLayout = 'qwerty'
 ): TypingStats {
   const elapsedMin = Math.max((endTime - startTime) / 60000, 0.01)
   const ops = align(normalizeDashes(sourceText), normalizeDashes(typedText))
@@ -108,7 +110,7 @@ export function analyzeTyping(
       if (!mistakeMap.has(op.expected)) mistakeMap.set(op.expected, new Map())
       const m = mistakeMap.get(op.expected)!
       m.set(op.actual, (m.get(op.actual) ?? 0) + 1)
-      const finger = charToFinger(op.expected)
+      const finger = charToFinger(op.expected, layout)
       if (finger) fingerErrors[finger] = (fingerErrors[finger] ?? 0) + 1
     } else if (op.op === 'ins') {
       insCount++
