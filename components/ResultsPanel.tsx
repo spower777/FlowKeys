@@ -66,60 +66,101 @@ function isPolishDiacriticLoss(expected: string, actual: string): boolean {
   return !!(expected && actual && POLISH_STRIPPED[expected]?.toLowerCase() === actual.toLowerCase())
 }
 
-function fmtShortDate(iso: string) {
-  return new Date(iso).toLocaleDateString('pl', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+function relDate(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime()
+  const m = Math.floor(diff / 60000)
+  const h = Math.floor(diff / 3600000)
+  const d = Math.floor(diff / 86400000)
+  if (m < 2) return 'przed chwilą'
+  if (m < 60) return `${m} min temu`
+  if (h < 24) return `${h} godz. temu`
+  if (d === 1) return 'wczoraj'
+  if (d < 7) return `${d} dni temu`
+  return new Date(iso).toLocaleDateString('pl', { day: 'numeric', month: 'short' })
 }
 
-interface ChartPoint { wpm: number; acc: number; current?: boolean }
+function niceTop(v: number): number {
+  for (const s of [20, 30, 40, 50, 60, 75, 80, 100, 120, 150]) if (s >= v) return s
+  return Math.ceil(v / 20) * 20
+}
 
-function ProgressChart({ points }: { points: ChartPoint[] }) {
-  if (points.length < 2) return null
-  const W = 500, H = 100
-  const PL = 10, PR = 10, PT = 18, PB = 20
+function WpmBarChart({ points }: { points: { wpm: number; current?: boolean }[] }) {
+  const W = 300, H = 120
+  const PL = 28, PR = 8, PT = 12, PB = 16
   const iW = W - PL - PR, iH = H - PT - PB
   const n = points.length
-  const maxWpm = Math.max(40, ...points.map(p => p.wpm)) * 1.08
-
-  const xOf = (i: number) => PL + (n < 2 ? iW / 2 : (i / (n - 1)) * iW)
-  const yW = (v: number) => PT + (1 - Math.min(v / maxWpm, 1)) * iH
-  const yA = (v: number) => PT + (1 - v / 100) * iH
-
-  const wPath = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${xOf(i)},${yW(p.wpm)}`).join(' ')
-  const aPath = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${xOf(i)},${yA(p.acc)}`).join(' ')
-  const last = points[n - 1]
+  const maxY = niceTop(Math.max(20, ...points.map(p => p.wpm)))
+  const ticks = [0, Math.round(maxY / 2), maxY]
+  const slotW = iW / n
+  const barW = Math.min(18, slotW * 0.7)
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: H }}>
-      {/* grid */}
-      {[25, 50, 75].map(pct => (
-        <line key={pct} x1={PL} x2={W - PR}
-          y1={PT + (1 - pct / 100) * iH} y2={PT + (1 - pct / 100) * iH}
-          stroke="currentColor" strokeOpacity={0.05} strokeWidth={1} />
-      ))}
-      {/* acc fill */}
-      <path d={`${aPath} L${xOf(n - 1)},${H - PB} L${xOf(0)},${H - PB}Z`} fill="#10b981" fillOpacity={0.07} />
-      {/* wpm fill */}
-      <path d={`${wPath} L${xOf(n - 1)},${H - PB} L${xOf(0)},${H - PB}Z`} fill="var(--accent-500)" fillOpacity={0.05} />
-      {/* lines */}
-      <path d={aPath} fill="none" stroke="#10b981" strokeWidth={1.5} strokeOpacity={0.7} strokeLinejoin="round" />
-      <path d={wPath} fill="none" stroke="var(--accent-500)" strokeWidth={2} strokeLinejoin="round" />
-      {/* dots */}
-      {points.map((p, i) => (
-        <g key={i}>
-          <circle cx={xOf(i)} cy={yW(p.wpm)} r={p.current ? 4.5 : 2.5} fill="var(--accent-500)" />
-          <circle cx={xOf(i)} cy={yA(p.acc)} r={p.current ? 3.5 : 2} fill="#10b981" />
-        </g>
-      ))}
-      {/* current labels */}
-      <text x={xOf(n - 1)} y={yW(last.wpm) - 8} textAnchor="middle" fontSize={9} fill="var(--accent-500)" fontWeight="bold">{last.wpm}</text>
-      <text x={xOf(n - 1)} y={yA(last.acc) - 8} textAnchor="middle" fontSize={9} fill="#10b981" fontWeight="bold">{last.acc}%</text>
-      {/* legend */}
-      <g>
-        <circle cx={PL} cy={6} r={3} fill="var(--accent-500)" />
-        <text x={PL + 6} y={9.5} fontSize={8} fill="currentColor" fillOpacity={0.45}>WPM</text>
-        <circle cx={PL + 38} cy={6} r={2.5} fill="#10b981" />
-        <text x={PL + 44} y={9.5} fontSize={8} fill="currentColor" fillOpacity={0.45}>Dokładność</text>
-      </g>
+      {ticks.map(v => {
+        const y = PT + (1 - v / maxY) * iH
+        return (
+          <g key={v}>
+            <line x1={PL} x2={W - PR} y1={y} y2={y} stroke="currentColor" strokeOpacity={0.08} strokeWidth={1} />
+            <text x={PL - 4} y={y + 3.5} textAnchor="end" fontSize={7} fill="currentColor" fillOpacity={0.4}>{v}</text>
+          </g>
+        )
+      })}
+      {points.map((p, i) => {
+        const bH = Math.max(2, (p.wpm / maxY) * iH)
+        const x = PL + slotW * i + (slotW - barW) / 2
+        const y = PT + iH - bH
+        const isCur = !!p.current
+        return (
+          <g key={i}>
+            <rect x={x} y={y} width={barW} height={bH}
+              fill="var(--accent-500)" fillOpacity={isCur ? 1 : 0.35} rx={2} />
+            {isCur && (
+              <text x={x + barW / 2} y={y - 4} textAnchor="middle" fontSize={8} fill="var(--accent-500)" fontWeight="bold">{p.wpm}</text>
+            )}
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
+
+function AccLineChart({ points }: { points: { acc: number; current?: boolean }[] }) {
+  const W = 300, H = 120
+  const PL = 32, PR = 8, PT = 12, PB = 16
+  const iW = W - PL - PR, iH = H - PT - PB
+  const n = points.length
+  const minAcc = Math.max(0, Math.floor(Math.min(...points.map(p => p.acc)) / 10) * 10 - 10)
+  const ticks = [minAcc, Math.round((minAcc + 100) / 2), 100]
+
+  const xOf = (i: number) => PL + (n < 2 ? iW / 2 : (i / (n - 1)) * iW)
+  const yOf = (v: number) => PT + (1 - (v - minAcc) / (100 - minAcc)) * iH
+  const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${xOf(i).toFixed(1)},${yOf(p.acc).toFixed(1)}`).join(' ')
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: H }}>
+      {ticks.map(v => {
+        const y = yOf(v)
+        return (
+          <g key={v}>
+            <line x1={PL} x2={W - PR} y1={y} y2={y} stroke="currentColor" strokeOpacity={0.08} strokeWidth={1} />
+            <text x={PL - 4} y={y + 3.5} textAnchor="end" fontSize={7} fill="currentColor" fillOpacity={0.4}>{v}%</text>
+          </g>
+        )
+      })}
+      <path d={`${linePath} L${xOf(n - 1)},${H - PB} L${xOf(0)},${H - PB}Z`} fill="#10b981" fillOpacity={0.07} />
+      <path d={linePath} fill="none" stroke="#10b981" strokeWidth={1.5} strokeLinejoin="round" />
+      {points.map((p, i) => {
+        const isCur = !!p.current
+        return (
+          <g key={i}>
+            <circle cx={xOf(i)} cy={yOf(p.acc)} r={isCur ? 4 : 3}
+              fill={isCur ? '#10b981' : 'var(--chart-dot-bg, white)'} stroke="#10b981" strokeWidth={1.5} />
+            {isCur && (
+              <text x={xOf(i)} y={yOf(p.acc) - 8} textAnchor="middle" fontSize={8} fill="#10b981" fontWeight="bold">{p.acc}%</text>
+            )}
+          </g>
+        )
+      })}
     </svg>
   )
 }
@@ -366,43 +407,61 @@ export default function ResultsPanel({
 
       {/* ── SESSION HISTORY ── */}
       {prevSessions.length > 0 && (() => {
-        const chartPoints: ChartPoint[] = [...prevSessions].reverse().map(s => ({
-          wpm: s.stats.wpm,
-          acc: s.stats.accuracy,
-        }))
-        chartPoints.push({ wpm: stats.wpm, acc: stats.accuracy, current: true })
+        const older = [...prevSessions].reverse()
+        const wpmPts = [...older.map(s => ({ wpm: s.stats.wpm })), { wpm: stats.wpm, current: true }]
+        const accPts = [...older.map(s => ({ acc: s.stats.accuracy })), { acc: stats.accuracy, current: true }]
+        const total = prevSessions.length + 1
+        const label = total === 1 ? 'próba' : total < 5 ? 'próby' : 'prób'
         return (
           <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl overflow-hidden">
             <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-widest px-5 py-3 border-b border-gray-100 dark:border-[#1e1e1e]">
-              Postęp · {prevSessions.length + 1} {prevSessions.length + 1 === 1 ? 'próba' : prevSessions.length + 1 < 5 ? 'próby' : 'prób'}
+              Postęp · {total} {label}
             </p>
-            <div className="px-4 pt-3 pb-1">
-              <ProgressChart points={chartPoints} />
+
+            {/* Charts */}
+            <div className="grid grid-cols-2 gap-px bg-gray-100 dark:bg-[#1e1e1e]">
+              <div className="bg-white dark:bg-[#161616] px-4 pt-3 pb-2">
+                <p className="text-[9px] font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-widest mb-1">Szybkość SNM</p>
+                <WpmBarChart points={wpmPts} />
+              </div>
+              <div className="bg-white dark:bg-[#161616] px-4 pt-3 pb-2">
+                <p className="text-[9px] font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-widest mb-1">Dokładność</p>
+                <AccLineChart points={accPts} />
+              </div>
             </div>
-            <div className="divide-y divide-gray-100 dark:divide-[#1e1e1e]">
-              {prevSessions.slice(0, 8).map((s, i) => {
-                const isFirst = i === 0
-                return (
-                  <div key={s.id} className={`flex items-center gap-3 px-5 py-2.5 ${isFirst ? 'bg-gray-50/50 dark:bg-white/[0.015]' : ''}`}>
-                    <span className="text-[10px] text-gray-400 dark:text-gray-600 w-24 shrink-0 tabular-nums">{fmtShortDate(s.createdAt)}</span>
-                    <span className="text-sm font-bold text-[var(--accent-500)] tabular-nums w-10 shrink-0">{s.stats.wpm}</span>
-                    <span className="text-[10px] text-gray-400 dark:text-gray-600 shrink-0">wpm</span>
-                    <span className={`text-sm font-semibold tabular-nums w-12 shrink-0 ${s.stats.accuracy >= 95 ? 'text-green-600 dark:text-green-400' : s.stats.accuracy >= 80 ? 'text-amber-600 dark:text-amber-400' : 'text-red-500 dark:text-red-400'}`}>{s.stats.accuracy}%</span>
-                    <span className="text-[10px] text-gray-400 dark:text-gray-600 shrink-0">acc</span>
-                    <div className="flex-1" />
-                    {s.replayData?.length ? (
-                      <button
-                        onClick={() => setHistoryReplay(s)}
-                        className="text-[10px] font-semibold text-[var(--accent-500)] hover:text-[var(--accent-600)] flex items-center gap-1 shrink-0 transition-colors"
-                      >
-                        ▶ odtwórz
-                      </button>
-                    ) : (
-                      <span className="text-[10px] text-gray-300 dark:text-gray-700 shrink-0">—</span>
-                    )}
-                  </div>
-                )
-              })}
+
+            {/* History table */}
+            <div>
+              <div className="grid grid-cols-[1fr_44px_52px_52px_32px] gap-2 px-5 py-2 border-t border-gray-100 dark:border-[#1e1e1e]">
+                <span className="text-[9px] font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-widest">Kiedy</span>
+                <span className="text-[9px] font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-widest text-right">WPM</span>
+                <span className="text-[9px] font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-widest text-right">Dokł.</span>
+                <span className="text-[9px] font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-widest text-right">Spokój</span>
+                <span />
+              </div>
+              <div className="divide-y divide-gray-100 dark:divide-[#1e1e1e]">
+                {prevSessions.slice(0, 10).map(s => {
+                  const calm = s.stats.calmScore ?? s.stats.accuracy
+                  return (
+                    <div key={s.id} className="grid grid-cols-[1fr_44px_52px_52px_32px] gap-2 items-center px-5 py-2.5">
+                      <span className="text-xs text-gray-500 dark:text-gray-500 truncate">{relDate(s.createdAt)}</span>
+                      <span className="text-sm font-bold text-[var(--accent-500)] tabular-nums text-right">{s.stats.wpm}</span>
+                      <span className={`text-sm font-semibold tabular-nums text-right ${s.stats.accuracy >= 95 ? 'text-green-600 dark:text-green-400' : s.stats.accuracy >= 80 ? 'text-amber-500 dark:text-amber-400' : 'text-red-500 dark:text-red-400'}`}>{s.stats.accuracy}%</span>
+                      <span className={`text-sm font-semibold tabular-nums text-right ${calm >= 80 ? 'text-teal-600 dark:text-teal-400' : calm >= 60 ? 'text-amber-500 dark:text-amber-400' : 'text-red-500 dark:text-red-400'}`}>{calm}</span>
+                      <div className="flex justify-end">
+                        {s.replayData?.length ? (
+                          <button onClick={() => setHistoryReplay(s)}
+                            className="w-6 h-6 flex items-center justify-center rounded-full text-[var(--accent-500)] hover:bg-[var(--accent-500)]/10 transition-colors text-xs">
+                            ▶
+                          </button>
+                        ) : (
+                          <span className="w-6 h-6 flex items-center justify-center text-[10px] text-gray-300 dark:text-gray-700">—</span>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           </div>
         )
