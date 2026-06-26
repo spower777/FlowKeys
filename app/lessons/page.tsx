@@ -8,8 +8,8 @@ import { lessons } from '@/data/lessons'
 import { chapters } from '@/data/chapters'
 import { PACK_GROUPS, DEFAULT_PACK_GROUPS, getPacksForGroups, type PackGroupId } from '@/data/packGroups'
 import type { FlowLesson } from '@/data/lessons'
-import { getAllLessonProgress, getLessonStatus, calculateStreak } from '@/lib/lessonProgress'
-import { loadSettings } from '@/lib/settings'
+import { getAllLessonProgress, getLessonStatus, calculateStreak, markLessonSkipped } from '@/lib/lessonProgress'
+import { loadSettings, saveSettings } from '@/lib/settings'
 import type { LessonProgress, LessonStatus } from '@/lib/lessonProgress'
 import { getSessions } from '@/lib/storage'
 import type { TypingMode } from '@/lib/types'
@@ -54,11 +54,17 @@ export default function LessonsPage() {
   }, [])
 
   function toggleGroup(id: PackGroupId) {
-    setActiveGroups(prev =>
-      prev.includes(id)
-        ? prev.length > 1 ? prev.filter(g => g !== id) : prev  // keep at least one
-        : [...prev, id]
-    )
+    setActiveGroups(prev => {
+      if (prev.includes(id) && prev.length === 1) return prev
+      const newGroups = prev.includes(id) ? prev.filter(g => g !== id) : [...prev, id]
+      saveSettings({ ...loadSettings(), preferredPackGroups: newGroups })
+      return newGroups
+    })
+  }
+
+  function skipLesson(id: number) {
+    markLessonSkipped(id)
+    setProgress(getAllLessonProgress())
   }
 
   const activePacks = getPacksForGroups(activeGroups)
@@ -123,7 +129,7 @@ export default function LessonsPage() {
         <div className="mb-8">
           <h1 className="text-2xl font-bold mb-1">Lekcje</h1>
           <p className="text-sm text-gray-500 dark:text-gray-500 mb-6">
-            Każda lekcja to jeden krok. Nie ścig — rytm.
+            Każda lekcja to jeden krok. Nie ścigaj się — rytm.
           </p>
 
           {/* Dashboard: Kontynuuj + Polecane dziś */}
@@ -294,6 +300,11 @@ export default function LessonsPage() {
                         stars={p?.stars ?? 0}
                         isNext={mounted && lesson.id === nextLesson?.id}
                         onClick={() => startLesson(lesson.id)}
+                        onSkip={
+                          mounted && status !== 'locked' && (lesson.mode === 'blindFlow' || lesson.mode === 'noBackspace') && !p?.completed
+                            ? () => skipLesson(lesson.id)
+                            : undefined
+                        }
                       />
                     )
                   })}

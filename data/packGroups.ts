@@ -41,7 +41,7 @@ export const PACK_GROUPS: PackGroup[] = [
     label: 'Self Flow',
     description: 'Afirmacje, motywacja i spokojny dialog ze sobą.',
     icon: '🌱',
-    packs: ['affirmations', 'motivation', 'visualization', 'mindfulness', 'mastery', 'noBackspace', 'blindFlow'],
+    packs: ['affirmations', 'motivation', 'visualization', 'mindfulness', 'mastery'],
     defaultEnabled: true,
   },
   {

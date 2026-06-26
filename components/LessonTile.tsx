@@ -31,9 +31,10 @@ interface Props {
   stars: 0 | 1 | 2 | 3
   isNext?: boolean
   onClick?: () => void
+  onSkip?: () => void
 }
 
-export default function LessonTile({ lesson, status, stars, isNext, onClick }: Props) {
+export default function LessonTile({ lesson, status, stars, isNext, onClick, onSkip }: Props) {
   const modeBadge = MODE_BADGE[lesson.mode]
   const modeIcon = MODE_ICON[lesson.mode]
   const isLocked = status === 'locked'
@@ -101,6 +102,16 @@ export default function LessonTile({ lesson, status, stars, isNext, onClick }: P
         <span className="absolute top-2.5 right-2.5 text-[8px] font-bold bg-[var(--accent-500)] text-white px-1.5 py-0.5 rounded-full leading-tight">
           następna
         </span>
+      )}
+
+      {/* Skip button for blind/noBackspace lessons */}
+      {onSkip && (
+        <button
+          onClick={e => { e.stopPropagation(); onSkip() }}
+          className="absolute bottom-2.5 right-2.5 text-[9px] font-semibold text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 bg-gray-100 dark:bg-[#222] hover:bg-gray-200 dark:hover:bg-[#2a2a2a] rounded-md px-1.5 py-0.5 transition-colors"
+        >
+          Pomiń
+        </button>
       )}
     </button>
   )

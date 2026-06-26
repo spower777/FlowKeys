@@ -93,6 +93,25 @@ export function updateLessonProgress(lessonId: number, stats: TypingStats): Less
   return updated
 }
 
+export function markLessonSkipped(lessonId: number): void {
+  const all = getAllLessonProgress()
+  const prev = all[lessonId]
+  if (prev?.completed) return
+  all[lessonId] = {
+    lessonId,
+    attempts: prev?.attempts ?? 0,
+    bestWpm: prev?.bestWpm ?? 0,
+    bestAccuracy: prev?.bestAccuracy ?? 0,
+    bestCalmIndex: prev?.bestCalmIndex ?? 0,
+    bestStreak: prev?.bestStreak ?? 0,
+    completed: true,
+    mastered: false,
+    stars: prev?.stars ?? 0,
+    lastAttemptAt: prev?.lastAttemptAt,
+  }
+  try { localStorage.setItem(LP_KEY, JSON.stringify(all)) } catch {}
+}
+
 // ── Lesson mode → TypingMode ──────────────────────────────────────────────────
 
 export function lessonModeToTypingMode(mode: LessonMode): TypingMode {
