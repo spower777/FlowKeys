@@ -301,7 +301,7 @@ export default function LessonsPage() {
                         isNext={mounted && lesson.id === nextLesson?.id}
                         onClick={() => startLesson(lesson.id)}
                         onSkip={
-                          mounted && status !== 'locked' && (lesson.mode === 'blindFlow' || lesson.mode === 'noBackspace') && !p?.completed
+                          mounted && status !== 'locked' && !p?.completed
                             ? () => skipLesson(lesson.id)
                             : undefined
                         }

@@ -488,7 +488,6 @@ export default function Home() {
               <p className="text-xs text-gray-500 mb-3">Wybierz tryb pisania:</p>
               {[
                 { mode: 'normal' as TypingMode, label: 'Start normalnie', sub: 'Tekst widoczny, pełna kontrola' },
-                { mode: 'blind' as TypingMode, label: 'Start Blind Flow', sub: 'Tekst znika — lektor czyta zdania' },
                 { mode: 'no_backspace' as TypingMode, label: 'Start No Backspace', sub: 'Nie poprawiasz — jedziemy dalej' },
               ].map(item => (
                 <button
@@ -533,9 +532,12 @@ export default function Home() {
                 </button>
                 <span className="text-[10px] text-gray-400 dark:text-gray-600 select-none">Esc — wyjdź</span>
                 {typingMode === 'blind' && (
-                  <span className="text-xs px-3 py-1 rounded-full border font-medium bg-purple-100 dark:bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-500/25">
+                  <button
+                    onClick={() => router.push('/lessons')}
+                    className="text-xs px-3 py-1 rounded-full border font-medium bg-purple-100 dark:bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-500/25 hover:bg-purple-200 dark:hover:bg-purple-500/25 transition-colors"
+                  >
                     🙈 Blind Flow
-                  </span>
+                  </button>
                 )}
                 {typingMode === 'no_backspace' && (
                   <span className="text-xs px-3 py-1 rounded-full border font-medium bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-500/25">
