@@ -8,7 +8,7 @@ import { lessons } from '@/data/lessons'
 import { chapters } from '@/data/chapters'
 import { PACK_GROUPS, DEFAULT_PACK_GROUPS, getPacksForGroups, type PackGroupId } from '@/data/packGroups'
 import type { FlowLesson } from '@/data/lessons'
-import { getAllLessonProgress, getLessonStatus, calculateStreak, markLessonSkipped } from '@/lib/lessonProgress'
+import { getAllLessonProgress, getLessonStatus, calculateStreak, markLessonSkipped, getNextLesson } from '@/lib/lessonProgress'
 import { loadSettings, saveSettings } from '@/lib/settings'
 import type { LessonProgress, LessonStatus } from '@/lib/lessonProgress'
 import { getSessions } from '@/lib/storage'
@@ -98,15 +98,23 @@ export default function LessonsPage() {
   const visibleTotal = visibleLessons.length
 
   const sortedVisibleLessons = [...visibleLessons].sort((a, b) => a.chapterId - b.chapterId || a.id - b.id)
-  const nextLesson = mounted
-    ? (sortedVisibleLessons.find(l => getLessonStatus(l.id, progress) === 'available') ?? null)
-    : null
 
   const lastPracticedEntry = Object.values(progress)
     .filter(p => p.lastAttemptAt)
     .sort((a, b) => (b.lastAttemptAt ?? '').localeCompare(a.lastAttemptAt ?? ''))[0] ?? null
   const lastLesson = lastPracticedEntry
     ? lessons.find(l => l.id === lastPracticedEntry.lessonId && activePacks.has(l.pack))
+    : null
+
+  // "Kontynuuj ścieżkę": first try next after last practiced, then fall back to first available visible
+  const nextLesson = mounted
+    ? (() => {
+        if (lastPracticedEntry) {
+          const next = getNextLesson(lastPracticedEntry.lessonId)
+          if (next && !progress[next.id]?.completed) return next
+        }
+        return sortedVisibleLessons.find(l => getLessonStatus(l.id, progress) === 'available') ?? null
+      })()
     : null
 
   const PATH_DEFS: { id: string; icon: string; label: string; packs: LessonPack[]; modeOverride?: TypingMode; isCustom?: boolean }[] = [
@@ -197,7 +205,7 @@ export default function LessonsPage() {
 
           {/* Dashboard: Kontynuuj + Polecane dziś */}
           {mounted && (
-            <div className={`grid gap-3 mb-6 ${recommendation ? 'grid-cols-2' : 'grid-cols-1'}`}>
+            <div className={`grid gap-3 mb-6 ${nextLesson && recommendation ? 'grid-cols-2' : 'grid-cols-1'}`}>
               {nextLesson && (
                 <div className="bg-[var(--accent-500)] text-white rounded-2xl px-5 py-4 flex items-center gap-4">
                   <div className="flex-1 min-w-0">
