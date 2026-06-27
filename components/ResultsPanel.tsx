@@ -185,6 +185,8 @@ interface Props {
   onSaveToLibrary?: (title: string) => void
   hasNextChunk?: boolean
   onNextChunk?: () => void
+  coachInsight?: string
+  coachTone?: 'positive' | 'neutral' | 'constructive'
   onNewRound: () => void
   onRepeat: () => void
   onAction?: (action: SuggestionAction) => void
@@ -195,7 +197,7 @@ export default function ResultsPanel({
   stats, trainingText, typedText, typingMode,
   newBadges, earnedStars, lessonId, hasNextLesson,
   replayData, currentSessionId, libraryTextId, onSaveToLibrary, hasNextChunk, onNextChunk,
-  onNewRound, onRepeat, onAction, onBackToAcademy,
+  coachInsight, coachTone, onNewRound, onRepeat, onAction, onBackToAcademy,
 }: Props) {
   const router = useRouter()
   const [libraryEntry, setLibraryEntry] = useState<CustomText | null>(null)
@@ -348,6 +350,28 @@ export default function ResultsPanel({
           <kbd className="text-xs font-normal bg-white/20 px-2.5 py-1 rounded-lg ml-1 opacity-70">Enter</kbd>
         </button>
       ) : null}
+
+      {/* ── COACH INSIGHT ── */}
+      {coachInsight && (
+        <div className={`flex items-start gap-3 px-4 py-3.5 rounded-2xl border ${
+          coachTone === 'positive'
+            ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/50'
+            : coachTone === 'constructive'
+            ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/50'
+            : 'bg-gray-50 dark:bg-[#161616] border-gray-200 dark:border-[#242424]'
+        }`}>
+          <span className="text-base shrink-0 mt-0.5">
+            {coachTone === 'positive' ? '✦' : coachTone === 'constructive' ? '◈' : '◇'}
+          </span>
+          <p className={`text-sm leading-relaxed ${
+            coachTone === 'positive'
+              ? 'text-emerald-800 dark:text-emerald-300'
+              : coachTone === 'constructive'
+              ? 'text-amber-800 dark:text-amber-300'
+              : 'text-gray-700 dark:text-gray-300'
+          }`}>{coachInsight}</p>
+        </div>
+      )}
 
       {/* ── SECONDARY STATS ── */}
       <div className="grid grid-cols-3 gap-3">

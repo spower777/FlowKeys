@@ -15,6 +15,7 @@ import { getLibrary, saveCustomText, recordLibrarySession, splitIntoChunks } fro
 import { EXAMPLE_TEXT } from '@/lib/transformPrompt'
 import { loadSettings, saveSettings, applySettingsToDOM, DEFAULTS } from '@/lib/settings'
 import { updateLessonProgress, checkAndUnlockBadges, lessonModeToTypingMode, calculateStars, getNextLesson, markLessonSkipped } from '@/lib/lessonProgress'
+import { generateCoachInsight, type CoachInsight } from '@/lib/coach'
 import { badges } from '@/data/badges'
 import { lessons } from '@/data/lessons'
 import { chapters } from '@/data/chapters'
@@ -49,6 +50,7 @@ export default function Home() {
   const [lastReplayData, setLastReplayData] = useState<ReplayEvent[]>([])
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
   const [lastSession, setLastSession] = useState<TypingSessionRecord | null>(null)
+  const [coachInsight, setCoachInsight] = useState<CoachInsight | null>(null)
   const [currentLibraryTextId, setCurrentLibraryTextId] = useState<string | null>(null)
   const [chunkIndex, setChunkIndex] = useState(0)
   const [totalChunks, setTotalChunks] = useState(1)
@@ -195,6 +197,10 @@ export default function Home() {
       updateLessonProgress(currentLesson.id, s)
       setEarnedStars(calculateStars(s))
     }
+    // Coach insight — based on history BEFORE this session
+    const historyBeforeThis = getSessions().filter(h => h.id !== sessionId)
+    setCoachInsight(generateCoachInsight(s, historyBeforeThis))
+
     // Check badges after every session, not just lesson sessions
     const unlockedIds = checkAndUnlockBadges(badges)
     if (unlockedIds.length > 0) {
@@ -213,6 +219,7 @@ export default function Home() {
     setTrainingText('')
     setTypedText('')
     setStats(null)
+    setCoachInsight(null)
     setTransformError(null)
     setIsMock(false)
     setCurrentLesson(null)
@@ -627,6 +634,8 @@ export default function Home() {
             onSaveToLibrary={handleSaveToLibrary}
             hasNextChunk={!!currentLibraryTextId && chunkIndex + 1 < totalChunks}
             onNextChunk={handleNextChunk}
+            coachInsight={coachInsight?.text}
+            coachTone={coachInsight?.tone}
             onNewRound={reset}
             onRepeat={repeatRound}
             onAction={handleResultAction}
