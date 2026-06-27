@@ -509,85 +509,72 @@ export default function Home() {
         {/* ── TYPING (focus mode) ── */}
         {step === 'typing' && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
+            {/* Toolbar */}
+            <div className="flex items-center justify-between gap-2">
               <button
                 onClick={() => {
                   if (currentLesson) router.push('/lessons')
                   else if (currentLibraryTextId) router.push('/library')
                   else reset()
                 }}
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 px-3 py-1.5 rounded-full border border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:border-gray-300 dark:hover:border-[#383838] transition-all duration-150"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 px-3 py-1.5 rounded-full border border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:border-gray-300 dark:hover:border-[#383838] transition-all"
               >
                 ← {currentLesson ? 'Akademia' : currentLibraryTextId ? 'Biblioteka' : 'Porzuć rundę'}
               </button>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={restartSession}
-                  title="Od nowa"
-                  className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border font-medium transition-all duration-150
-                    text-gray-500 dark:text-gray-400 border-gray-200 dark:border-[#2a2a2a]
-                    hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-[#383838] select-none"
-                >
-                  ↺ Od nowa
-                </button>
-                <span className="text-[10px] text-gray-400 dark:text-gray-600 select-none">Esc — wyjdź</span>
+
+              <div className="flex items-center gap-1.5">
                 {typingMode === 'blind' && (
-                  <button
-                    onClick={() => router.push('/lessons')}
-                    className="text-xs px-3 py-1 rounded-full border font-medium bg-purple-100 dark:bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-500/25 hover:bg-purple-200 dark:hover:bg-purple-500/25 transition-colors"
-                  >
-                    🙈 Blind Flow
-                  </button>
+                  <span className="text-xs px-3 py-1.5 rounded-full border font-medium bg-purple-100 dark:bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-500/25 select-none">
+                    🙈 Blind
+                  </span>
                 )}
                 {typingMode === 'no_backspace' && (
-                  <span className="text-xs px-3 py-1 rounded-full border font-medium bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-500/25">
+                  <span className="text-xs px-3 py-1.5 rounded-full border font-medium bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-500/25 select-none">
                     ⌫ No Backspace
                   </span>
                 )}
+                <button
+                  onClick={restartSession}
+                  className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border font-medium transition-all text-gray-500 dark:text-gray-400 border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-[#383838] select-none"
+                >
+                  ↺ Od nowa
+                </button>
+                {currentLesson && getNextLesson(currentLesson.id) && (
+                  <button
+                    onClick={() => {
+                      markLessonSkipped(currentLesson.id)
+                      const next = getNextLesson(currentLesson.id)
+                      if (next) {
+                        setSourceText(next.text); setTrainingText(next.text)
+                        setTransformMode('1to1'); setTypingMode(lessonModeToTypingMode(next.mode))
+                        setCurrentLesson(next); setTypedText(''); setStats(null)
+                      }
+                    }}
+                    className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border font-medium transition-all text-gray-500 dark:text-gray-400 border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-[#383838] select-none"
+                  >
+                    Pomiń →
+                  </button>
+                )}
+                <span className="text-[10px] text-gray-300 dark:text-gray-700 select-none pl-1 hidden sm:inline">Esc</span>
               </div>
             </div>
 
+            {/* Lesson info — pure info, no controls */}
             {currentLesson && (() => {
               const chapterTitle = chapters.find(c => c.id === currentLesson.chapterId)?.title ?? ''
               return (
                 <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-5 py-3.5">
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <span className="font-mono text-xs font-bold text-gray-400 dark:text-gray-600 tabular-nums">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="font-mono text-xs font-bold text-gray-400 dark:text-gray-600 tabular-nums shrink-0">
                       {String(currentLesson.id).padStart(3, '0')}
                     </span>
-                    <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">{currentLesson.title}</span>
+                    <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate">{currentLesson.title}</span>
                     {currentLesson.subtitle && (
-                      <span className="text-xs text-gray-400 dark:text-gray-500 italic">— {currentLesson.subtitle}</span>
+                      <span className="text-xs text-gray-400 dark:text-gray-500 italic truncate hidden sm:block">— {currentLesson.subtitle}</span>
                     )}
-                    <div className="flex items-center gap-1.5 ml-auto shrink-0">
-                      <span className="text-[10px] text-gray-400 dark:text-gray-600">Rozdz. {currentLesson.chapterId} · {chapterTitle}</span>
-                      {typingMode === 'blind' && (
-                        <span className="text-[9px] px-2 py-0.5 rounded-full border font-medium bg-purple-100 dark:bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-500/25">
-                          🙈 Blind
-                        </span>
-                      )}
-                      {typingMode === 'no_backspace' && (
-                        <span className="text-[9px] px-2 py-0.5 rounded-full border font-medium bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-500/25">
-                          ⌫ No BS
-                        </span>
-                      )}
-                      {getNextLesson(currentLesson.id) && (
-                        <button
-                          onClick={() => {
-                            markLessonSkipped(currentLesson.id)
-                            const next = getNextLesson(currentLesson.id)
-                            if (next) {
-                              setSourceText(next.text); setTrainingText(next.text)
-                              setTransformMode('1to1'); setTypingMode(lessonModeToTypingMode(next.mode))
-                              setCurrentLesson(next); setTypedText(''); setStats(null)
-                            }
-                          }}
-                          className="text-[9px] px-2 py-0.5 rounded-full border font-medium text-gray-400 dark:text-gray-600 border-gray-200 dark:border-[#2a2a2a] hover:text-gray-600 dark:hover:text-gray-400 hover:border-gray-300 dark:hover:border-[#3a3a3a] transition-colors"
-                        >
-                          Pomiń →
-                        </button>
-                      )}
-                    </div>
+                    <span className="text-[10px] text-gray-400 dark:text-gray-600 ml-auto shrink-0">
+                      Rozdz. {currentLesson.chapterId} · {chapterTitle}
+                    </span>
                   </div>
                 </div>
               )
