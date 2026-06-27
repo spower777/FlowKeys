@@ -630,6 +630,7 @@ export default function Home() {
             onNewRound={reset}
             onRepeat={repeatRound}
             onAction={handleResultAction}
+            onBackToAcademy={currentLesson ? () => router.push('/lessons') : undefined}
           />
         )}
       </div>

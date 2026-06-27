@@ -188,13 +188,14 @@ interface Props {
   onNewRound: () => void
   onRepeat: () => void
   onAction?: (action: SuggestionAction) => void
+  onBackToAcademy?: () => void
 }
 
 export default function ResultsPanel({
   stats, trainingText, typedText, typingMode,
   newBadges, earnedStars, lessonId, hasNextLesson,
   replayData, currentSessionId, libraryTextId, onSaveToLibrary, hasNextChunk, onNextChunk,
-  onNewRound, onRepeat, onAction,
+  onNewRound, onRepeat, onAction, onBackToAcademy,
 }: Props) {
   const router = useRouter()
   const [libraryEntry, setLibraryEntry] = useState<CustomText | null>(null)
@@ -209,7 +210,7 @@ export default function ResultsPanel({
     if (libraryTextId) setLibraryEntry(getCustomText(libraryTextId))
   }, [libraryTextId])
 
-  // Enter → next lesson / next chunk
+  // Enter → next lesson / next chunk / back to academy
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key !== 'Enter') return
@@ -217,10 +218,11 @@ export default function ResultsPanel({
       e.preventDefault()
       if (hasNextLesson && onAction) { onAction('next_lesson'); return }
       if (hasNextChunk && onNextChunk) { onNextChunk(); return }
+      if (onBackToAcademy) { onBackToAcademy(); return }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [hasNextLesson, onAction, hasNextChunk, onNextChunk])
+  }, [hasNextLesson, onAction, hasNextChunk, onNextChunk, onBackToAcademy])
 
   useEffect(() => {
     if (lessonId === undefined && !libraryTextId) return
@@ -328,7 +330,7 @@ export default function ResultsPanel({
       </div>
 
       {/* ── NEXT LESSON: primary CTA ── */}
-      {hasNextLesson && onAction && (
+      {hasNextLesson && onAction ? (
         <button
           onClick={() => onAction('next_lesson')}
           className="fk-btn w-full py-5 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white rounded-2xl font-bold text-lg hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:shadow-none flex items-center justify-center gap-3 group"
@@ -337,7 +339,15 @@ export default function ResultsPanel({
           <span className="group-hover:translate-x-1 transition-transform">→</span>
           <kbd className="text-xs font-normal bg-white/20 px-2.5 py-1 rounded-lg ml-1 opacity-70">Enter</kbd>
         </button>
-      )}
+      ) : onBackToAcademy ? (
+        <button
+          onClick={onBackToAcademy}
+          className="fk-btn w-full py-5 bg-[var(--accent-500)] hover:bg-[var(--accent-600)] text-white rounded-2xl font-bold text-lg hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:shadow-none flex items-center justify-center gap-3 group"
+        >
+          <span>← Akademia</span>
+          <kbd className="text-xs font-normal bg-white/20 px-2.5 py-1 rounded-lg ml-1 opacity-70">Enter</kbd>
+        </button>
+      ) : null}
 
       {/* ── SECONDARY STATS ── */}
       <div className="grid grid-cols-3 gap-3">
