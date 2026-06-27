@@ -88,7 +88,9 @@ export function getNextLesson(lessonId: number): import('@/data/lessons').FlowLe
     const idx = packLessons.findIndex(l => l.id === lessonId)
     return idx >= 0 && idx + 1 < packLessons.length ? packLessons[idx + 1] : null
   }
-  return lessons.find(l => l.id === lessonId + 1) ?? null
+  const next = lessons.find(l => l.id === lessonId + 1) ?? null
+  if (next && INDEPENDENT_TRACK_PACKS.has(next.pack)) return null
+  return next
 }
 
 export function calculateStars(stats: TypingStats): 0 | 1 | 2 | 3 {
