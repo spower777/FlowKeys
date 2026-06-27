@@ -14,7 +14,7 @@ import { saveSession, getSessions } from '@/lib/storage'
 import { getLibrary, saveCustomText, recordLibrarySession, splitIntoChunks } from '@/lib/library'
 import { EXAMPLE_TEXT } from '@/lib/transformPrompt'
 import { loadSettings, saveSettings, applySettingsToDOM, DEFAULTS } from '@/lib/settings'
-import { updateLessonProgress, checkAndUnlockBadges, lessonModeToTypingMode, calculateStars, getNextLesson } from '@/lib/lessonProgress'
+import { updateLessonProgress, checkAndUnlockBadges, lessonModeToTypingMode, calculateStars, getNextLesson, markLessonSkipped } from '@/lib/lessonProgress'
 import { badges } from '@/data/badges'
 import { lessons } from '@/data/lessons'
 import { chapters } from '@/data/chapters'
@@ -571,6 +571,22 @@ export default function Home() {
                           ⌫ No BS
                         </span>
                       )}
+                      {getNextLesson(currentLesson.id) && (
+                        <button
+                          onClick={() => {
+                            markLessonSkipped(currentLesson.id)
+                            const next = getNextLesson(currentLesson.id)
+                            if (next) {
+                              setSourceText(next.text); setTrainingText(next.text)
+                              setTransformMode('1to1'); setTypingMode(lessonModeToTypingMode(next.mode))
+                              setCurrentLesson(next); setTypedText(''); setStats(null)
+                            }
+                          }}
+                          className="text-[9px] px-2 py-0.5 rounded-full border font-medium text-gray-400 dark:text-gray-600 border-gray-200 dark:border-[#2a2a2a] hover:text-gray-600 dark:hover:text-gray-400 hover:border-gray-300 dark:hover:border-[#3a3a3a] transition-colors"
+                        >
+                          Pomiń →
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -617,7 +633,7 @@ export default function Home() {
             newBadges={newBadges}
             earnedStars={earnedStars}
             lessonId={currentLesson?.id}
-            hasNextLesson={!!currentLesson && !!lessons.find(l => l.id === (currentLesson.id + 1))}
+            hasNextLesson={!!currentLesson && !!getNextLesson(currentLesson.id)}
             replayData={lastReplayData}
             currentSessionId={currentSessionId ?? undefined}
             libraryTextId={currentLibraryTextId}
