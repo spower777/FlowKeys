@@ -1,27 +1,21 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-
-type Theme = 'dark' | 'light' | 'system'
-
-function applyTheme(theme: Theme) {
-  const isDark =
-    theme === 'dark' ||
-    (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
-  document.documentElement.classList.toggle('dark', isDark)
-}
+import { loadSettings, saveSettings, applySettingsToDOM } from '@/lib/settings'
+import type { Theme } from '@/lib/settings'
 
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>('system')
 
   useEffect(() => {
-    const saved = (localStorage.getItem('flowkeys_theme') as Theme) ?? 'system'
-    setTheme(saved)
-    applyTheme(saved)
+    const s = loadSettings()
+    setTheme(s.theme)
+    applySettingsToDOM(s)
 
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
     const handler = () => {
-      if ((localStorage.getItem('flowkeys_theme') ?? 'system') === 'system') applyTheme('system')
+      const current = loadSettings()
+      if (current.theme === 'system') applySettingsToDOM(current)
     }
     mq.addEventListener('change', handler)
     return () => mq.removeEventListener('change', handler)
@@ -29,8 +23,9 @@ export default function ThemeToggle() {
 
   function set(t: Theme) {
     setTheme(t)
-    localStorage.setItem('flowkeys_theme', t)
-    applyTheme(t)
+    const updated = { ...loadSettings(), theme: t }
+    saveSettings(updated)
+    applySettingsToDOM(updated)
   }
 
   const options: { value: Theme; icon: string }[] = [

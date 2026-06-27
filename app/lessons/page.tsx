@@ -106,14 +106,18 @@ export default function LessonsPage() {
     ? lessons.find(l => l.id === lastPracticedEntry.lessonId && activePacks.has(l.pack))
     : null
 
-  // "Kontynuuj ścieżkę": first try next after last practiced, then fall back to first available visible
+  // "Kontynuuj ścieżkę": 1) next after last practiced, 2) first available visible, 3) first available globally
   const nextLesson = mounted
     ? (() => {
         if (lastPracticedEntry) {
           const next = getNextLesson(lastPracticedEntry.lessonId)
           if (next && !progress[next.id]?.completed) return next
         }
-        return sortedVisibleLessons.find(l => getLessonStatus(l.id, progress) === 'available') ?? null
+        const visibleNext = sortedVisibleLessons.find(l => getLessonStatus(l.id, progress) === 'available')
+        if (visibleNext) return visibleNext
+        // Global fallback: first available lesson regardless of active filters
+        const allSorted = [...lessons].sort((a, b) => a.chapterId - b.chapterId || a.id - b.id)
+        return allSorted.find(l => getLessonStatus(l.id, progress) === 'available') ?? null
       })()
     : null
 
