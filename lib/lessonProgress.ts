@@ -32,6 +32,13 @@ export function getAllLessonProgress(): Record<number, LessonProgress> {
   } catch { return {} }
 }
 
+// Packs that run as independent tracks — not part of the main 1–210 ID chain.
+// The first lesson in each of these packs is always unlocked without prerequisites.
+const INDEPENDENT_TRACK_PACKS = new Set<string>([
+  'homerow', 'numbers', 'symbols',
+  'emeraldTablets', 'bhagavadGita', 'taoTeching',
+])
+
 export function getLessonStatus(lessonId: number, allProgress?: Record<number, LessonProgress>): LessonStatus {
   if (loadSettings().devUnlockAll) {
     const p = (allProgress ?? getAllLessonProgress())[lessonId]
@@ -42,6 +49,23 @@ export function getLessonStatus(lessonId: number, allProgress?: Record<number, L
 
   const progress = allProgress ?? getAllLessonProgress()
   const p = progress[lessonId]
+
+  const lesson = lessons.find(l => l.id === lessonId)
+
+  if (lesson && INDEPENDENT_TRACK_PACKS.has(lesson.pack)) {
+    const packLessons = lessons.filter(l => l.pack === lesson.pack)
+    const indexInPack = packLessons.findIndex(l => l.id === lessonId)
+    if (indexInPack <= 0) {
+      if (p?.mastered) return 'mastered'
+      if (p?.completed) return 'completed'
+      return 'available'
+    }
+    const prevInPack = packLessons[indexInPack - 1]
+    if (!progress[prevInPack.id]?.completed) return 'locked'
+    if (p?.mastered) return 'mastered'
+    if (p?.completed) return 'completed'
+    return 'available'
+  }
 
   if (lessonId === 1) {
     if (p?.mastered) return 'mastered'

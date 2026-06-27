@@ -69,7 +69,7 @@ export default function LessonsPage() {
 
   const activePacks = getPacksForGroups(activeGroups)
   const visibleLessons = lessons.filter(l => activePacks.has(l.pack))
-  const activeChapterIds = [...new Set(visibleLessons.map(l => l.chapterId))]
+  const activeChapterIds = [...new Set(visibleLessons.map(l => l.chapterId))].sort((a, b) => a - b)
 
   function startLesson(id: number, typingModeOverride?: TypingMode) {
     const lesson = lessons.find(l => l.id === id)
@@ -87,8 +87,9 @@ export default function LessonsPage() {
   const masteredCount = Object.values(progress).filter(p => p.mastered).length
   const visibleTotal = visibleLessons.length
 
+  const sortedVisibleLessons = [...visibleLessons].sort((a, b) => a.chapterId - b.chapterId || a.id - b.id)
   const nextLesson = mounted
-    ? (visibleLessons.find(l => getLessonStatus(l.id, progress) === 'available') ?? null)
+    ? (sortedVisibleLessons.find(l => getLessonStatus(l.id, progress) === 'available') ?? null)
     : null
 
   const lastPracticedEntry = Object.values(progress)
