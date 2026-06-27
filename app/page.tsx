@@ -14,7 +14,7 @@ import { saveSession, getSessions } from '@/lib/storage'
 import { getLibrary, saveCustomText, recordLibrarySession, splitIntoChunks } from '@/lib/library'
 import { EXAMPLE_TEXT } from '@/lib/transformPrompt'
 import { loadSettings, saveSettings, applySettingsToDOM, DEFAULTS } from '@/lib/settings'
-import { updateLessonProgress, checkAndUnlockBadges, lessonModeToTypingMode, calculateStars } from '@/lib/lessonProgress'
+import { updateLessonProgress, checkAndUnlockBadges, lessonModeToTypingMode, calculateStars, getNextLesson } from '@/lib/lessonProgress'
 import { badges } from '@/data/badges'
 import { lessons } from '@/data/lessons'
 import { chapters } from '@/data/chapters'
@@ -246,7 +246,7 @@ export default function Home() {
     if (action === 'blind') { setTypingMode('blind'); setStep('typing') }
     else if (action === 'no_backspace') { setTypingMode('no_backspace'); setStep('typing') }
     else if (action === 'next_lesson' && currentLesson) {
-      const next = lessons.find(l => l.id === currentLesson.id + 1) ?? null
+      const next = getNextLesson(currentLesson.id)
       if (next) {
         setSourceText(next.text); setTrainingText(next.text)
         setTransformMode('1to1'); setTypingMode(lessonModeToTypingMode(next.mode))

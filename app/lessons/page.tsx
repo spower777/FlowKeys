@@ -22,6 +22,8 @@ export default function LessonsPage() {
   const [mounted, setMounted] = useState(false)
   const [activeGroups, setActiveGroups] = useState<PackGroupId[]>(DEFAULT_PACK_GROUPS)
   const [sessionCounts, setSessionCounts] = useState({ blind: 0, noBackspace: 0 })
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchOpen, setSearchOpen] = useState(false)
   const [recommendation, setRecommendation] = useState<{
     lesson: FlowLesson; mode?: TypingMode; label: string; desc: string
   } | null>(null)
@@ -70,6 +72,14 @@ export default function LessonsPage() {
   const activePacks = getPacksForGroups(activeGroups)
   const visibleLessons = lessons.filter(l => activePacks.has(l.pack))
   const activeChapterIds = [...new Set(visibleLessons.map(l => l.chapterId))].sort((a, b) => a - b)
+
+  const q = searchQuery.trim().toLowerCase()
+  const searchResults = q.length >= 2
+    ? lessons.filter(l =>
+        l.title.toLowerCase().includes(q) ||
+        (l.subtitle ?? '').toLowerCase().includes(q)
+      )
+    : []
 
   function startLesson(id: number, typingModeOverride?: TypingMode) {
     const lesson = lessons.find(l => l.id === id)
@@ -128,7 +138,59 @@ export default function LessonsPage() {
 
         {/* Hero */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-1">Lekcje</h1>
+          <div className="flex items-center gap-3 mb-1">
+            <h1 className="text-2xl font-bold flex-1">Lekcje</h1>
+            <button
+              onClick={() => { setSearchOpen(o => !o); setSearchQuery('') }}
+              className="p-2 rounded-xl text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#222] transition-colors"
+              aria-label="Szukaj lekcji"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+              </svg>
+            </button>
+          </div>
+
+          {/* Wyszukiwarka */}
+          {searchOpen && (
+            <div className="mb-5">
+              <input
+                autoFocus
+                type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Szukaj lekcji po nazwie…"
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-[#2a2a2a] bg-white dark:bg-[#161616] text-sm text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 outline-none focus:border-[var(--accent-400)] dark:focus:border-[var(--accent-500)] transition-colors"
+              />
+              {q.length >= 2 && (
+                <div className="mt-2 space-y-1">
+                  {searchResults.length === 0 && (
+                    <p className="text-xs text-gray-400 dark:text-gray-600 px-1 py-2">Brak wyników dla „{q}"</p>
+                  )}
+                  {searchResults.map(lesson => {
+                    const p = progress[lesson.id]
+                    const chapter = chapters.find(c => c.id === lesson.chapterId)
+                    return (
+                      <button
+                        key={lesson.id}
+                        onClick={() => startLesson(lesson.id)}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] hover:border-[var(--accent-400)] dark:hover:border-[var(--accent-500)]/40 text-left transition-colors"
+                      >
+                        <span className="font-mono text-[10px] text-gray-400 dark:text-gray-600 shrink-0 w-6 text-right">{lesson.id}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{lesson.title}</p>
+                          {lesson.subtitle && <p className="text-[11px] text-gray-400 dark:text-gray-600 truncate">{lesson.subtitle}</p>}
+                        </div>
+                        <span className="text-[10px] text-gray-400 dark:text-gray-600 shrink-0">{chapter?.title ?? `Rozdz. ${lesson.chapterId}`}</span>
+                        {p?.completed && <span className="text-teal-500 text-xs shrink-0">✓</span>}
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
           <p className="text-sm text-gray-500 dark:text-gray-500 mb-6">
             Każda lekcja to jeden krok. Nie ścigaj się — rytm.
           </p>

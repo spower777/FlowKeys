@@ -34,7 +34,7 @@ export function getAllLessonProgress(): Record<number, LessonProgress> {
 
 // Packs that run as independent tracks — not part of the main 1–210 ID chain.
 // The first lesson in each of these packs is always unlocked without prerequisites.
-const INDEPENDENT_TRACK_PACKS = new Set<string>([
+export const INDEPENDENT_TRACK_PACKS = new Set<string>([
   'homerow', 'numbers', 'symbols',
   'emeraldTablets', 'bhagavadGita', 'taoTeching',
 ])
@@ -78,6 +78,17 @@ export function getLessonStatus(lessonId: number, allProgress?: Record<number, L
   if (p?.mastered) return 'mastered'
   if (p?.completed) return 'completed'
   return 'available'
+}
+
+export function getNextLesson(lessonId: number): import('@/data/lessons').FlowLesson | null {
+  const lesson = lessons.find(l => l.id === lessonId)
+  if (!lesson) return null
+  if (INDEPENDENT_TRACK_PACKS.has(lesson.pack)) {
+    const packLessons = lessons.filter(l => l.pack === lesson.pack)
+    const idx = packLessons.findIndex(l => l.id === lessonId)
+    return idx >= 0 && idx + 1 < packLessons.length ? packLessons[idx + 1] : null
+  }
+  return lessons.find(l => l.id === lessonId + 1) ?? null
 }
 
 export function calculateStars(stats: TypingStats): 0 | 1 | 2 | 3 {
