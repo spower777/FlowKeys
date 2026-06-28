@@ -10,6 +10,8 @@ import { PACK_GROUPS, DEFAULT_PACK_GROUPS, getPacksForGroups, type PackGroupId }
 import type { FlowLesson } from '@/data/lessons'
 import { getAllLessonProgress, getLessonStatus, calculateStreak, markLessonSkipped, getNextLesson } from '@/lib/lessonProgress'
 import { loadSettings, saveSettings } from '@/lib/settings'
+import { useLocale } from 'next-intl'
+import { getLocalizedLessonText } from '@/lib/lessonTexts'
 import type { LessonProgress, LessonStatus } from '@/lib/lessonProgress'
 import { getSessions } from '@/lib/storage'
 import type { TypingMode } from '@/lib/types'
@@ -17,6 +19,7 @@ import type { LessonPack } from '@/data/lessons'
 
 export default function LessonsPage() {
   const router = useRouter()
+  const locale = useLocale()
   const [progress, setProgress] = useState<Record<number, LessonProgress>>({})
   const [streak, setStreak] = useState(0)
   const [mounted, setMounted] = useState(false)
@@ -86,7 +89,7 @@ export default function LessonsPage() {
     if (!lesson) return
     try {
       localStorage.setItem('flowkeys_pending_lesson', JSON.stringify({
-        id: lesson.id, text: lesson.text, mode: lesson.mode, title: lesson.title,
+        id: lesson.id, text: getLocalizedLessonText(lesson.id, locale) ?? lesson.text, mode: lesson.mode, title: lesson.title,
         ...(typingModeOverride ? { typingMode: typingModeOverride } : {}),
       }))
     } catch {}

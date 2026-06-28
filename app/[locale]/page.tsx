@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { useRouter } from '@/i18n/navigation'
+import { getLocalizedLessonText } from '@/lib/lessonTexts'
 import Header from '@/components/Header'
 import TextInput from '@/components/TextInput'
 import VoiceInput from '@/components/VoiceInput'
@@ -263,7 +264,8 @@ export default function Home() {
     else if (action === 'next_lesson' && currentLesson) {
       const next = getNextLesson(currentLesson.id)
       if (next) {
-        setSourceText(next.text); setTrainingText(next.text)
+        const nt = getLocalizedLessonText(next.id, locale) ?? next.text
+        setSourceText(nt); setTrainingText(nt)
         setTransformMode('1to1'); setTypingMode(lessonModeToTypingMode(next.mode))
         setCurrentLesson(next); setStep('typing')
       }
@@ -288,8 +290,9 @@ export default function Home() {
     if (lastSession.lessonId != null) {
       const lesson = lessons.find(l => l.id === lastSession.lessonId) ?? null
       if (lesson) {
-        setSourceText(lesson.text)
-        setTrainingText(lesson.text)
+        const lt = getLocalizedLessonText(lesson.id, locale) ?? lesson.text
+        setSourceText(lt)
+        setTrainingText(lt)
         setTransformMode('1to1')
         setTypingMode(lessonModeToTypingMode(lesson.mode))
         setCurrentLesson(lesson)
@@ -565,7 +568,8 @@ export default function Home() {
                       markLessonSkipped(currentLesson.id)
                       const next = getNextLesson(currentLesson.id)
                       if (next) {
-                        setSourceText(next.text); setTrainingText(next.text)
+                        const nt = getLocalizedLessonText(next.id, locale) ?? next.text
+                        setSourceText(nt); setTrainingText(nt)
                         setTransformMode('1to1'); setTypingMode(lessonModeToTypingMode(next.mode))
                         setCurrentLesson(next); setTypedText(''); setStats(null)
                       }
