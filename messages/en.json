@@ -23,7 +23,8 @@
     "libraryUnit": "{count, plural, one {text} other {texts}}",
     "voiceRecord": "Record a story by voice",
     "voiceDesc": "Transcription via Whisper AI",
-    "footer": "© 2026 FlowKeys"
+    "footer": "© 2026 FlowKeys",
+    "tagline": "Train rhythm, precision, and control over keyboard chaos."
   },
   "input": {
     "back": "← Back",
@@ -34,11 +35,26 @@
     "subtitle": "How should AI process your text?",
     "mockNotice": "Mock mode — missing OPENAI_API_KEY",
     "modes": {
-      "1to1": { "label": "1:1", "desc": "Practice on your text as-is" },
-      "clean": { "label": "Clean", "desc": "Fix typos and punctuation" },
-      "story": { "label": "Story", "desc": "Turn into a narrative with beginning and end" },
-      "exercise": { "label": "Exercise", "desc": "Calm practice text, ~200 words" },
-      "polish_chars": { "label": "Polish signs", "desc": "More ą ć ę ł ń ó ś ź ż" }
+      "1to1": {
+        "label": "1:1",
+        "desc": "Practice on your text as-is"
+      },
+      "clean": {
+        "label": "Clean",
+        "desc": "Fix typos and punctuation"
+      },
+      "story": {
+        "label": "Story",
+        "desc": "Turn into a narrative with beginning and end"
+      },
+      "exercise": {
+        "label": "Exercise",
+        "desc": "Calm practice text, ~200 words"
+      },
+      "polish_chars": {
+        "label": "Polish signs",
+        "desc": "More ą ć ę ł ń ó ś ź ż"
+      }
     },
     "forward": "Next →",
     "transformWithAi": "Transform with AI →",
@@ -417,68 +433,248 @@
   },
   "data": {
     "chapters": {
-      "1":  { "title": "First Rhythm",         "desc": "Simple sentences, calm start, rhythm without pressure." },
-      "2":  { "title": "Fluency",               "desc": "Short texts, more tempo, less tension." },
-      "3":  { "title": "Polish Signs",          "desc": "Practicing diacritics, endings and difficult letters." },
-      "4":  { "title": "New Rhythm",            "desc": "Compact texts, calm return to the keys." },
-      "5":  { "title": "Deeper Rhythm",         "desc": "Longer sentences, more of your own voice." },
-      "6":  { "title": "Polish Diacritics",     "desc": "Diacritics in action: ą ę ć ł ń ó ś ź ż." },
-      "7":  { "title": "Blind Flow",            "desc": "Typing from memory. The screen is silent, fingers remember." },
-      "8":  { "title": "Visualization",         "desc": "Imagination and fulfillment as practice." },
-      "9":  { "title": "Spirituality",          "desc": "Silence, guidance, prayer and calm." },
-      "10": { "title": "Relationships",         "desc": "Presence, love and communication in daily life." },
-      "11": { "title": "Stories",               "desc": "Short life stories with rhythm." },
-      "12": { "title": "Mastery",               "desc": "Discipline, precision and steady progress." },
-      "13": { "title": "Jade Path I",           "desc": "Calm and breath in the spirit of wuxia cinema." },
-      "14": { "title": "Jade Path II",          "desc": "Going deeper — shadow, blade and rhythm." },
-      "15": { "title": "Jade Path III",         "desc": "Harder sentences, master level." },
-      "16": { "title": "Gaming Flow",           "desc": "Respawn, loot, base. Training in gamer language." },
-      "17": { "title": "Home Row",              "desc": "a s d f g h j k l — fingers learn their place." },
-      "18": { "title": "New Keys",              "desc": "e i r n o t w z c — step by step beyond the home row." },
-      "19": { "title": "Numbers",               "desc": "1 2 3 4 5 6 7 8 9 0 — number row from scratch." },
-      "20": { "title": "Symbols",               "desc": ". , ! ? : ; - ( ) \" % @ / — punctuation and special chars." },
-      "21": { "title": "Top Row",               "desc": "q w e r t y u i o p — full top row step by step." },
-      "22": { "title": "Bottom Row",            "desc": "z x c v b n m — bottom row and combining all three." },
-      "23": { "title": "Emerald Tablets of Thoth", "desc": "Hermetic wisdom of Atlantis — soul, time and Light." },
-      "24": { "title": "Bhagavad Gita",         "desc": "Arjuna's dialogue with Krishna — dharma, action and eternity." },
-      "25": { "title": "Tao Te Ching",          "desc": "Laozi — 81 verses on water, silence and the pathless path." }
+      "1": {
+        "title": "First Rhythm",
+        "desc": "Simple sentences, calm start, rhythm without pressure."
+      },
+      "2": {
+        "title": "Fluency",
+        "desc": "Short texts, more tempo, less tension."
+      },
+      "3": {
+        "title": "Polish Signs",
+        "desc": "Practicing diacritics, endings and difficult letters."
+      },
+      "4": {
+        "title": "New Rhythm",
+        "desc": "Compact texts, calm return to the keys."
+      },
+      "5": {
+        "title": "Deeper Rhythm",
+        "desc": "Longer sentences, more of your own voice."
+      },
+      "6": {
+        "title": "Polish Diacritics",
+        "desc": "Diacritics in action: ą ę ć ł ń ó ś ź ż."
+      },
+      "7": {
+        "title": "Blind Flow",
+        "desc": "Typing from memory. The screen is silent, fingers remember."
+      },
+      "8": {
+        "title": "Visualization",
+        "desc": "Imagination and fulfillment as practice."
+      },
+      "9": {
+        "title": "Spirituality",
+        "desc": "Silence, guidance, prayer and calm."
+      },
+      "10": {
+        "title": "Relationships",
+        "desc": "Presence, love and communication in daily life."
+      },
+      "11": {
+        "title": "Stories",
+        "desc": "Short life stories with rhythm."
+      },
+      "12": {
+        "title": "Mastery",
+        "desc": "Discipline, precision and steady progress."
+      },
+      "13": {
+        "title": "Jade Path I",
+        "desc": "Calm and breath in the spirit of wuxia cinema."
+      },
+      "14": {
+        "title": "Jade Path II",
+        "desc": "Going deeper — shadow, blade and rhythm."
+      },
+      "15": {
+        "title": "Jade Path III",
+        "desc": "Harder sentences, master level."
+      },
+      "16": {
+        "title": "Gaming Flow",
+        "desc": "Respawn, loot, base. Training in gamer language."
+      },
+      "17": {
+        "title": "Home Row",
+        "desc": "a s d f g h j k l — fingers learn their place."
+      },
+      "18": {
+        "title": "New Keys",
+        "desc": "e i r n o t w z c — step by step beyond the home row."
+      },
+      "19": {
+        "title": "Numbers",
+        "desc": "1 2 3 4 5 6 7 8 9 0 — number row from scratch."
+      },
+      "20": {
+        "title": "Symbols",
+        "desc": ". , ! ? : ; - ( ) \" % @ / — punctuation and special chars."
+      },
+      "21": {
+        "title": "Top Row",
+        "desc": "q w e r t y u i o p — full top row step by step."
+      },
+      "22": {
+        "title": "Bottom Row",
+        "desc": "z x c v b n m — bottom row and combining all three."
+      },
+      "23": {
+        "title": "Emerald Tablets of Thoth",
+        "desc": "Hermetic wisdom of Atlantis — soul, time and Light."
+      },
+      "24": {
+        "title": "Bhagavad Gita",
+        "desc": "Arjuna's dialogue with Krishna — dharma, action and eternity."
+      },
+      "25": {
+        "title": "Tao Te Ching",
+        "desc": "Laozi — 81 verses on water, silence and the pathless path."
+      }
     },
     "badges": {
-      "first_round":     { "title": "First Rhythm",         "desc": "Complete your first lesson." },
-      "ten_lessons":     { "title": "Warm Fingers",         "desc": "Complete 10 lessons." },
-      "fifty_lessons":   { "title": "Steady Course",        "desc": "Complete 50 lessons." },
-      "hundred_lessons": { "title": "Keyboard Master",      "desc": "Complete 100 lessons." },
-      "three_days":      { "title": "Three Days of Rhythm", "desc": "Practice for 3 days in a row." },
-      "seven_days":      { "title": "Week Without Escape",  "desc": "Practice for 7 days in a row." },
-      "thirty_days":     { "title": "Month of Patience",    "desc": "Practice for 30 days in a row." },
-      "accuracy_90":     { "title": "Clean Start",          "desc": "Reach 90% accuracy." },
-      "accuracy_95":     { "title": "Steady Hand",          "desc": "Reach 95% accuracy." },
-      "accuracy_98":     { "title": "Iron Accuracy",        "desc": "Reach 98% accuracy." },
-      "accuracy_100":    { "title": "Flawless",             "desc": "Complete a round with 100% accuracy." },
-      "wpm_30":          { "title": "First Gear",           "desc": "Reach 30 WPM." },
-      "wpm_40":          { "title": "Smooth Step",          "desc": "Reach 40 WPM." },
-      "wpm_50":          { "title": "Fast Stream",          "desc": "Reach 50 WPM." },
-      "wpm_60":          { "title": "Express",              "desc": "Reach 60 WPM." },
-      "wpm_80":          { "title": "Lightning",            "desc": "Reach 80 WPM." },
-      "calm_80":         { "title": "Calm Hand",            "desc": "Reach calm index 80." },
-      "calm_90":         { "title": "Silent Mechanism",     "desc": "Reach calm index 90." },
-      "calm_95":         { "title": "Steel Nerves",         "desc": "Reach calm index 95." },
-      "calm_99":         { "title": "Keyboard Monk",        "desc": "Reach calm index 99." },
-      "no_backspace_1":  { "title": "No Going Back",        "desc": "Complete one round without Backspace." },
-      "no_backspace_5":  { "title": "Straight Ahead",       "desc": "Complete 5 rounds without Backspace." },
-      "no_backspace_20": { "title": "No Looking Back",      "desc": "Complete 20 rounds without Backspace." },
-      "blind_1":         { "title": "Blind Stream",         "desc": "Complete your first Blind Flow round." },
-      "blind_10":        { "title": "Typing from Memory",   "desc": "Complete 10 Blind Flow rounds." },
-      "blind_50":        { "title": "Inner Keyboard",       "desc": "Complete 50 Blind Flow rounds." },
-      "polish_1":        { "title": "First Diacritic",      "desc": "Complete a lesson with Polish signs." },
-      "polish_10":       { "title": "Diacritic Master",     "desc": "Complete 10 Polish sign lessons without errors." },
-      "polish_50":       { "title": "Diacritic Champion",   "desc": "Complete 50 Polish sign lessons without errors." },
-      "cicha_runda":     { "title": "Silent Round",         "desc": "Complete a round with calm ≥90 and max 10 corrections." },
-      "bez_szarpania":   { "title": "No Jerking",           "desc": "Complete a round with at most 5 corrections." },
-      "wlasny_glos":     { "title": "Own Voice",            "desc": "Complete a session on your own text (not a lesson)." },
-      "mastered_10":     { "title": "Ten Clean",            "desc": "Master 10 lessons with 3 stars." },
-      "mastered_50":     { "title": "Progress Map",         "desc": "Master 50 lessons with 3 stars." },
-      "mastered_100":    { "title": "Hundred Clean Rounds", "desc": "Master 100 lessons with 3 stars." }
+      "first_round": {
+        "title": "First Rhythm",
+        "desc": "Complete your first lesson."
+      },
+      "ten_lessons": {
+        "title": "Warm Fingers",
+        "desc": "Complete 10 lessons."
+      },
+      "fifty_lessons": {
+        "title": "Steady Course",
+        "desc": "Complete 50 lessons."
+      },
+      "hundred_lessons": {
+        "title": "Keyboard Master",
+        "desc": "Complete 100 lessons."
+      },
+      "three_days": {
+        "title": "Three Days of Rhythm",
+        "desc": "Practice for 3 days in a row."
+      },
+      "seven_days": {
+        "title": "Week Without Escape",
+        "desc": "Practice for 7 days in a row."
+      },
+      "thirty_days": {
+        "title": "Month of Patience",
+        "desc": "Practice for 30 days in a row."
+      },
+      "accuracy_90": {
+        "title": "Clean Start",
+        "desc": "Reach 90% accuracy."
+      },
+      "accuracy_95": {
+        "title": "Steady Hand",
+        "desc": "Reach 95% accuracy."
+      },
+      "accuracy_98": {
+        "title": "Iron Accuracy",
+        "desc": "Reach 98% accuracy."
+      },
+      "accuracy_100": {
+        "title": "Flawless",
+        "desc": "Complete a round with 100% accuracy."
+      },
+      "wpm_30": {
+        "title": "First Gear",
+        "desc": "Reach 30 WPM."
+      },
+      "wpm_40": {
+        "title": "Smooth Step",
+        "desc": "Reach 40 WPM."
+      },
+      "wpm_50": {
+        "title": "Fast Stream",
+        "desc": "Reach 50 WPM."
+      },
+      "wpm_60": {
+        "title": "Express",
+        "desc": "Reach 60 WPM."
+      },
+      "wpm_80": {
+        "title": "Lightning",
+        "desc": "Reach 80 WPM."
+      },
+      "calm_80": {
+        "title": "Calm Hand",
+        "desc": "Reach calm index 80."
+      },
+      "calm_90": {
+        "title": "Silent Mechanism",
+        "desc": "Reach calm index 90."
+      },
+      "calm_95": {
+        "title": "Steel Nerves",
+        "desc": "Reach calm index 95."
+      },
+      "calm_99": {
+        "title": "Keyboard Monk",
+        "desc": "Reach calm index 99."
+      },
+      "no_backspace_1": {
+        "title": "No Going Back",
+        "desc": "Complete one round without Backspace."
+      },
+      "no_backspace_5": {
+        "title": "Straight Ahead",
+        "desc": "Complete 5 rounds without Backspace."
+      },
+      "no_backspace_20": {
+        "title": "No Looking Back",
+        "desc": "Complete 20 rounds without Backspace."
+      },
+      "blind_1": {
+        "title": "Blind Stream",
+        "desc": "Complete your first Blind Flow round."
+      },
+      "blind_10": {
+        "title": "Typing from Memory",
+        "desc": "Complete 10 Blind Flow rounds."
+      },
+      "blind_50": {
+        "title": "Inner Keyboard",
+        "desc": "Complete 50 Blind Flow rounds."
+      },
+      "polish_1": {
+        "title": "First Diacritic",
+        "desc": "Complete a lesson with Polish signs."
+      },
+      "polish_10": {
+        "title": "Diacritic Master",
+        "desc": "Complete 10 Polish sign lessons without errors."
+      },
+      "polish_50": {
+        "title": "Diacritic Champion",
+        "desc": "Complete 50 Polish sign lessons without errors."
+      },
+      "cicha_runda": {
+        "title": "Silent Round",
+        "desc": "Complete a round with calm ≥90 and max 10 corrections."
+      },
+      "bez_szarpania": {
+        "title": "No Jerking",
+        "desc": "Complete a round with at most 5 corrections."
+      },
+      "wlasny_glos": {
+        "title": "Own Voice",
+        "desc": "Complete a session on your own text (not a lesson)."
+      },
+      "mastered_10": {
+        "title": "Ten Clean",
+        "desc": "Master 10 lessons with 3 stars."
+      },
+      "mastered_50": {
+        "title": "Progress Map",
+        "desc": "Master 50 lessons with 3 stars."
+      },
+      "mastered_100": {
+        "title": "Hundred Clean Rounds",
+        "desc": "Master 100 lessons with 3 stars."
+      }
     }
   }
 }

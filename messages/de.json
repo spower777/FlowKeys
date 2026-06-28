@@ -23,7 +23,8 @@
     "libraryUnit": "{count, plural, one {Text} other {Texte}}",
     "voiceRecord": "Geschichte per Stimme aufnehmen",
     "voiceDesc": "Transkription via Whisper AI",
-    "footer": "© 2026 FlowKeys"
+    "footer": "© 2026 FlowKeys",
+    "tagline": "Trainiere Rhythmus, Präzision und Kontrolle auf der Tastatur."
   },
   "input": {
     "back": "← Zurück",
@@ -34,11 +35,26 @@
     "subtitle": "Wie soll die KI deinen Text verarbeiten?",
     "mockNotice": "Mock-Modus — OPENAI_API_KEY fehlt",
     "modes": {
-      "1to1": { "label": "1:1", "desc": "Übe mit deinem Text ohne Änderungen" },
-      "clean": { "label": "Bereinigen", "desc": "Tippfehler und Zeichensetzung korrigieren" },
-      "story": { "label": "Geschichte", "desc": "In eine Erzählung mit Anfang und Ende verwandeln" },
-      "exercise": { "label": "Übung", "desc": "Ruhiger Übungstext, ~200 Wörter" },
-      "polish_chars": { "label": "Polnische Zeichen", "desc": "Mehr ą ć ę ł ń ó ś ź ż" }
+      "1to1": {
+        "label": "1:1",
+        "desc": "Übe mit deinem Text ohne Änderungen"
+      },
+      "clean": {
+        "label": "Bereinigen",
+        "desc": "Tippfehler und Zeichensetzung korrigieren"
+      },
+      "story": {
+        "label": "Geschichte",
+        "desc": "In eine Erzählung mit Anfang und Ende verwandeln"
+      },
+      "exercise": {
+        "label": "Übung",
+        "desc": "Ruhiger Übungstext, ~200 Wörter"
+      },
+      "polish_chars": {
+        "label": "Polnische Zeichen",
+        "desc": "Mehr ą ć ę ł ń ó ś ź ż"
+      }
     },
     "forward": "Weiter →",
     "transformWithAi": "Mit KI transformieren →",
@@ -417,68 +433,248 @@
   },
   "data": {
     "chapters": {
-      "1":  { "title": "Erster Rhythmus",       "desc": "Einfache Sätze, ruhiger Start, Rhythmus ohne Druck." },
-      "2":  { "title": "Flüssigkeit",            "desc": "Kurze Texte, mehr Tempo, weniger Spannung." },
-      "3":  { "title": "Polnische Zeichen",      "desc": "Üben von Diakritika, Endungen und schwierigen Buchstaben." },
-      "4":  { "title": "Neuer Rhythmus",         "desc": "Kompakte Texte, ruhige Rückkehr zu den Tasten." },
-      "5":  { "title": "Tieferer Rhythmus",      "desc": "Längere Sätze, mehr eigene Stimme." },
-      "6":  { "title": "Polnische Diakritika",   "desc": "Diakritika in Aktion: ą ę ć ł ń ó ś ź ż." },
-      "7":  { "title": "Blind Flow",             "desc": "Tippen aus dem Gedächtnis. Der Bildschirm schweigt, die Finger erinnern sich." },
-      "8":  { "title": "Visualisierung",         "desc": "Vorstellungskraft und Erfüllung als Praxis." },
-      "9":  { "title": "Spiritualität",          "desc": "Stille, Führung, Gebet und Ruhe." },
-      "10": { "title": "Beziehungen",            "desc": "Präsenz, Liebe und Kommunikation im Alltag." },
-      "11": { "title": "Geschichten",            "desc": "Kurze Lebensgeschichten mit Rhythmus." },
-      "12": { "title": "Meisterschaft",          "desc": "Disziplin, Präzision und stabiler Fortschritt." },
-      "13": { "title": "Jadepfad I",             "desc": "Ruhe und Atem im Geist des Wuxia-Kinos." },
-      "14": { "title": "Jadepfad II",            "desc": "Immer tiefer — Schatten, Klinge und Rhythmus." },
-      "15": { "title": "Jadepfad III",           "desc": "Schwerere Sätze, Meisterniveau." },
-      "16": { "title": "Gaming Flow",            "desc": "Respawn, Loot, Basis. Training in Gamer-Sprache." },
-      "17": { "title": "Grundreihe",             "desc": "a s d f g h j k l — Finger lernen ihren Platz." },
-      "18": { "title": "Neue Tasten",            "desc": "e i r n o t w z c — Schritt für Schritt über die Grundreihe hinaus." },
-      "19": { "title": "Zahlen",                 "desc": "1 2 3 4 5 6 7 8 9 0 — Zahlenreihe von Grund auf." },
-      "20": { "title": "Symbole",                "desc": ". , ! ? : ; - ( ) \" % @ / — Interpunktion und Sonderzeichen." },
-      "21": { "title": "Obere Reihe",            "desc": "q w e r t y u i o p — vollständige obere Reihe Schritt für Schritt." },
-      "22": { "title": "Untere Reihe",           "desc": "z x c v b n m — untere Reihe und Kombination aller drei." },
-      "23": { "title": "Smaragdtafeln des Thoth", "desc": "Hermetische Weisheit von Atlantis — Seele, Zeit und Licht." },
-      "24": { "title": "Bhagavad Gita",          "desc": "Arjunas Dialog mit Krishna — Dharma, Handlung und Ewigkeit." },
-      "25": { "title": "Tao Te Ching",           "desc": "Laozi — 81 Verse über Wasser, Stille und den pfadlosen Weg." }
+      "1": {
+        "title": "Erster Rhythmus",
+        "desc": "Einfache Sätze, ruhiger Start, Rhythmus ohne Druck."
+      },
+      "2": {
+        "title": "Flüssigkeit",
+        "desc": "Kurze Texte, mehr Tempo, weniger Spannung."
+      },
+      "3": {
+        "title": "Polnische Zeichen",
+        "desc": "Üben von Diakritika, Endungen und schwierigen Buchstaben."
+      },
+      "4": {
+        "title": "Neuer Rhythmus",
+        "desc": "Kompakte Texte, ruhige Rückkehr zu den Tasten."
+      },
+      "5": {
+        "title": "Tieferer Rhythmus",
+        "desc": "Längere Sätze, mehr eigene Stimme."
+      },
+      "6": {
+        "title": "Polnische Diakritika",
+        "desc": "Diakritika in Aktion: ą ę ć ł ń ó ś ź ż."
+      },
+      "7": {
+        "title": "Blind Flow",
+        "desc": "Tippen aus dem Gedächtnis. Der Bildschirm schweigt, die Finger erinnern sich."
+      },
+      "8": {
+        "title": "Visualisierung",
+        "desc": "Vorstellungskraft und Erfüllung als Praxis."
+      },
+      "9": {
+        "title": "Spiritualität",
+        "desc": "Stille, Führung, Gebet und Ruhe."
+      },
+      "10": {
+        "title": "Beziehungen",
+        "desc": "Präsenz, Liebe und Kommunikation im Alltag."
+      },
+      "11": {
+        "title": "Geschichten",
+        "desc": "Kurze Lebensgeschichten mit Rhythmus."
+      },
+      "12": {
+        "title": "Meisterschaft",
+        "desc": "Disziplin, Präzision und stabiler Fortschritt."
+      },
+      "13": {
+        "title": "Jadepfad I",
+        "desc": "Ruhe und Atem im Geist des Wuxia-Kinos."
+      },
+      "14": {
+        "title": "Jadepfad II",
+        "desc": "Immer tiefer — Schatten, Klinge und Rhythmus."
+      },
+      "15": {
+        "title": "Jadepfad III",
+        "desc": "Schwerere Sätze, Meisterniveau."
+      },
+      "16": {
+        "title": "Gaming Flow",
+        "desc": "Respawn, Loot, Basis. Training in Gamer-Sprache."
+      },
+      "17": {
+        "title": "Grundreihe",
+        "desc": "a s d f g h j k l — Finger lernen ihren Platz."
+      },
+      "18": {
+        "title": "Neue Tasten",
+        "desc": "e i r n o t w z c — Schritt für Schritt über die Grundreihe hinaus."
+      },
+      "19": {
+        "title": "Zahlen",
+        "desc": "1 2 3 4 5 6 7 8 9 0 — Zahlenreihe von Grund auf."
+      },
+      "20": {
+        "title": "Symbole",
+        "desc": ". , ! ? : ; - ( ) \" % @ / — Interpunktion und Sonderzeichen."
+      },
+      "21": {
+        "title": "Obere Reihe",
+        "desc": "q w e r t y u i o p — vollständige obere Reihe Schritt für Schritt."
+      },
+      "22": {
+        "title": "Untere Reihe",
+        "desc": "z x c v b n m — untere Reihe und Kombination aller drei."
+      },
+      "23": {
+        "title": "Smaragdtafeln des Thoth",
+        "desc": "Hermetische Weisheit von Atlantis — Seele, Zeit und Licht."
+      },
+      "24": {
+        "title": "Bhagavad Gita",
+        "desc": "Arjunas Dialog mit Krishna — Dharma, Handlung und Ewigkeit."
+      },
+      "25": {
+        "title": "Tao Te Ching",
+        "desc": "Laozi — 81 Verse über Wasser, Stille und den pfadlosen Weg."
+      }
     },
     "badges": {
-      "first_round":     { "title": "Erster Rhythmus",        "desc": "Schließe deine erste Lektion ab." },
-      "ten_lessons":     { "title": "Warme Finger",           "desc": "Schließe 10 Lektionen ab." },
-      "fifty_lessons":   { "title": "Stetiger Kurs",          "desc": "Schließe 50 Lektionen ab." },
-      "hundred_lessons": { "title": "Tastaturmeister",        "desc": "Schließe 100 Lektionen ab." },
-      "three_days":      { "title": "Drei Rhythmustage",      "desc": "Übe 3 Tage in Folge." },
-      "seven_days":      { "title": "Woche ohne Flucht",      "desc": "Übe 7 Tage in Folge." },
-      "thirty_days":     { "title": "Monat der Geduld",       "desc": "Übe 30 Tage in Folge." },
-      "accuracy_90":     { "title": "Sauberer Start",         "desc": "Erreiche 90% Genauigkeit." },
-      "accuracy_95":     { "title": "Feste Hand",             "desc": "Erreiche 95% Genauigkeit." },
-      "accuracy_98":     { "title": "Eiserne Genauigkeit",    "desc": "Erreiche 98% Genauigkeit." },
-      "accuracy_100":    { "title": "Makellos",               "desc": "Schließe eine Runde mit 100% Genauigkeit ab." },
-      "wpm_30":          { "title": "Erster Gang",            "desc": "Erreiche 30 WPM." },
-      "wpm_40":          { "title": "Fließender Schritt",     "desc": "Erreiche 40 WPM." },
-      "wpm_50":          { "title": "Schneller Strom",        "desc": "Erreiche 50 WPM." },
-      "wpm_60":          { "title": "Express",                "desc": "Erreiche 60 WPM." },
-      "wpm_80":          { "title": "Blitz",                  "desc": "Erreiche 80 WPM." },
-      "calm_80":         { "title": "Ruhige Hand",            "desc": "Erreiche Ruheindex 80." },
-      "calm_90":         { "title": "Stiller Mechanismus",    "desc": "Erreiche Ruheindex 90." },
-      "calm_95":         { "title": "Stahlnerven",            "desc": "Erreiche Ruheindex 95." },
-      "calm_99":         { "title": "Tastaturmönch",          "desc": "Erreiche Ruheindex 99." },
-      "no_backspace_1":  { "title": "Kein Zurück",            "desc": "Schließe eine Runde ohne Backspace ab." },
-      "no_backspace_5":  { "title": "Geradeaus",              "desc": "Schließe 5 Runden ohne Backspace ab." },
-      "no_backspace_20": { "title": "Nicht umschauen",        "desc": "Schließe 20 Runden ohne Backspace ab." },
-      "blind_1":         { "title": "Blinder Strom",          "desc": "Schließe deine erste Blind-Flow-Runde ab." },
-      "blind_10":        { "title": "Aus dem Gedächtnis",     "desc": "Schließe 10 Blind-Flow-Runden ab." },
-      "blind_50":        { "title": "Innere Tastatur",        "desc": "Schließe 50 Blind-Flow-Runden ab." },
-      "polish_1":        { "title": "Erstes Diakritikum",     "desc": "Schließe eine Lektion mit polnischen Zeichen ab." },
-      "polish_10":       { "title": "Diakritik-Meister",      "desc": "Schließe 10 polnische Zeichenlektionen ohne Fehler ab." },
-      "polish_50":       { "title": "Diakritik-Champion",     "desc": "Schließe 50 polnische Zeichenlektionen ohne Fehler ab." },
-      "cicha_runda":     { "title": "Stille Runde",           "desc": "Schließe eine Runde mit Ruhe ≥90 und max. 10 Korrekturen ab." },
-      "bez_szarpania":   { "title": "Kein Rucken",            "desc": "Schließe eine Runde mit maximal 5 Korrekturen ab." },
-      "wlasny_glos":     { "title": "Eigene Stimme",          "desc": "Schließe eine Sitzung mit eigenem Text ab (keine Lektion)." },
-      "mastered_10":     { "title": "Zehn Saubere",           "desc": "Meistere 10 Lektionen mit 3 Sternen." },
-      "mastered_50":     { "title": "Fortschrittskarte",      "desc": "Meistere 50 Lektionen mit 3 Sternen." },
-      "mastered_100":    { "title": "Hundert saubere Runden", "desc": "Meistere 100 Lektionen mit 3 Sternen." }
+      "first_round": {
+        "title": "Erster Rhythmus",
+        "desc": "Schließe deine erste Lektion ab."
+      },
+      "ten_lessons": {
+        "title": "Warme Finger",
+        "desc": "Schließe 10 Lektionen ab."
+      },
+      "fifty_lessons": {
+        "title": "Stetiger Kurs",
+        "desc": "Schließe 50 Lektionen ab."
+      },
+      "hundred_lessons": {
+        "title": "Tastaturmeister",
+        "desc": "Schließe 100 Lektionen ab."
+      },
+      "three_days": {
+        "title": "Drei Rhythmustage",
+        "desc": "Übe 3 Tage in Folge."
+      },
+      "seven_days": {
+        "title": "Woche ohne Flucht",
+        "desc": "Übe 7 Tage in Folge."
+      },
+      "thirty_days": {
+        "title": "Monat der Geduld",
+        "desc": "Übe 30 Tage in Folge."
+      },
+      "accuracy_90": {
+        "title": "Sauberer Start",
+        "desc": "Erreiche 90% Genauigkeit."
+      },
+      "accuracy_95": {
+        "title": "Feste Hand",
+        "desc": "Erreiche 95% Genauigkeit."
+      },
+      "accuracy_98": {
+        "title": "Eiserne Genauigkeit",
+        "desc": "Erreiche 98% Genauigkeit."
+      },
+      "accuracy_100": {
+        "title": "Makellos",
+        "desc": "Schließe eine Runde mit 100% Genauigkeit ab."
+      },
+      "wpm_30": {
+        "title": "Erster Gang",
+        "desc": "Erreiche 30 WPM."
+      },
+      "wpm_40": {
+        "title": "Fließender Schritt",
+        "desc": "Erreiche 40 WPM."
+      },
+      "wpm_50": {
+        "title": "Schneller Strom",
+        "desc": "Erreiche 50 WPM."
+      },
+      "wpm_60": {
+        "title": "Express",
+        "desc": "Erreiche 60 WPM."
+      },
+      "wpm_80": {
+        "title": "Blitz",
+        "desc": "Erreiche 80 WPM."
+      },
+      "calm_80": {
+        "title": "Ruhige Hand",
+        "desc": "Erreiche Ruheindex 80."
+      },
+      "calm_90": {
+        "title": "Stiller Mechanismus",
+        "desc": "Erreiche Ruheindex 90."
+      },
+      "calm_95": {
+        "title": "Stahlnerven",
+        "desc": "Erreiche Ruheindex 95."
+      },
+      "calm_99": {
+        "title": "Tastaturmönch",
+        "desc": "Erreiche Ruheindex 99."
+      },
+      "no_backspace_1": {
+        "title": "Kein Zurück",
+        "desc": "Schließe eine Runde ohne Backspace ab."
+      },
+      "no_backspace_5": {
+        "title": "Geradeaus",
+        "desc": "Schließe 5 Runden ohne Backspace ab."
+      },
+      "no_backspace_20": {
+        "title": "Nicht umschauen",
+        "desc": "Schließe 20 Runden ohne Backspace ab."
+      },
+      "blind_1": {
+        "title": "Blinder Strom",
+        "desc": "Schließe deine erste Blind-Flow-Runde ab."
+      },
+      "blind_10": {
+        "title": "Aus dem Gedächtnis",
+        "desc": "Schließe 10 Blind-Flow-Runden ab."
+      },
+      "blind_50": {
+        "title": "Innere Tastatur",
+        "desc": "Schließe 50 Blind-Flow-Runden ab."
+      },
+      "polish_1": {
+        "title": "Erstes Diakritikum",
+        "desc": "Schließe eine Lektion mit polnischen Zeichen ab."
+      },
+      "polish_10": {
+        "title": "Diakritik-Meister",
+        "desc": "Schließe 10 polnische Zeichenlektionen ohne Fehler ab."
+      },
+      "polish_50": {
+        "title": "Diakritik-Champion",
+        "desc": "Schließe 50 polnische Zeichenlektionen ohne Fehler ab."
+      },
+      "cicha_runda": {
+        "title": "Stille Runde",
+        "desc": "Schließe eine Runde mit Ruhe ≥90 und max. 10 Korrekturen ab."
+      },
+      "bez_szarpania": {
+        "title": "Kein Rucken",
+        "desc": "Schließe eine Runde mit maximal 5 Korrekturen ab."
+      },
+      "wlasny_glos": {
+        "title": "Eigene Stimme",
+        "desc": "Schließe eine Sitzung mit eigenem Text ab (keine Lektion)."
+      },
+      "mastered_10": {
+        "title": "Zehn Saubere",
+        "desc": "Meistere 10 Lektionen mit 3 Sternen."
+      },
+      "mastered_50": {
+        "title": "Fortschrittskarte",
+        "desc": "Meistere 50 Lektionen mit 3 Sternen."
+      },
+      "mastered_100": {
+        "title": "Hundert saubere Runden",
+        "desc": "Meistere 100 Lektionen mit 3 Sternen."
+      }
     }
   }
 }

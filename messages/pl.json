@@ -23,7 +23,8 @@
     "libraryUnit": "{count, plural, one {tekst} =2 {teksty} =3 {teksty} =4 {teksty} other {tekstów}}",
     "voiceRecord": "Nagraj historię głosem",
     "voiceDesc": "Transkrypcja przez Whisper AI",
-    "footer": "© 2026 FlowKeys"
+    "footer": "© 2026 FlowKeys",
+    "tagline": "Trenuj rytm, precyzję i panowanie nad chaosem na klawiaturze."
   },
   "input": {
     "back": "← Wróć",
@@ -34,11 +35,26 @@
     "subtitle": "Jak AI ma przetworzyć Twój tekst?",
     "mockNotice": "Mock mode — brak OPENAI_API_KEY",
     "modes": {
-      "1to1": { "label": "1:1", "desc": "Ćwicz na swoim tekście bez zmian" },
-      "clean": { "label": "Oczyść", "desc": "Popraw literówki i interpunkcję" },
-      "story": { "label": "Opowieść", "desc": "Zamień w narrację z początkiem i końcem" },
-      "exercise": { "label": "Ćwiczenie", "desc": "Spokojny tekst do nauki, ~200 słów" },
-      "polish_chars": { "label": "Trudne znaki", "desc": "Więcej ą ć ę ł ń ó ś ź ż" }
+      "1to1": {
+        "label": "1:1",
+        "desc": "Ćwicz na swoim tekście bez zmian"
+      },
+      "clean": {
+        "label": "Oczyść",
+        "desc": "Popraw literówki i interpunkcję"
+      },
+      "story": {
+        "label": "Opowieść",
+        "desc": "Zamień w narrację z początkiem i końcem"
+      },
+      "exercise": {
+        "label": "Ćwiczenie",
+        "desc": "Spokojny tekst do nauki, ~200 słów"
+      },
+      "polish_chars": {
+        "label": "Trudne znaki",
+        "desc": "Więcej ą ć ę ł ń ó ś ź ż"
+      }
     },
     "forward": "Dalej →",
     "transformWithAi": "Transformuj z AI →",
@@ -417,68 +433,248 @@
   },
   "data": {
     "chapters": {
-      "1":  { "title": "Pierwszy Rytm",       "desc": "Proste zdania, spokojny start, rytm bez presji." },
-      "2":  { "title": "Płynność",            "desc": "Krótkie teksty, więcej tempa, mniej napięcia." },
-      "3":  { "title": "Polskie Znaki",       "desc": "Ćwiczenie ogonków, końcówek i trudnych liter." },
-      "4":  { "title": "Nowy Rytm",           "desc": "Kompaktowe teksty, spokojny powrót do klawiszy." },
-      "5":  { "title": "Głębszy Rytm",        "desc": "Dłuższe zdania, więcej własnego głosu." },
-      "6":  { "title": "Polskie Ogonki",      "desc": "Ogonki w akcji: ą ę ć ł ń ó ś ź ż." },
-      "7":  { "title": "Blind Flow",          "desc": "Pisanie z pamięci. Ekran milczy, palce pamiętają." },
-      "8":  { "title": "Wizualizacja",        "desc": "Wyobraźnia i stan spełnienia jako praktyka." },
-      "9":  { "title": "Duchowość",           "desc": "Cisza, prowadzenie, modlitwa i spokój." },
-      "10": { "title": "Relacje",             "desc": "Obecność, miłość i komunikacja w codzienności." },
-      "11": { "title": "Opowieści",           "desc": "Krótkie życiowe historyjki z rytmem." },
-      "12": { "title": "Mistrzostwo",         "desc": "Dyscyplina, precyzja i stabilny progres." },
-      "13": { "title": "Jadeitowa Droga I",   "desc": "Spokój i oddech w duchu filmowego wuxia." },
-      "14": { "title": "Jadeitowa Droga II",  "desc": "Coraz głębiej — cień, ostrze i rytm." },
-      "15": { "title": "Jadeitowa Droga III", "desc": "Trudniejsze zdania, mistrzowski poziom." },
-      "16": { "title": "Gaming Flow",         "desc": "Respawn, loot, baza. Trening w języku gracza." },
-      "17": { "title": "Rząd Domowy",         "desc": "a s d f g h j k l — palce uczą się swojego miejsca." },
-      "18": { "title": "Nowe Klawisze",       "desc": "e i r n o t w z c — krok po kroku poza rząd domowy." },
-      "19": { "title": "Cyfry",               "desc": "1 2 3 4 5 6 7 8 9 0 — rząd numeryczny od podstaw." },
-      "20": { "title": "Symbole",             "desc": ". , ! ? : ; - ( ) \" % @ / — interpunkcja i znaki specjalne." },
-      "21": { "title": "Górny Rząd",          "desc": "q w e r t y u i o p — kompletny górny rząd krok po kroku." },
-      "22": { "title": "Dolny Rząd",          "desc": "z x c v b n m — dolny rząd i łączenie wszystkich trzech." },
-      "23": { "title": "Tablice Szmaragdowe Thotha", "desc": "Hermetyczne mądrości Atlantydy — dusza, czas i Światło." },
-      "24": { "title": "Bhagavad Gita",       "desc": "Dialog Arjuny z Krishną — dharma, działanie i wieczność." },
-      "25": { "title": "Tao Te Ching",        "desc": "Laozi — 81 wersów o wodzie, ciszy i drodze bez drogi." }
+      "1": {
+        "title": "Pierwszy Rytm",
+        "desc": "Proste zdania, spokojny start, rytm bez presji."
+      },
+      "2": {
+        "title": "Płynność",
+        "desc": "Krótkie teksty, więcej tempa, mniej napięcia."
+      },
+      "3": {
+        "title": "Polskie Znaki",
+        "desc": "Ćwiczenie ogonków, końcówek i trudnych liter."
+      },
+      "4": {
+        "title": "Nowy Rytm",
+        "desc": "Kompaktowe teksty, spokojny powrót do klawiszy."
+      },
+      "5": {
+        "title": "Głębszy Rytm",
+        "desc": "Dłuższe zdania, więcej własnego głosu."
+      },
+      "6": {
+        "title": "Polskie Ogonki",
+        "desc": "Ogonki w akcji: ą ę ć ł ń ó ś ź ż."
+      },
+      "7": {
+        "title": "Blind Flow",
+        "desc": "Pisanie z pamięci. Ekran milczy, palce pamiętają."
+      },
+      "8": {
+        "title": "Wizualizacja",
+        "desc": "Wyobraźnia i stan spełnienia jako praktyka."
+      },
+      "9": {
+        "title": "Duchowość",
+        "desc": "Cisza, prowadzenie, modlitwa i spokój."
+      },
+      "10": {
+        "title": "Relacje",
+        "desc": "Obecność, miłość i komunikacja w codzienności."
+      },
+      "11": {
+        "title": "Opowieści",
+        "desc": "Krótkie życiowe historyjki z rytmem."
+      },
+      "12": {
+        "title": "Mistrzostwo",
+        "desc": "Dyscyplina, precyzja i stabilny progres."
+      },
+      "13": {
+        "title": "Jadeitowa Droga I",
+        "desc": "Spokój i oddech w duchu filmowego wuxia."
+      },
+      "14": {
+        "title": "Jadeitowa Droga II",
+        "desc": "Coraz głębiej — cień, ostrze i rytm."
+      },
+      "15": {
+        "title": "Jadeitowa Droga III",
+        "desc": "Trudniejsze zdania, mistrzowski poziom."
+      },
+      "16": {
+        "title": "Gaming Flow",
+        "desc": "Respawn, loot, baza. Trening w języku gracza."
+      },
+      "17": {
+        "title": "Rząd Domowy",
+        "desc": "a s d f g h j k l — palce uczą się swojego miejsca."
+      },
+      "18": {
+        "title": "Nowe Klawisze",
+        "desc": "e i r n o t w z c — krok po kroku poza rząd domowy."
+      },
+      "19": {
+        "title": "Cyfry",
+        "desc": "1 2 3 4 5 6 7 8 9 0 — rząd numeryczny od podstaw."
+      },
+      "20": {
+        "title": "Symbole",
+        "desc": ". , ! ? : ; - ( ) \" % @ / — interpunkcja i znaki specjalne."
+      },
+      "21": {
+        "title": "Górny Rząd",
+        "desc": "q w e r t y u i o p — kompletny górny rząd krok po kroku."
+      },
+      "22": {
+        "title": "Dolny Rząd",
+        "desc": "z x c v b n m — dolny rząd i łączenie wszystkich trzech."
+      },
+      "23": {
+        "title": "Tablice Szmaragdowe Thotha",
+        "desc": "Hermetyczne mądrości Atlantydy — dusza, czas i Światło."
+      },
+      "24": {
+        "title": "Bhagavad Gita",
+        "desc": "Dialog Arjuny z Krishną — dharma, działanie i wieczność."
+      },
+      "25": {
+        "title": "Tao Te Ching",
+        "desc": "Laozi — 81 wersów o wodzie, ciszy i drodze bez drogi."
+      }
     },
     "badges": {
-      "first_round":     { "title": "Pierwszy Rytm",        "desc": "Ukończ pierwszą lekcję." },
-      "ten_lessons":     { "title": "Rozgrzane Palce",       "desc": "Ukończ 10 lekcji." },
-      "fifty_lessons":   { "title": "Stały Kurs",            "desc": "Ukończ 50 lekcji." },
-      "hundred_lessons": { "title": "Mistrz Klawiatury",     "desc": "Ukończ 100 lekcji." },
-      "three_days":      { "title": "Trzy Dni Rytmu",        "desc": "Ćwicz przez 3 dni z rzędu." },
-      "seven_days":      { "title": "Tydzień Bez Ucieczki",  "desc": "Ćwicz przez 7 dni z rzędu." },
-      "thirty_days":     { "title": "Miesiąc Cierpliwości",  "desc": "Ćwicz przez 30 dni z rzędu." },
-      "accuracy_90":     { "title": "Czysty Start",          "desc": "Osiągnij 90% dokładności." },
-      "accuracy_95":     { "title": "Pewna Ręka",            "desc": "Osiągnij 95% dokładności." },
-      "accuracy_98":     { "title": "Żelazna Dokładność",    "desc": "Osiągnij 98% dokładności." },
-      "accuracy_100":    { "title": "Bez Skazy",             "desc": "Ukończ rundę ze 100% dokładności." },
-      "wpm_30":          { "title": "Pierwszy Bieg",         "desc": "Osiągnij 30 WPM." },
-      "wpm_40":          { "title": "Płynny Krok",           "desc": "Osiągnij 40 WPM." },
-      "wpm_50":          { "title": "Szybki Strumień",       "desc": "Osiągnij 50 WPM." },
-      "wpm_60":          { "title": "Ekspres",               "desc": "Osiągnij 60 WPM." },
-      "wpm_80":          { "title": "Błyskawica",            "desc": "Osiągnij 80 WPM." },
-      "calm_80":         { "title": "Spokojna Dłoń",         "desc": "Osiągnij indeks spokoju 80." },
-      "calm_90":         { "title": "Cichy Mechanizm",       "desc": "Osiągnij indeks spokoju 90." },
-      "calm_95":         { "title": "Nerwy ze Stali",        "desc": "Osiągnij indeks spokoju 95." },
-      "calm_99":         { "title": "Mnich Klawiatury",      "desc": "Osiągnij indeks spokoju 99." },
-      "no_backspace_1":  { "title": "Bez Cofania",           "desc": "Ukończ jedną rundę bez Backspace." },
-      "no_backspace_5":  { "title": "Prosto Przed Siebie",   "desc": "Ukończ 5 rund bez Backspace." },
-      "no_backspace_20": { "title": "Nie Oglądam Się",       "desc": "Ukończ 20 rund bez Backspace." },
-      "blind_1":         { "title": "Ślepy Strumień",        "desc": "Ukończ pierwszą rundę Blind Flow." },
-      "blind_10":        { "title": "Piszę z Pamięci",       "desc": "Ukończ 10 rund Blind Flow." },
-      "blind_50":        { "title": "Wewnętrzna Klawiatura", "desc": "Ukończ 50 rund Blind Flow." },
-      "polish_1":        { "title": "Pierwszy Ogonek",       "desc": "Ukończ lekcję z polskimi znakami." },
-      "polish_10":       { "title": "Mistrz Ogonków",        "desc": "Ukończ 10 lekcji z polskimi znakami bez błędu." },
-      "polish_50":       { "title": "Zażółć Champion",       "desc": "Ukończ 50 lekcji z polskimi znakami bez błędu." },
-      "cicha_runda":     { "title": "Cicha Runda",           "desc": "Ukończ rundę ze spokojem ≥90 i maks. 10 cofnięciami." },
-      "bez_szarpania":   { "title": "Bez Szarpania",         "desc": "Ukończ rundę z maksymalnie 5 cofnięciami." },
-      "wlasny_glos":     { "title": "Własny Głos",           "desc": "Ukończ trening na własnym tekście (nie lekcji)." },
-      "mastered_10":     { "title": "Dziesięć Czystych",     "desc": "Opanuj 10 lekcji na 3 gwiazdki." },
-      "mastered_50":     { "title": "Mapa Postępu",          "desc": "Opanuj 50 lekcji na 3 gwiazdki." },
-      "mastered_100":    { "title": "Sto Czystych Rund",     "desc": "Opanuj 100 lekcji na 3 gwiazdki." }
+      "first_round": {
+        "title": "Pierwszy Rytm",
+        "desc": "Ukończ pierwszą lekcję."
+      },
+      "ten_lessons": {
+        "title": "Rozgrzane Palce",
+        "desc": "Ukończ 10 lekcji."
+      },
+      "fifty_lessons": {
+        "title": "Stały Kurs",
+        "desc": "Ukończ 50 lekcji."
+      },
+      "hundred_lessons": {
+        "title": "Mistrz Klawiatury",
+        "desc": "Ukończ 100 lekcji."
+      },
+      "three_days": {
+        "title": "Trzy Dni Rytmu",
+        "desc": "Ćwicz przez 3 dni z rzędu."
+      },
+      "seven_days": {
+        "title": "Tydzień Bez Ucieczki",
+        "desc": "Ćwicz przez 7 dni z rzędu."
+      },
+      "thirty_days": {
+        "title": "Miesiąc Cierpliwości",
+        "desc": "Ćwicz przez 30 dni z rzędu."
+      },
+      "accuracy_90": {
+        "title": "Czysty Start",
+        "desc": "Osiągnij 90% dokładności."
+      },
+      "accuracy_95": {
+        "title": "Pewna Ręka",
+        "desc": "Osiągnij 95% dokładności."
+      },
+      "accuracy_98": {
+        "title": "Żelazna Dokładność",
+        "desc": "Osiągnij 98% dokładności."
+      },
+      "accuracy_100": {
+        "title": "Bez Skazy",
+        "desc": "Ukończ rundę ze 100% dokładności."
+      },
+      "wpm_30": {
+        "title": "Pierwszy Bieg",
+        "desc": "Osiągnij 30 WPM."
+      },
+      "wpm_40": {
+        "title": "Płynny Krok",
+        "desc": "Osiągnij 40 WPM."
+      },
+      "wpm_50": {
+        "title": "Szybki Strumień",
+        "desc": "Osiągnij 50 WPM."
+      },
+      "wpm_60": {
+        "title": "Ekspres",
+        "desc": "Osiągnij 60 WPM."
+      },
+      "wpm_80": {
+        "title": "Błyskawica",
+        "desc": "Osiągnij 80 WPM."
+      },
+      "calm_80": {
+        "title": "Spokojna Dłoń",
+        "desc": "Osiągnij indeks spokoju 80."
+      },
+      "calm_90": {
+        "title": "Cichy Mechanizm",
+        "desc": "Osiągnij indeks spokoju 90."
+      },
+      "calm_95": {
+        "title": "Nerwy ze Stali",
+        "desc": "Osiągnij indeks spokoju 95."
+      },
+      "calm_99": {
+        "title": "Mnich Klawiatury",
+        "desc": "Osiągnij indeks spokoju 99."
+      },
+      "no_backspace_1": {
+        "title": "Bez Cofania",
+        "desc": "Ukończ jedną rundę bez Backspace."
+      },
+      "no_backspace_5": {
+        "title": "Prosto Przed Siebie",
+        "desc": "Ukończ 5 rund bez Backspace."
+      },
+      "no_backspace_20": {
+        "title": "Nie Oglądam Się",
+        "desc": "Ukończ 20 rund bez Backspace."
+      },
+      "blind_1": {
+        "title": "Ślepy Strumień",
+        "desc": "Ukończ pierwszą rundę Blind Flow."
+      },
+      "blind_10": {
+        "title": "Piszę z Pamięci",
+        "desc": "Ukończ 10 rund Blind Flow."
+      },
+      "blind_50": {
+        "title": "Wewnętrzna Klawiatura",
+        "desc": "Ukończ 50 rund Blind Flow."
+      },
+      "polish_1": {
+        "title": "Pierwszy Ogonek",
+        "desc": "Ukończ lekcję z polskimi znakami."
+      },
+      "polish_10": {
+        "title": "Mistrz Ogonków",
+        "desc": "Ukończ 10 lekcji z polskimi znakami bez błędu."
+      },
+      "polish_50": {
+        "title": "Zażółć Champion",
+        "desc": "Ukończ 50 lekcji z polskimi znakami bez błędu."
+      },
+      "cicha_runda": {
+        "title": "Cicha Runda",
+        "desc": "Ukończ rundę ze spokojem ≥90 i maks. 10 cofnięciami."
+      },
+      "bez_szarpania": {
+        "title": "Bez Szarpania",
+        "desc": "Ukończ rundę z maksymalnie 5 cofnięciami."
+      },
+      "wlasny_glos": {
+        "title": "Własny Głos",
+        "desc": "Ukończ trening na własnym tekście (nie lekcji)."
+      },
+      "mastered_10": {
+        "title": "Dziesięć Czystych",
+        "desc": "Opanuj 10 lekcji na 3 gwiazdki."
+      },
+      "mastered_50": {
+        "title": "Mapa Postępu",
+        "desc": "Opanuj 50 lekcji na 3 gwiazdki."
+      },
+      "mastered_100": {
+        "title": "Sto Czystych Rund",
+        "desc": "Opanuj 100 lekcji na 3 gwiazdki."
+      }
     }
   }
 }

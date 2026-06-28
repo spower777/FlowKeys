@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslations, useLocale } from 'next-intl'
 import { useRouter } from '@/i18n/navigation'
 import Header from '@/components/Header'
 import TextInput from '@/components/TextInput'
@@ -30,6 +31,13 @@ type InputMethod = 'paste' | 'voice' | 'example'
 
 export default function Home() {
   const router = useRouter()
+  const locale = useLocale()
+  const t = useTranslations('home')
+  const tInput = useTranslations('input')
+  const tTransform = useTranslations('transform')
+  const tPreview = useTranslations('preview')
+  const tTyping = useTranslations('typing')
+  const tNav = useTranslations('nav')
   const [step, setStep] = useState<Step>('home')
   const [inputMethod, setInputMethod] = useState<InputMethod>('paste')
   const [sourceText, setSourceText] = useState('')
@@ -345,17 +353,17 @@ export default function Home() {
 
             {/* Value claim — widoczny dla wszystkich */}
             <p className="text-center text-[13px] font-semibold text-[var(--accent-500)] dark:text-[var(--accent-400)] tracking-wide leading-snug animate-fade-up px-2" style={{ animationDelay: '20ms' }}>
-              Trenuj rytm, precyzję i panowanie nad chaosem na klawiaturze.
+              {t('tagline')}
             </p>
 
             {/* Nowy użytkownik — nagłówek */}
             {!lastSession && (
               <div className="animate-fade-up pb-4">
                 <h1 className="text-3xl font-black text-gray-900 dark:text-gray-100 leading-tight tracking-tight">
-                  Pisz własnym głosem.
+                  {t('hero.title')}
                 </h1>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">
-                  FlowKeys uczy spokojnego pisania. Szybkość przychodzi później.
+                  {t('hero.subtitle')}
                 </p>
               </div>
             )}
@@ -363,9 +371,9 @@ export default function Home() {
             {/* Kontynuuj — powracający użytkownicy */}
             {lastSession && (() => {
               const lessonTitle = lastSession.lessonId != null
-                ? (lessons.find(l => l.id === lastSession.lessonId)?.title ?? `Lekcja ${lastSession.lessonId}`)
-                : 'Twój ostatni tekst'
-              const dateStr = new Date(lastSession.createdAt).toLocaleDateString('pl-PL', { day: 'numeric', month: 'short' })
+                ? (lessons.find(l => l.id === lastSession.lessonId)?.title ?? t('lessonLabel', { id: lastSession.lessonId }))
+                : t('yourLastText')
+              const dateStr = new Date(lastSession.createdAt).toLocaleDateString(locale, { day: 'numeric', month: 'short' })
               return (
                 <button
                   onClick={handleContinue}
@@ -373,7 +381,7 @@ export default function Home() {
                 >
                   <div className="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center shrink-0 text-xl group-hover:scale-110 transition-transform duration-200">▶</div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[10px] font-bold uppercase tracking-widest opacity-65 mb-0.5">Kontynuuj</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest opacity-65 mb-0.5">{t('continue')}</p>
                     <p className="text-base font-bold leading-tight truncate">{lessonTitle}</p>
                     <p className="text-xs opacity-60 mt-0.5">{lastSession.stats.wpm} WPM · {lastSession.stats.accuracy}% · {dateStr}</p>
                   </div>
@@ -390,8 +398,8 @@ export default function Home() {
               >
                 <span className="text-3xl shrink-0">✍️</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-base font-bold text-gray-800 dark:text-gray-200">Wklej własny tekst</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">Notatka, wspomnienie, fragment czegokolwiek</p>
+                  <p className="text-base font-bold text-gray-800 dark:text-gray-200">{t('pasteText')}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">{t('pasteDesc')}</p>
                 </div>
                 <span className="text-gray-400 dark:text-gray-600 group-hover:text-[var(--accent-500)] transition-colors">›</span>
               </button>
@@ -402,11 +410,11 @@ export default function Home() {
               >
                 <span className="text-3xl shrink-0">📚</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-base font-bold text-gray-800 dark:text-gray-200">Moja Biblioteka</p>
+                  <p className="text-base font-bold text-gray-800 dark:text-gray-200">{t('myLibrary')}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
                     {libraryCount > 0
-                      ? `${libraryCount} ${libraryCount === 1 ? 'tekst' : libraryCount < 5 ? 'teksty' : 'tekstów'} · Wróć do swoich materiałów`
-                      : 'Wróć do tekstów, które coś znaczą'}
+                      ? t('libraryDescCount', { count: libraryCount, unit: t('libraryUnit', { count: libraryCount }) })
+                      : t('libraryDescEmpty')}
                   </p>
                 </div>
                 <span className="text-gray-400 dark:text-gray-600 group-hover:text-[var(--accent-500)] transition-colors">›</span>
@@ -421,8 +429,8 @@ export default function Home() {
             >
               <span className="text-2xl shrink-0">🎙️</span>
               <div className="flex-1 min-w-0">
-                <p className="text-base font-medium text-gray-700 dark:text-gray-300">Nagraj historię głosem</p>
-                <p className="text-xs text-gray-400 dark:text-gray-600 mt-0.5">Transkrypcja przez Whisper AI</p>
+                <p className="text-base font-medium text-gray-700 dark:text-gray-300">{t('voiceRecord')}</p>
+                <p className="text-xs text-gray-400 dark:text-gray-600 mt-0.5">{t('voiceDesc')}</p>
               </div>
               <span className="text-gray-300 dark:text-gray-700 group-hover:text-gray-500 dark:group-hover:text-gray-500 transition-colors text-sm">›</span>
             </button>
@@ -430,7 +438,7 @@ export default function Home() {
             {/* Footer */}
             <div className="animate-fade-up flex flex-col items-center gap-1 pt-4 pb-1" style={{ animationDelay: '180ms' }}>
               <p className="text-[10px] tracking-widest uppercase text-gray-300 dark:text-gray-700 select-none">
-                © 2026 FlowKeys
+                {t('footer')}
               </p>
               <p className="text-sm font-black tracking-[0.3em] uppercase text-gray-300 dark:text-gray-700 select-none">
                 CHROBRY KING 👑
@@ -443,10 +451,10 @@ export default function Home() {
         {/* ── INPUT ── */}
         {step === 'input' && (
           <div className="space-y-5">
-            <button onClick={reset} className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 px-3 py-1.5 rounded-full border border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:border-gray-300 dark:hover:border-[#383838] transition-all duration-150">← Wróć</button>
-            <h2 className="text-lg font-semibold">Twój tekst</h2>
+            <button onClick={reset} className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 px-3 py-1.5 rounded-full border border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:border-gray-300 dark:hover:border-[#383838] transition-all duration-150">{tInput('back')}</button>
+            <h2 className="text-lg font-semibold">{tInput('title')}</h2>
             {inputMethod === 'voice' && (
-              <VoiceInput onTranscript={t => setSourceText(prev => prev ? prev + ' ' + t : t)} />
+              <VoiceInput onTranscript={transcript => setSourceText(prev => prev ? prev + ' ' + transcript : transcript)} />
             )}
             <TextInput
               value={sourceText}
@@ -459,10 +467,10 @@ export default function Home() {
         {/* ── TRANSFORM ── */}
         {step === 'transform' && (
           <div className="space-y-5">
-            <button onClick={() => setStep(inputMethod === 'example' ? 'home' : 'input')} className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 px-3 py-1.5 rounded-full border border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:border-gray-300 dark:hover:border-[#383838] transition-all duration-150">← Wróć</button>
+            <button onClick={() => setStep(inputMethod === 'example' ? 'home' : 'input')} className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 px-3 py-1.5 rounded-full border border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:border-gray-300 dark:hover:border-[#383838] transition-all duration-150">{tInput('back')}</button>
             <div>
-              <h2 className="text-lg font-semibold">Tryb transformacji</h2>
-              <p className="text-sm text-gray-500 mt-1">Jak AI ma przetworzyć Twój tekst?</p>
+              <h2 className="text-lg font-semibold">{tTransform('title')}</h2>
+              <p className="text-sm text-gray-500 mt-1">{tTransform('subtitle')}</p>
             </div>
             {transformError && (
               <div className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-400/10 border border-red-200 dark:border-red-400/20 rounded-xl px-4 py-3">
@@ -485,22 +493,22 @@ export default function Home() {
               <button onClick={() => setStep('transform')} className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 px-3 py-1.5 rounded-full border border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:border-gray-300 dark:hover:border-[#383838] transition-all duration-150">← Wróć</button>
               {isMock && (
                 <span className="text-[10px] font-medium bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/25 px-2.5 py-1 rounded-full">
-                  Mock mode — brak OPENAI_API_KEY
+                  {tTransform('mockNotice')}
                 </span>
               )}
             </div>
             <div>
-              <h2 className="text-lg font-semibold">Tekst treningowy</h2>
-              <p className="text-sm text-gray-500 mt-1">{trainingText.trim().split(/\s+/).length} słów · {trainingText.length} znaków</p>
+              <h2 className="text-lg font-semibold">{tPreview('title')}</h2>
+              <p className="text-sm text-gray-500 mt-1">{tPreview('wordCount', { words: trainingText.trim().split(/\s+/).length, chars: trainingText.length })}</p>
             </div>
             <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-5 py-5 text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
               {trainingText}
             </div>
             <div className="space-y-2">
-              <p className="text-xs text-gray-500 mb-3">Wybierz tryb pisania:</p>
+              <p className="text-xs text-gray-500 mb-3">{tPreview('chooseMode')}</p>
               {[
-                { mode: 'normal' as TypingMode, label: 'Start normalnie', sub: 'Tekst widoczny, pełna kontrola' },
-                { mode: 'no_backspace' as TypingMode, label: 'Start No Backspace', sub: 'Nie poprawiasz — jedziemy dalej' },
+                { mode: 'normal' as TypingMode, label: tPreview('startNormal'), sub: tPreview('startNormalDesc') },
+                { mode: 'no_backspace' as TypingMode, label: tPreview('startNoBackspace'), sub: tPreview('startNoBackspaceDesc') },
               ].map(item => (
                 <button
                   key={item.mode}
@@ -531,7 +539,7 @@ export default function Home() {
                 }}
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 px-3 py-1.5 rounded-full border border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:border-gray-300 dark:hover:border-[#383838] transition-all"
               >
-                ← {currentLesson ? 'Akademia' : currentLibraryTextId ? 'Biblioteka' : 'Porzuć rundę'}
+                ← {currentLesson ? tNav('academy') : currentLibraryTextId ? tNav('library') : tTyping('abandon')}
               </button>
 
               <div className="flex items-center gap-1.5">
@@ -549,7 +557,7 @@ export default function Home() {
                   onClick={restartSession}
                   className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border font-medium transition-all text-gray-500 dark:text-gray-400 border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-[#383838] select-none"
                 >
-                  ↺ Od nowa
+                  {tTyping('restart')}
                 </button>
                 {currentLesson && getNextLesson(currentLesson.id) && (
                   <button
@@ -564,7 +572,7 @@ export default function Home() {
                     }}
                     className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border font-medium transition-all text-gray-500 dark:text-gray-400 border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-[#383838] select-none"
                   >
-                    Pomiń →
+                    {tTyping('skip')}
                   </button>
                 )}
                 <span className="text-[10px] text-gray-300 dark:text-gray-700 select-none pl-1 hidden sm:inline">Esc</span>
@@ -585,7 +593,7 @@ export default function Home() {
                       <span className="text-xs text-gray-400 dark:text-gray-500 italic truncate hidden sm:block">— {currentLesson.subtitle}</span>
                     )}
                     <span className="text-[10px] text-gray-400 dark:text-gray-600 ml-auto shrink-0">
-                      Rozdz. {currentLesson.chapterId} · {chapterTitle}
+                      {tTyping('chapter', { chapterId: currentLesson.chapterId, chapterTitle })}
                     </span>
                   </div>
                 </div>
@@ -596,7 +604,7 @@ export default function Home() {
                 <div className="flex items-center gap-3 flex-wrap">
                   <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate flex-1">{chunkTitle}</span>
                   <span className="shrink-0 text-[10px] px-2.5 py-1 rounded-full bg-[var(--accent-100)] dark:bg-[var(--accent-500)]/15 text-[var(--accent-600)] dark:text-[var(--accent-400)] border border-[var(--accent-200)] dark:border-[var(--accent-500)]/20 font-medium">
-                    Fragment {chunkIndex + 1} / {totalChunks}
+                    {tTyping('fragment', { current: chunkIndex + 1, total: totalChunks })}
                   </span>
                 </div>
               </div>
