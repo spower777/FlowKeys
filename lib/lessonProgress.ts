@@ -19,7 +19,7 @@ export interface LessonProgress {
   bestStreak: number
   completed: boolean
   mastered: boolean
-  stars: 0 | 1 | 2 | 3
+  stars: 0 | 1 | 2 | 3 | 4 | 5
   lastAttemptAt?: string
 }
 
@@ -93,13 +93,18 @@ export function getNextLesson(lessonId: number): import('@/data/lessons').FlowLe
   return next
 }
 
-export function calculateStars(stats: TypingStats): 0 | 1 | 2 | 3 {
+export function calculateStars(stats: TypingStats): 0 | 1 | 2 | 3 | 4 | 5 {
   const calm = stats.calmScore ?? stats.accuracy
-  const completed = stats.completionPercent >= 90
-  if (!completed) return 0
-  if (stats.accuracy >= 98 && calm >= 90) return 3
-  if (stats.accuracy >= 94 && calm >= 80) return 2
-  if (stats.accuracy >= 85) return 1
+  // ★★★★★ — Opanowane: perfekcja rytmu i dokładności
+  if (stats.completionPercent >= 95 && stats.accuracy >= 98 && calm >= 90) return 5
+  // ★★★★  — Świetnie
+  if (stats.completionPercent >= 90 && stats.accuracy >= 96 && calm >= 85) return 4
+  // ★★★   — Dobrze
+  if (stats.completionPercent >= 90 && stats.accuracy >= 93 && calm >= 80) return 3
+  // ★★    — Solidnie
+  if (stats.completionPercent >= 90 && stats.accuracy >= 88 && calm >= 72) return 2
+  // ★     — Zaliczone (naprawia lukę: completed=acc≥80% → zawsze co najmniej 1★)
+  if (stats.completionPercent >= 90 && stats.accuracy >= 80) return 1
   return 0
 }
 
@@ -121,7 +126,7 @@ export function updateLessonProgress(lessonId: number, stats: TypingStats): Less
     bestStreak: Math.max(prev?.bestStreak ?? 0, stats.bestStreak ?? 0),
     completed: prev?.completed || completed,
     mastered: prev?.mastered || mastered,
-    stars: Math.max(prev?.stars ?? 0, stars) as 0 | 1 | 2 | 3,
+    stars: Math.max(prev?.stars ?? 0, stars) as 0 | 1 | 2 | 3 | 4 | 5,
     lastAttemptAt: new Date().toISOString(),
   }
 
@@ -143,7 +148,7 @@ export function markLessonSkipped(lessonId: number): void {
     bestStreak: prev?.bestStreak ?? 0,
     completed: true,
     mastered: false,
-    stars: prev?.stars ?? 0,
+    stars: (prev?.stars ?? 0) as 0 | 1 | 2 | 3 | 4 | 5,
     lastAttemptAt: prev?.lastAttemptAt,
   }
   try { localStorage.setItem(LP_KEY, JSON.stringify(all)) } catch {}

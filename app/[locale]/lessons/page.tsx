@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@/i18n/navigation'
 import Header from '@/components/Header'
 import LessonTile from '@/components/LessonTile'
 import { lessons } from '@/data/lessons'

@@ -1,12 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { useRouter } from '@/i18n/navigation'
 import { getSessions } from '@/lib/storage'
 import { getLibrary } from '@/lib/library'
 import { lessons } from '@/data/lessons'
-import type { TypingSessionRecord, TransformMode, TypingMode } from '@/lib/types'
+import type { TypingSessionRecord, TypingStats, TransformMode, TypingMode } from '@/lib/types'
 import { FINGER_LABELS, FINGER_COLORS } from '@/lib/fingerMap'
+import { getSessionDiagnosis } from '@/lib/coach'
 import ReplayModal from './ReplayModal'
 
 const MODE_LABEL: Record<TransformMode, string> = {
@@ -66,6 +68,11 @@ function StatCard({ value, label, desc, color }: StatCardProps) {
 
 export default function SessionHistory() {
   const router = useRouter()
+  const tDiagnosis = useTranslations('diagnosis')
+  const diagText = (stats: TypingStats): string => {
+    const dk = getSessionDiagnosis(stats)
+    return tDiagnosis(dk.key as any, dk.params as any) as unknown as string
+  }
   const [sessions, setSessions] = useState<TypingSessionRecord[]>([])
   const [libraryMap, setLibraryMap] = useState<Record<string, string>>({})
   const [selected, setSelected] = useState<TypingSessionRecord | null>(null)
@@ -183,6 +190,12 @@ export default function SessionHistory() {
             <StatCard value={st.mistakesCount} label="Błędy" color={st.mistakesCount > 0 ? 'text-red-500 dark:text-red-400' : 'text-green-600 dark:text-green-400'} />
           </div>
 
+          {/* Wniosek z rundy */}
+          <div className="bg-gray-50 dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-4 py-3 flex items-start gap-2.5">
+            <span className="text-gray-400 dark:text-gray-600 shrink-0 mt-0.5 text-sm">◇</span>
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{diagText(st)}</p>
+          </div>
+
           {/* Secondary stats */}
           <div className="grid grid-cols-3 gap-3">
             <StatCard value={st.calmScore ?? st.accuracy} label="Indeks spokoju" desc="Dokładność – Backspace" color={calmColor(st.calmScore ?? st.accuracy)} />
@@ -296,6 +309,7 @@ export default function SessionHistory() {
             >
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-gray-700 dark:text-gray-300 truncate font-medium">{title}</p>
+                <p className="text-[11px] text-gray-400 dark:text-gray-600 italic mt-0.5 truncate">{diagText(s.stats)}</p>
                 <div className="flex items-center gap-2 mt-1 flex-wrap">
                   <span className="text-xs text-gray-400 dark:text-gray-600">{fmtDate(s.createdAt)}</span>
                   <span className={`text-[10px] px-2 py-0.5 rounded-full border ${TYPE_BADGE[type]}`}>

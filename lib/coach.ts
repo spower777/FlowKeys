@@ -1,25 +1,71 @@
 import type { TypingStats, TypingSessionRecord } from './types'
 import { FINGER_LABELS } from './fingerMap'
 
+export interface DiagnosisKey {
+  key: string
+  params?: Record<string, string | number>
+}
+
+export function getSessionDiagnosis(stats: TypingStats): DiagnosisKey {
+  const bs = stats.backspaceCount ?? 0
+  const calm = stats.calmScore ?? stats.accuracy
+  const errors = stats.errorsByFinger ?? {}
+  const worstFinger = Object.entries(errors).sort((a, b) => b[1] - a[1])[0]
+  if (calm < 50 && bs > 10) return { key: 'manyBackspace', params: { count: bs } }
+  if (stats.polishCharsMissed >= 3) return { key: 'polishChars' }
+  if (worstFinger && worstFinger[1] >= 3) return {
+    key: 'worstFinger',
+    params: { finger: FINGER_LABELS[worstFinger[0]] ?? worstFinger[0], count: worstFinger[1] },
+  }
+  if (stats.accuracy >= 97) return { key: 'greatAccuracy' }
+  if (stats.accuracy >= 90) return { key: 'goodAccuracy' }
+  if (stats.mistakesCount > 0 && stats.commonMistakes[0]?.count >= 3) {
+    const m = stats.commonMistakes[0]
+    return {
+      key: 'repeatedMistake',
+      params: {
+        expected: m.expected === ' ' ? '␣' : m.expected,
+        actual: m.actual === ' ' ? '␣' : m.actual,
+      },
+    }
+  }
+  if (stats.wpm < 20) return { key: 'slowPace' }
+  return { key: 'default' }
+}
+
 function avg(nums: number[]): number {
   if (nums.length === 0) return 0
   return nums.reduce((a, b) => a + b, 0) / nums.length
 }
 
-export interface CoachInsight {
-  text: string
+export interface CoachInsightKey {
+  key: string
+  params?: Record<string, string | number>
   tone: 'positive' | 'neutral' | 'constructive'
 }
 
 export function generateCoachInsight(
   current: TypingStats,
-  history: TypingSessionRecord[],   // sessions BEFORE this one, newest first
-): CoachInsight | null {
-  // Need at least 3 completed sessions to have a baseline
+  history: TypingSessionRecord[],
+): CoachInsightKey | null {
   const base = history
     .filter(s => s.stats.completionPercent >= 90)
     .slice(0, 15)
-  if (base.length < 3) return null
+
+  if (base.length === 0) {
+    const bs = current.backspaceCount ?? 0
+    const completed = current.completionPercent >= 90
+    if (!completed) return null
+    if (bs <= 3) return { key: 'firstSessionClean', tone: 'positive' }
+    if (current.accuracy >= 90) return {
+      key: 'firstSessionAccuracy',
+      params: { acc: current.accuracy },
+      tone: 'positive',
+    }
+    return { key: 'firstSession', tone: 'neutral' }
+  }
+
+  if (base.length < 1) return null
 
   const currentCalm  = current.calmScore ?? current.accuracy
   const currentBs    = current.backspaceCount ?? 0
@@ -30,51 +76,43 @@ export function generateCoachInsight(
   const avgAcc   = avg(base.map(s => s.stats.accuracy))
   const avgWpm   = avg(base.map(s => s.stats.wpm))
 
-  // ── 1. Rytm (najbardziej FlowKeys-specific) ───────────────────────────────
   if (completed && currentCalm >= avgCalm + 7)
-    return { text: `Spokojniejszy rytm niż zwykle — Calm ${Math.round(currentCalm)} vs Twoja średnia ${Math.round(avgCalm)}.`, tone: 'positive' }
+    return { key: 'calmImproved', params: { current: Math.round(currentCalm), avg: Math.round(avgCalm) }, tone: 'positive' }
   if (completed && currentCalm <= avgCalm - 9)
-    return { text: `Więcej napięcia niż zwykle. Zwolnij — rytm ważniejszy niż tempo.`, tone: 'constructive' }
+    return { key: 'calmWorse', tone: 'constructive' }
 
-  // ── 2. Cofnięcia ─────────────────────────────────────────────────────────
   if (avgBs >= 8 && currentBs <= avgBs * 0.55 && completed)
-    return { text: `Tylko ${currentBs} cofnięć — o połowę mniej niż zwykle. Dobre pisanie.`, tone: 'positive' }
+    return { key: 'backspaceLess', params: { count: currentBs }, tone: 'positive' }
   if (avgBs >= 5 && currentBs >= avgBs * 1.7)
-    return { text: `${currentBs} cofnięć — więcej niż zwykle (${Math.round(avgBs)} średnio). Pisz pewniej, nie szybciej.`, tone: 'constructive' }
+    return { key: 'backspaceMore', params: { count: currentBs, avg: Math.round(avgBs) }, tone: 'constructive' }
 
-  // ── 3. Dokładność ────────────────────────────────────────────────────────
   if (current.accuracy >= avgAcc + 4 && current.accuracy >= 90 && completed)
-    return { text: `Dokładność ${current.accuracy}% — lepsza niż Twoja średnia (${Math.round(avgAcc)}%).`, tone: 'positive' }
+    return { key: 'accuracyBetter', params: { acc: current.accuracy, avg: Math.round(avgAcc) }, tone: 'positive' }
   if (current.accuracy <= avgAcc - 6 && completed)
-    return { text: `Dokładność poniżej Twojej normy (${current.accuracy}% vs ${Math.round(avgAcc)}% śr.). Wróć do wolniejszego tempa.`, tone: 'constructive' }
+    return { key: 'accuracyWorse', params: { acc: current.accuracy, avg: Math.round(avgAcc) }, tone: 'constructive' }
 
-  // ── 4. WPM ────────────────────────────────────────────────────────────────
   if (current.wpm >= avgWpm + 9 && current.accuracy >= 85 && completed)
-    return { text: `${current.wpm} WPM — szybciej niż zwykle. Utrzymaj spokój przy tym tempie.`, tone: 'positive' }
+    return { key: 'wpmFaster', params: { wpm: current.wpm }, tone: 'positive' }
   if (current.wpm <= avgWpm * 0.72 && completed)
-    return { text: `Wolniejsze tempo niż zwykle. Jeśli pisałeś świadomie — to był dobry trening.`, tone: 'neutral' }
+    return { key: 'wpmSlower', tone: 'neutral' }
 
-  // ── 5. Palec z największą liczbą błędów ───────────────────────────────────
   if (current.errorsByFinger) {
     const fingers = Object.entries(current.errorsByFinger).sort((a, b) => b[1] - a[1])
     if (fingers.length > 0 && fingers[0][1] >= 4) {
       const [key, count] = fingers[0]
       const label = FINGER_LABELS[key] ?? key
-      return { text: `${label} — ${count} błędów w tej sesji. Wróć do lekcji tego palca.`, tone: 'constructive' }
+      return { key: 'worstFinger', params: { finger: label, count }, tone: 'constructive' }
     }
   }
 
-  // ── 6. Najgorsza litera ───────────────────────────────────────────────────
   if (current.commonMistakes?.length > 0) {
     const top = [...current.commonMistakes].sort((a, b) => b.count - a.count)[0]
     if (top.count >= 3)
-      return { text: `Literka „${top.expected}" — ${top.count} błędów. Ćwicz ją w izolacji.`, tone: 'constructive' }
+      return { key: 'worstLetter', params: { letter: top.expected, count: top.count }, tone: 'constructive' }
   }
 
   return null
 }
-
-// ── Tygodniowe porównanie WPM / Calm ─────────────────────────────────────────
 
 export interface WeeklyTrend {
   wpmThisWeek: number
@@ -107,8 +145,6 @@ export function getWeeklyTrend(sessions: TypingSessionRecord[]): WeeklyTrend | n
     sessionsThisWeek: thisWeek.length,
   }
 }
-
-// ── Agregat błędów palców (historia) ─────────────────────────────────────────
 
 export function aggregateFingerErrors(sessions: TypingSessionRecord[]): Record<string, number> {
   const totals: Record<string, number> = {}

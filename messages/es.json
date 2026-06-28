@@ -1,0 +1,484 @@
+{
+  "nav": {
+    "library": "Biblioteca",
+    "academy": "Academia",
+    "history": "Historial",
+    "badges": "Insignias",
+    "settings": "Ajustes",
+    "language": "Idioma"
+  },
+  "home": {
+    "hero": {
+      "title": "Escribe con tu propia voz.",
+      "subtitle": "FlowKeys enseña a escribir con calma. La velocidad viene después."
+    },
+    "continue": "Continuar",
+    "yourLastText": "Tu último texto",
+    "lessonLabel": "Lección {id}",
+    "pasteText": "Pegar tu propio texto",
+    "pasteDesc": "Una nota, un recuerdo, un fragmento de cualquier cosa",
+    "myLibrary": "Mi Biblioteca",
+    "libraryDescEmpty": "Vuelve a los textos que importan",
+    "libraryDescCount": "{count} {unit} · Vuelve a tus materiales",
+    "libraryUnit": "{count, plural, one {texto} other {textos}}",
+    "voiceRecord": "Grabar una historia por voz",
+    "voiceDesc": "Transcripción via Whisper AI",
+    "footer": "© 2026 FlowKeys"
+  },
+  "input": {
+    "back": "← Volver",
+    "title": "Tu texto"
+  },
+  "transform": {
+    "title": "Modo de transformación",
+    "subtitle": "¿Cómo debe procesar la IA tu texto?",
+    "mockNotice": "Modo mock — falta OPENAI_API_KEY",
+    "modes": {
+      "1to1": { "label": "1:1", "desc": "Practica con tu texto sin cambios" },
+      "clean": { "label": "Limpiar", "desc": "Corregir erratas y puntuación" },
+      "story": { "label": "Historia", "desc": "Convertir en narrativa con inicio y fin" },
+      "exercise": { "label": "Ejercicio", "desc": "Texto de práctica tranquilo, ~200 palabras" },
+      "polish_chars": { "label": "Signos polacos", "desc": "Más ą ć ę ł ń ó ś ź ż" }
+    },
+    "forward": "Siguiente →",
+    "transformWithAi": "Transformar con IA →",
+    "transforming": "Transformando..."
+  },
+  "preview": {
+    "title": "Texto de entrenamiento",
+    "wordCount": "{words} palabras · {chars} caracteres",
+    "chooseMode": "Elegir modo de escritura:",
+    "startNormal": "Empezar normal",
+    "startNormalDesc": "Texto visible, control total",
+    "startNoBackspace": "Empezar Sin Retroceso",
+    "startNoBackspaceDesc": "Sin correcciones — seguir adelante"
+  },
+  "typing": {
+    "abandon": "Abandonar ronda",
+    "restart": "↺ Reiniciar",
+    "skip": "Omitir →",
+    "chapter": "Cap. {chapterId} · {chapterTitle}",
+    "fragment": "Fragmento {current} / {total}",
+    "clickToType": "Haz clic para escribir"
+  },
+  "results": {
+    "wpmBadge": {
+      "fast": "exprés",
+      "smooth": "fluido",
+      "good": "bien",
+      "slow": "ritmo tranquilo"
+    },
+    "accBadge": {
+      "perfect": "perfecto",
+      "veryGood": "muy bien",
+      "good": "bien",
+      "solid": "sólido",
+      "slow": "reduce velocidad"
+    },
+    "calmBadge": {
+      "calm": "tranquilo",
+      "stable": "estable",
+      "ok": "ok",
+      "nervous": "tenso"
+    },
+    "bsBadge": {
+      "clean": "limpio",
+      "ok": "ok",
+      "some": "algunos",
+      "many": "muchas correcciones"
+    },
+    "tierLabel": {
+      "great": "Limpio",
+      "good": "Bien",
+      "ok": "OK",
+      "practice": "Practicando"
+    },
+    "starLabel": {
+      "5": "Dominado",
+      "4": "Flujo limpio",
+      "3": "Buen ritmo",
+      "2": "Estable",
+      "1": "Aprobado"
+    },
+    "label": {
+      "accuracy": "precisión · {badge}",
+      "calm": "calma · {badge}",
+      "calmTooltip": "Calma = precisión − penalización por retrocesos. Cuanto más limpio el ritmo y menos retrocesos, mayor la calma.",
+      "backspace": "Retroceso",
+      "bestStreak": "Mejor racha",
+      "errors": "Errores"
+    },
+    "streakQuality": {
+      "great": "excelente",
+      "good": "buena",
+      "practice": "practicando"
+    },
+    "errorsQuality": {
+      "clean": "¡limpio!",
+      "few": "pocos",
+      "practice": "practicando"
+    },
+    "whyScore": "¿Por qué este resultado?",
+    "nextLesson": "Siguiente lección",
+    "backToAcademy": "← Academia",
+    "nextGoal": "Siguiente objetivo",
+    "incomplete": "Incompleto ({percent}%)",
+    "lesson": "Lección {id} · {label}",
+    "progress": {
+      "title": "Progreso · {count} {label}",
+      "attempt": "{count, plural, one {intento} other {intentos}}"
+    },
+    "charts": {
+      "speed": "Velocidad PPM",
+      "accuracy": "Precisión"
+    },
+    "table": {
+      "when": "Cuándo",
+      "wpm": "PPM",
+      "acc": "Prec.",
+      "calm": "Calma"
+    },
+    "textWithErrors": "Texto con errores",
+    "playback": "Reproducir",
+    "commonMistakes": "Errores frecuentes",
+    "target": "objetivo",
+    "mistype": "escrito",
+    "polish": "diacrítico",
+    "fingerErrors": "Errores por dedo",
+    "thisText": "Este texto",
+    "round": "{count, plural, one {ronda} other {rondas}}",
+    "wpmBest": "PPM mejor",
+    "accBest": "prec. mejor",
+    "nextFragment": "Siguiente fragmento →",
+    "repeatText": "Repetir texto",
+    "backToLibrary": "Volver a la biblioteca →",
+    "savedToLibrary": "Guardado en Mi Biblioteca",
+    "goToLibrary": "Ir a la biblioteca →",
+    "saveToLibrary": "Guardar en Mi Biblioteca",
+    "saveToLibraryDesc": "Vuelve a este texto cuando quieras. Cada ronda deja una huella.",
+    "titleText": "Dale un título a este texto",
+    "titlePlaceholder": "ej. Mi recuerdo, Mi afirmación...",
+    "cancel": "Cancelar",
+    "save": "Guardar →",
+    "repeat": "↺ Repetir",
+    "newRound": "Nueva ronda",
+    "newBadge": "🏅 {title}",
+    "moreBadges": "+{count} más →",
+    "starBreakdown": {
+      "reason5": "Precisión perfecta y ritmo limpio de principio a fin.",
+      "reason1": "Completado con {acc}% de precisión.",
+      "reason2": "Precisión estable ({acc}%) y ritmo bajo control.",
+      "reason3": "Buena precisión ({acc}%) y flujo tranquilo.",
+      "reason4": "Gran precisión ({acc}%) — flujo casi perfecto.",
+      "next": "Para {stars}★: {blockers}.",
+      "nextAccuracy": "+{delta}% precisión",
+      "nextBackspace": "menos retrocesos (tienes {count}×)",
+      "nextCalm": "ritmo más tranquilo",
+      "and": " y "
+    },
+    "nextGoalTexts": {
+      "accuracy1": "Alcanza {target}% de precisión — reduce la velocidad un 10–15%.",
+      "accuracy2": "Mejora la precisión de {acc}% a {target}%.",
+      "backspace": "Reduce los retrocesos de {count} a {target} — escribe con más confianza.",
+      "errors": "Reduce los errores de {count} a {target} — un ritmo más lento ayudará.",
+      "wpm": "Mantén la precisión y alcanza {target} PPM.",
+      "noBackspace": "Prueba el modo Sin Retroceso con la misma precisión."
+    }
+  },
+  "settings": {
+    "title": "Ajustes",
+    "sections": {
+      "appearance": "A. Apariencia",
+      "typing": "B. Escritura",
+      "audio": "C. Audio / Blind Flow",
+      "recording": "D. Grabación",
+      "data": "E. Datos",
+      "textMood": "F. Ambiente de texto"
+    },
+    "appearance": {
+      "theme": "Tema",
+      "brightness": "Brillo",
+      "light": "☀️ Claro",
+      "auto": "⚙️ Auto",
+      "dark": "🌙 Oscuro",
+      "density": "Densidad UI",
+      "comfortable": "Cómodo",
+      "compact": "Compacto"
+    },
+    "typing": {
+      "textView": "Vista de texto",
+      "sentence": "Oración",
+      "word": "Palabra",
+      "full": "Completo",
+      "keyboardLayout": "Distribución de teclado",
+      "keyboardLayoutDesc": "Cambia la distribución visual de teclas y asignación de dedos",
+      "showKeyboard": "Mostrar teclado",
+      "showKeyboardDesc": "Resalta la siguiente tecla",
+      "showFingers": "Zonas de dedos",
+      "showFingersDesc": "Colorea las teclas por dedo",
+      "sounds": "Sonidos de teclado",
+      "soundsDesc": "Estilo de sonido en cada pulsación",
+      "soundOff": "Apag.",
+      "soundMechanical": "Mec.",
+      "soundSoft": "Suave",
+      "soundTypewriter": "Retro",
+      "soundDeep": "Profundo",
+      "blockPaste": "Bloquear pegado",
+      "blockPasteDesc": "Evita manipular estadísticas",
+      "calmMode": "Modo calma",
+      "calmModeDesc": "Colores de error más suaves, PPM menos dominante"
+    },
+    "audio": {
+      "voiceRate": "Velocidad del narrador",
+      "voiceMode": "Modo narrador",
+      "voiceModeAll": "Texto completo",
+      "voiceModeSentence": "Oración",
+      "blindHint": "Pista de oración en Blind Flow",
+      "blindHintDesc": "Muestra las primeras palabras de la oración actual"
+    },
+    "recording": {
+      "webSpeechApi": "Web Speech API",
+      "browser": "Navegador",
+      "mic": "Micrófono",
+      "available": "Disponible",
+      "unavailable": "No disponible",
+      "unknown": "Desconocido",
+      "micGranted": "Concedido",
+      "micDenied": "Bloqueado",
+      "micPrompt": "No preguntado",
+      "braveWarning": "Brave bloquea Google Speech API incluso con Shields desactivado. Usa Chrome para grabación por voz.",
+      "firefoxWarning": "Firefox no soporta Web Speech API. Usa Chrome.",
+      "info": "La grabación por voz depende de la Google Speech API del navegador. En el futuro FlowKeys podría usar transcripción del lado del servidor independiente del navegador."
+    },
+    "data": {
+      "clearHistory": "Limpiar historial de sesiones",
+      "clearConfirm": "¿Eliminar todo el historial de sesiones? No se puede deshacer.",
+      "clearYes": "Sí, eliminar",
+      "cleared": "Historial de sesiones eliminado.",
+      "resetSettings": "Restablecer ajustes",
+      "resetConfirm": "¿Restaurar ajustes predeterminados?",
+      "resetYes": "Sí, restablecer",
+      "cancel": "Cancelar"
+    },
+    "textMood": {
+      "desc": "Elige tu estilo de lección. Vista predeterminada en el mapa de lecciones."
+    }
+  },
+  "lessons": {
+    "title": "Lecciones",
+    "searchPlaceholder": "Buscar lecciones por nombre…",
+    "searchLabel": "Buscar lecciones",
+    "searchNoResults": "Sin resultados para \"{query}\"",
+    "subtitle": "Cada lección es un paso. Sin carreras — ritmo.",
+    "continueTrack": "Continuar camino",
+    "recommended": "Recomendado hoy",
+    "start": "Iniciar →",
+    "go": "¡Ir! →",
+    "trainingPaths": "Caminos de entrenamiento",
+    "done": "Listo ✓",
+    "ownText": "Texto propio",
+    "paste": "Pegar →",
+    "stats": {
+      "completed": "Completadas",
+      "mastered": "Dominadas",
+      "dayStreak": "{count, plural, one {día seguido} other {días seguidos}}",
+      "available": "Disponibles"
+    },
+    "lastPracticed": "Última vez",
+    "repeat": "Repetir",
+    "textMood": "Ambiente de texto",
+    "chapter": "Capítulo {id} — {title}",
+    "noLessons": "Sin lecciones para los filtros seleccionados.",
+    "noLessonsHint": "Selecciona al menos un ambiente de texto arriba.",
+    "paths": {
+      "basics": "Básico",
+      "numbers": "Números",
+      "symbols": "Símbolos",
+      "start": "Inicio",
+      "fluency": "Fluidez",
+      "polish": "Signos polacos",
+      "noBackspace": "Sin Retroceso",
+      "blind": "Blind Flow",
+      "jade": "Camino Jade",
+      "gaming": "Gaming",
+      "own": "Textos propios"
+    },
+    "recommendBlind": "Probar Blind Flow",
+    "recommendBlindDesc": "\"{title}\" — escribe de memoria",
+    "recommendNoBackspace": "Sin Retroceso",
+    "recommendNoBackspaceDesc": "\"{title}\" — sin correcciones",
+    "tile": {
+      "next": "siguiente",
+      "skip": "Omitir"
+    }
+  },
+  "library": {
+    "title": "Mi Biblioteca",
+    "subtitleEmpty": "Textos a los que vale la pena volver.",
+    "subtitleCount": "{count} {unit}",
+    "countUnit": "{count, plural, one {texto} other {textos}}",
+    "addText": "+ Añadir texto",
+    "addFirst": "Añadir primer texto",
+    "emptyTitle": "Tu biblioteca todavía está vacía",
+    "emptyDesc": "Añade una nota, recuerdo o fragmento al que quieras volver. Cada texto construye su propio ritmo.",
+    "continueCard": "Continuar",
+    "myTexts": "Mis textos",
+    "noTextsInPeriod": "Sin textos del período seleccionado.",
+    "addNewText": "Añadir nuevo texto",
+    "gridView": "Vista en cuadrícula",
+    "listView": "Vista en lista",
+    "deleteTitle": "¿Eliminar este texto?",
+    "deleteDesc": "El texto y todos sus resultados serán eliminados permanentemente. No se puede deshacer.",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "fragment": "Fragmento {current}/{total}",
+    "roundUnit": "{count, plural, one {ronda} other {rondas}}",
+    "form": {
+      "backToLibrary": "← Volver a la biblioteca",
+      "addTitle": "Añadir nuevo texto",
+      "editTitle": "Editar texto",
+      "fieldTitle": "Título",
+      "fieldText": "Texto",
+      "fieldMood": "Ambiente",
+      "fieldTags": "Etiquetas",
+      "titlePlaceholder": "ej. Recuerdo de verano, Mi afirmación matutina...",
+      "textPlaceholder": "Pega o escribe el texto que quieres practicar...",
+      "wordCount": "{count} palabras",
+      "saveAndPractice": "Guardar y practicar",
+      "save": "Guardar",
+      "cancel": "Cancelar"
+    },
+    "filters": {
+      "all": "Todas",
+      "7d": "7 días",
+      "30d": "30 días",
+      "3m": "3 meses"
+    },
+    "sort": {
+      "recent": "Recientes",
+      "practiced": "Practicadas",
+      "bestWpm": "Mejor PPM"
+    }
+  },
+  "history": {
+    "title": "Historial de sesiones"
+  },
+  "badges": {
+    "title": "Premios FlowKeys",
+    "subtitle": "Cada insignia es la huella de algo real.",
+    "countOf": "de {total} insignias",
+    "dayStreak": "{count, plural, one {día seguido} other {días seguidos}}",
+    "closestToUnlock": "Más cerca de desbloquear"
+  },
+  "sessionHistory": {
+    "empty": "Sin sesiones",
+    "emptyDesc": "Ve a la página principal y empieza tu primera ronda.",
+    "noResults": "Sin sesiones para este filtro.",
+    "fingerErrors": "Errores por dedo",
+    "commonMistakes": "Errores frecuentes",
+    "trainingText": "Texto de entrenamiento",
+    "yourText": "Tu texto"
+  },
+  "replay": {
+    "title": "Repetición de ronda",
+    "speed": "Velocidad:"
+  },
+  "audio": {
+    "narrator": "Narrador",
+    "speed": "Velocidad:"
+  },
+  "textView": {
+    "label": "Vista"
+  },
+  "diagnosis": {
+    "manyBackspace": "Muchas correcciones ({count}×). Intenta ir más lento — el ritmo importa más que la velocidad.",
+    "polishChars": "A menudo omites diacríticos polacos — ą ę ć ł ń ó ś ź ż.",
+    "worstFinger": "Dedo más débil: {finger} ({count} errores). Reduce la velocidad en esas teclas.",
+    "greatAccuracy": "Gran precisión. Ahora trabaja en velocidad y fluidez.",
+    "goodAccuracy": "Buena consistencia. Practica terminaciones de palabras y transiciones fluidas.",
+    "repeatedMistake": "Error repetido: \"{expected}\" → \"{actual}\".",
+    "slowPace": "Ritmo tranquilo — un buen comienzo. El ritmo importa más que la velocidad.",
+    "default": "Ronda guardada. Sigue practicando en un ritmo constante."
+  },
+  "coach": {
+    "firstSessionClean": "Primera ronda con casi ninguna corrección — un muy buen comienzo.",
+    "firstSessionAccuracy": "{acc}% de precisión de inmediato — por encima del promedio para nuevos usuarios.",
+    "firstSession": "Primera ronda completada. Cada sesión construye el ritmo.",
+    "calmImproved": "Ritmo más tranquilo de lo habitual — Calma {current} vs tu promedio {avg}.",
+    "calmWorse": "Más tensión de lo habitual. Reduce la velocidad — el ritmo importa más que el tempo.",
+    "backspaceLess": "Solo {count} correcciones — la mitad de lo habitual. Buena escritura.",
+    "backspaceMore": "{count} correcciones — más de lo habitual ({avg} de promedio). Escribe con confianza, no más rápido.",
+    "accuracyBetter": "Precisión {acc}% — mejor que tu promedio ({avg}%).",
+    "accuracyWorse": "Precisión por debajo de tu norma ({acc}% vs {avg}% prom). Vuelve a un ritmo más lento.",
+    "wpmFaster": "{wpm} PPM — más rápido de lo habitual. Mantén la calma a esta velocidad.",
+    "wpmSlower": "Ritmo más lento de lo habitual. Si escribiste conscientemente — fue una buena sesión.",
+    "worstFinger": "{finger} — {count} errores en esta sesión. Vuelve a lecciones para ese dedo.",
+    "worstLetter": "Letra \"{letter}\" — {count} errores. Practícala de forma aislada."
+  },
+  "data": {
+    "chapters": {
+      "1":  { "title": "Primer Ritmo",         "desc": "Oraciones simples, inicio tranquilo, ritmo sin presión." },
+      "2":  { "title": "Fluidez",              "desc": "Textos cortos, más tempo, menos tensión." },
+      "3":  { "title": "Signos Polacos",       "desc": "Práctica de diacríticos, terminaciones y letras difíciles." },
+      "4":  { "title": "Nuevo Ritmo",          "desc": "Textos compactos, regreso tranquilo a las teclas." },
+      "5":  { "title": "Ritmo Más Profundo",   "desc": "Oraciones más largas, más voz propia." },
+      "6":  { "title": "Diacríticos Polacos",  "desc": "Diacríticos en acción: ą ę ć ł ń ó ś ź ż." },
+      "7":  { "title": "Blind Flow",           "desc": "Escribir de memoria. La pantalla guarda silencio, los dedos recuerdan." },
+      "8":  { "title": "Visualización",        "desc": "Imaginación y realización como práctica." },
+      "9":  { "title": "Espiritualidad",       "desc": "Silencio, guía, oración y calma." },
+      "10": { "title": "Relaciones",           "desc": "Presencia, amor y comunicación en la vida diaria." },
+      "11": { "title": "Historias",            "desc": "Pequeñas historias de vida con ritmo." },
+      "12": { "title": "Maestría",             "desc": "Disciplina, precisión y progreso estable." },
+      "13": { "title": "Camino Jade I",        "desc": "Calma y respiración en el espíritu del cine wuxia." },
+      "14": { "title": "Camino Jade II",       "desc": "Cada vez más profundo — sombra, hoja y ritmo." },
+      "15": { "title": "Camino Jade III",      "desc": "Oraciones más difíciles, nivel maestro." },
+      "16": { "title": "Gaming Flow",          "desc": "Respawn, botín, base. Entrenamiento en lenguaje gamer." },
+      "17": { "title": "Fila Base",            "desc": "a s d f g h j k l — los dedos aprenden su lugar." },
+      "18": { "title": "Nuevas Teclas",        "desc": "e i r n o t w z c — paso a paso más allá de la fila base." },
+      "19": { "title": "Números",              "desc": "1 2 3 4 5 6 7 8 9 0 — fila numérica desde cero." },
+      "20": { "title": "Símbolos",             "desc": ". , ! ? : ; - ( ) \" % @ / — puntuación y caracteres especiales." },
+      "21": { "title": "Fila Superior",        "desc": "q w e r t y u i o p — fila superior completa paso a paso." },
+      "22": { "title": "Fila Inferior",        "desc": "z x c v b n m — fila inferior y combinando las tres." },
+      "23": { "title": "Tablas Esmeraldas de Thoth", "desc": "Sabiduría hermética de la Atlántida — alma, tiempo y Luz." },
+      "24": { "title": "Bhagavad Gita",        "desc": "Diálogo de Arjuna con Krishna — dharma, acción y eternidad." },
+      "25": { "title": "Tao Te Ching",         "desc": "Laozi — 81 versos sobre el agua, el silencio y el camino sin camino." }
+    },
+    "badges": {
+      "first_round":     { "title": "Primer Ritmo",          "desc": "Completa tu primera lección." },
+      "ten_lessons":     { "title": "Dedos Calientes",        "desc": "Completa 10 lecciones." },
+      "fifty_lessons":   { "title": "Curso Constante",        "desc": "Completa 50 lecciones." },
+      "hundred_lessons": { "title": "Maestro del Teclado",    "desc": "Completa 100 lecciones." },
+      "three_days":      { "title": "Tres Días de Ritmo",     "desc": "Practica 3 días seguidos." },
+      "seven_days":      { "title": "Semana Sin Escape",      "desc": "Practica 7 días seguidos." },
+      "thirty_days":     { "title": "Mes de Paciencia",       "desc": "Practica 30 días seguidos." },
+      "accuracy_90":     { "title": "Inicio Limpio",          "desc": "Alcanza 90% de precisión." },
+      "accuracy_95":     { "title": "Mano Firme",             "desc": "Alcanza 95% de precisión." },
+      "accuracy_98":     { "title": "Precisión de Hierro",    "desc": "Alcanza 98% de precisión." },
+      "accuracy_100":    { "title": "Impecable",              "desc": "Completa una ronda con 100% de precisión." },
+      "wpm_30":          { "title": "Primera Marcha",         "desc": "Alcanza 30 PPM." },
+      "wpm_40":          { "title": "Paso Fluido",            "desc": "Alcanza 40 PPM." },
+      "wpm_50":          { "title": "Corriente Rápida",       "desc": "Alcanza 50 PPM." },
+      "wpm_60":          { "title": "Exprés",                 "desc": "Alcanza 60 PPM." },
+      "wpm_80":          { "title": "Rayo",                   "desc": "Alcanza 80 PPM." },
+      "calm_80":         { "title": "Mano Tranquila",         "desc": "Alcanza índice de calma 80." },
+      "calm_90":         { "title": "Mecanismo Silencioso",   "desc": "Alcanza índice de calma 90." },
+      "calm_95":         { "title": "Nervios de Acero",       "desc": "Alcanza índice de calma 95." },
+      "calm_99":         { "title": "Monje del Teclado",      "desc": "Alcanza índice de calma 99." },
+      "no_backspace_1":  { "title": "Sin Retroceso",          "desc": "Completa una ronda sin usar Retroceso." },
+      "no_backspace_5":  { "title": "Directo Adelante",       "desc": "Completa 5 rondas sin Retroceso." },
+      "no_backspace_20": { "title": "Sin Mirar Atrás",        "desc": "Completa 20 rondas sin Retroceso." },
+      "blind_1":         { "title": "Corriente Ciega",        "desc": "Completa tu primera ronda de Blind Flow." },
+      "blind_10":        { "title": "Escribo de Memoria",     "desc": "Completa 10 rondas de Blind Flow." },
+      "blind_50":        { "title": "Teclado Interior",       "desc": "Completa 50 rondas de Blind Flow." },
+      "polish_1":        { "title": "Primer Diacrítico",      "desc": "Completa una lección con signos polacos." },
+      "polish_10":       { "title": "Maestro Diacrítico",     "desc": "Completa 10 lecciones de signos polacos sin errores." },
+      "polish_50":       { "title": "Campeón Diacrítico",     "desc": "Completa 50 lecciones de signos polacos sin errores." },
+      "cicha_runda":     { "title": "Ronda Silenciosa",       "desc": "Completa una ronda con calma ≥90 y máx. 10 correcciones." },
+      "bez_szarpania":   { "title": "Sin Sacudidas",          "desc": "Completa una ronda con máximo 5 correcciones." },
+      "wlasny_glos":     { "title": "Voz Propia",             "desc": "Completa una sesión con tu propio texto (no una lección)." },
+      "mastered_10":     { "title": "Diez Limpias",           "desc": "Domina 10 lecciones con 3 estrellas." },
+      "mastered_50":     { "title": "Mapa de Progreso",       "desc": "Domina 50 lecciones con 3 estrellas." },
+      "mastered_100":    { "title": "Cien Rondas Limpias",    "desc": "Domina 100 lecciones con 3 estrellas." }
+    }
+  }
+}

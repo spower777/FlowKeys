@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import type { FlowLesson, LessonMode } from '@/data/lessons'
 import { PACK_LABEL } from '@/data/lessons'
 import type { LessonStatus } from '@/lib/lessonProgress'
@@ -28,13 +29,14 @@ const STATUS_CLS: Record<LessonStatus, string> = {
 interface Props {
   lesson: FlowLesson
   status: LessonStatus
-  stars: 0 | 1 | 2 | 3
+  stars: 0 | 1 | 2 | 3 | 4 | 5
   isNext?: boolean
   onClick?: () => void
   onSkip?: () => void
 }
 
 export default function LessonTile({ lesson, status, stars, isNext, onClick, onSkip }: Props) {
+  const t = useTranslations('lessons')
   const modeBadge = MODE_BADGE[lesson.mode]
   const modeIcon = MODE_ICON[lesson.mode]
   const isLocked = status === 'locked'
@@ -100,7 +102,7 @@ export default function LessonTile({ lesson, status, stars, isNext, onClick, onS
       {/* "następna" label */}
       {isNext && !isLocked && (
         <span className="absolute top-2.5 right-2.5 text-[8px] font-bold bg-[var(--accent-500)] text-white px-1.5 py-0.5 rounded-full leading-tight">
-          następna
+          {t('next')}
         </span>
       )}
 
@@ -110,7 +112,7 @@ export default function LessonTile({ lesson, status, stars, isNext, onClick, onS
           onClick={e => { e.stopPropagation(); onSkip() }}
           className="absolute bottom-2.5 right-2.5 text-[9px] font-semibold text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 bg-gray-100 dark:bg-[#222] hover:bg-gray-200 dark:hover:bg-[#2a2a2a] rounded-md px-1.5 py-0.5 transition-colors"
         >
-          Pomiń
+          {t('skip')}
         </button>
       )}
     </button>
@@ -121,9 +123,9 @@ function Stars({ count, status }: { count: number; status: LessonStatus }) {
   if (status === 'locked' || status === 'available') return null
   const color = status === 'mastered' ? 'text-amber-400' : 'text-teal-400'
   return (
-    <div className="flex gap-0.5">
-      {[1, 2, 3].map(i => (
-        <span key={i} className={`text-sm leading-none ${i <= count ? color : 'text-gray-200 dark:text-gray-700'}`}>★</span>
+    <div className="flex gap-px">
+      {[1, 2, 3, 4, 5].map(i => (
+        <span key={i} className={`text-xs leading-none ${i <= count ? color : 'text-gray-200 dark:text-gray-700'}`}>★</span>
       ))}
     </div>
   )

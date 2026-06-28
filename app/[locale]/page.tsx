@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@/i18n/navigation'
 import Header from '@/components/Header'
 import TextInput from '@/components/TextInput'
 import VoiceInput from '@/components/VoiceInput'
@@ -15,7 +15,7 @@ import { getLibrary, saveCustomText, recordLibrarySession, splitIntoChunks } fro
 import { EXAMPLE_TEXT } from '@/lib/transformPrompt'
 import { loadSettings, saveSettings, applySettingsToDOM, DEFAULTS } from '@/lib/settings'
 import { updateLessonProgress, checkAndUnlockBadges, lessonModeToTypingMode, calculateStars, getNextLesson, markLessonSkipped } from '@/lib/lessonProgress'
-import { generateCoachInsight, type CoachInsight } from '@/lib/coach'
+import { generateCoachInsight, type CoachInsightKey } from '@/lib/coach'
 import { badges } from '@/data/badges'
 import { lessons } from '@/data/lessons'
 import { chapters } from '@/data/chapters'
@@ -46,11 +46,11 @@ export default function Home() {
   const [settings, setSettings] = useState<Settings>(DEFAULTS)
   const [currentLesson, setCurrentLesson] = useState<FlowLesson | null>(null)
   const [newBadges, setNewBadges] = useState<BadgeSummary[]>([])
-  const [earnedStars, setEarnedStars] = useState<0|1|2|3>(0)
+  const [earnedStars, setEarnedStars] = useState<0|1|2|3|4|5>(0)
   const [lastReplayData, setLastReplayData] = useState<ReplayEvent[]>([])
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
   const [lastSession, setLastSession] = useState<TypingSessionRecord | null>(null)
-  const [coachInsight, setCoachInsight] = useState<CoachInsight | null>(null)
+  const [coachInsight, setCoachInsight] = useState<CoachInsightKey | null>(null)
   const [currentLibraryTextId, setCurrentLibraryTextId] = useState<string | null>(null)
   const [chunkIndex, setChunkIndex] = useState(0)
   const [totalChunks, setTotalChunks] = useState(1)
@@ -343,6 +343,11 @@ export default function Home() {
 
             <MarqueeBanner />
 
+            {/* Value claim — widoczny dla wszystkich */}
+            <p className="text-center text-[13px] font-semibold text-[var(--accent-500)] dark:text-[var(--accent-400)] tracking-wide leading-snug animate-fade-up px-2" style={{ animationDelay: '20ms' }}>
+              Trenuj rytm, precyzję i panowanie nad chaosem na klawiaturze.
+            </p>
+
             {/* Nowy użytkownik — nagłówek */}
             {!lastSession && (
               <div className="animate-fade-up pb-4">
@@ -350,7 +355,7 @@ export default function Home() {
                   Pisz własnym głosem.
                 </h1>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">
-                  Zamień wspomnienia i notatki w trening na klawiaturze.
+                  FlowKeys uczy spokojnego pisania. Szybkość przychodzi później.
                 </p>
               </div>
             )}
@@ -634,8 +639,7 @@ export default function Home() {
             onSaveToLibrary={handleSaveToLibrary}
             hasNextChunk={!!currentLibraryTextId && chunkIndex + 1 < totalChunks}
             onNextChunk={handleNextChunk}
-            coachInsight={coachInsight?.text}
-            coachTone={coachInsight?.tone}
+            coachInsight={coachInsight}
             onNewRound={reset}
             onRepeat={repeatRound}
             onAction={handleResultAction}
