@@ -377,7 +377,14 @@
     }
   },
   "history": {
-    "title": "Session history"
+    "title": "Session history",
+    "subtitle": "Every round leaves a trace.",
+    "statTotal": "Sessions total",
+    "statBestWpm": "Best WPM",
+    "statAvgWpm": "Avg WPM",
+    "statAvgAcc": "Avg accuracy",
+    "statStreak": "{count, plural, one {Day streak} other {Day streak}}",
+    "statTime": "Practice time"
   },
   "badges": {
     "title": "FlowKeys Awards",
@@ -393,7 +400,33 @@
     "fingerErrors": "Errors by finger",
     "commonMistakes": "Common mistakes",
     "trainingText": "Training text",
-    "yourText": "Your text"
+    "yourText": "Your text",
+    "back": "← Back to history",
+    "playRound": "▶ Play round",
+    "openInLibrary": "Open in library →",
+    "incomplete": "Round incomplete — metrics cover {chars} typed characters",
+    "filterAll": "All",
+    "filterLessons": "Lessons",
+    "filterLibrary": "Library",
+    "filterCustom": "Custom",
+    "sortRecent": "↓ Recent",
+    "sortBest": "↓ Best",
+    "lessonLabel": "Lesson {id}",
+    "libraryText": "Library text",
+    "statWpmDesc": "Words per minute",
+    "statAccuracy": "Accuracy",
+    "statAccuracyDesc": "Correct characters",
+    "statCompletion": "Completion",
+    "statErrors": "Errors",
+    "statCalmIndex": "Calm index",
+    "statCalmDesc": "Accuracy – Backspace",
+    "statBackspaceDesc": "Corrections",
+    "statBestStreak": "Best streak",
+    "statBestStreakDesc": "Characters without error",
+    "typeLesson": "Lesson",
+    "typeLibrary": "📚 Library",
+    "typeCustom": "Custom text",
+    "statCalmShort": "calm"
   },
   "replay": {
     "title": "Round replay",

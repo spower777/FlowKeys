@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import Header from '@/components/Header'
 import SessionHistory from '@/components/SessionHistory'
 import { getSessions } from '@/lib/storage'
@@ -39,6 +40,7 @@ function computeStats(sessions: TypingSessionRecord[]): HistoryStats {
 }
 
 export default function HistoryPage() {
+  const t = useTranslations('history')
   const [stats, setStats] = useState<HistoryStats | null>(null)
 
   useEffect(() => {
@@ -46,12 +48,12 @@ export default function HistoryPage() {
   }, [])
 
   const cards = stats ? [
-    { value: stats.total, label: 'Sesji łącznie', color: 'text-[var(--accent-600)] dark:text-[var(--accent-400)]' },
-    { value: stats.bestWpm, label: 'Najlepsze WPM', color: 'text-blue-600 dark:text-blue-400' },
-    { value: stats.avgWpm, label: 'Średnie WPM', color: 'text-indigo-600 dark:text-indigo-400' },
-    { value: `${stats.avgAccuracy}%`, label: 'Śr. dokładność', color: stats.avgAccuracy >= 95 ? 'text-green-600 dark:text-green-400' : stats.avgAccuracy >= 80 ? 'text-amber-600 dark:text-amber-400' : 'text-red-500 dark:text-red-400' },
-    { value: stats.streak, label: stats.streak === 1 ? 'Dzień z rzędu' : 'Dni z rzędu', color: 'text-orange-500 dark:text-orange-400' },
-    { value: fmtMinutes(stats.totalMinutes), label: 'Czas ćwiczeń', color: 'text-teal-600 dark:text-teal-400' },
+    { value: stats.total, label: t('statTotal'), color: 'text-[var(--accent-600)] dark:text-[var(--accent-400)]' },
+    { value: stats.bestWpm, label: t('statBestWpm'), color: 'text-blue-600 dark:text-blue-400' },
+    { value: stats.avgWpm, label: t('statAvgWpm'), color: 'text-indigo-600 dark:text-indigo-400' },
+    { value: `${stats.avgAccuracy}%`, label: t('statAvgAcc'), color: stats.avgAccuracy >= 95 ? 'text-green-600 dark:text-green-400' : stats.avgAccuracy >= 80 ? 'text-amber-600 dark:text-amber-400' : 'text-red-500 dark:text-red-400' },
+    { value: stats.streak, label: t('statStreak', { count: stats.streak }), color: 'text-orange-500 dark:text-orange-400' },
+    { value: fmtMinutes(stats.totalMinutes), label: t('statTime'), color: 'text-teal-600 dark:text-teal-400' },
   ] : []
 
   return (
@@ -60,9 +62,9 @@ export default function HistoryPage() {
         <Header />
 
         <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-1">Historia sesji</h1>
+          <h1 className="text-2xl font-bold mb-1">{t('title')}</h1>
           <p className="text-sm text-gray-500 dark:text-gray-500 mb-6">
-            Każda runda zostawia ślad.
+            {t('subtitle')}
           </p>
 
           {stats && stats.total > 0 && (

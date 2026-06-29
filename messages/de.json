@@ -377,7 +377,14 @@
     }
   },
   "history": {
-    "title": "Sitzungsverlauf"
+    "title": "Sitzungsverlauf",
+    "subtitle": "Jede Runde hinterlässt eine Spur.",
+    "statTotal": "Sitzungen gesamt",
+    "statBestWpm": "Bestes WPM",
+    "statAvgWpm": "Ø WPM",
+    "statAvgAcc": "Ø Genauigkeit",
+    "statStreak": "{count, plural, one {Tag in Folge} other {Tage in Folge}}",
+    "statTime": "Übungszeit"
   },
   "badges": {
     "title": "FlowKeys-Auszeichnungen",
@@ -393,7 +400,33 @@
     "fingerErrors": "Fehler nach Finger",
     "commonMistakes": "Häufige Fehler",
     "trainingText": "Trainingstext",
-    "yourText": "Dein Text"
+    "yourText": "Dein Text",
+    "back": "← Zurück zum Verlauf",
+    "playRound": "▶ Runde abspielen",
+    "openInLibrary": "In Bibliothek öffnen →",
+    "incomplete": "Runde unvollständig — Metriken beziehen sich auf {chars} eingegebene Zeichen",
+    "filterAll": "Alle",
+    "filterLessons": "Lektionen",
+    "filterLibrary": "Bibliothek",
+    "filterCustom": "Eigene",
+    "sortRecent": "↓ Neueste",
+    "sortBest": "↓ Beste",
+    "lessonLabel": "Lektion {id}",
+    "libraryText": "Bibliothekstext",
+    "statWpmDesc": "Wörter pro Minute",
+    "statAccuracy": "Genauigkeit",
+    "statAccuracyDesc": "Richtige Zeichen",
+    "statCompletion": "Abschluss",
+    "statErrors": "Fehler",
+    "statCalmIndex": "Ruheindex",
+    "statCalmDesc": "Genauigkeit – Backspace",
+    "statBackspaceDesc": "Korrekturen",
+    "statBestStreak": "Beste Serie",
+    "statBestStreakDesc": "Zeichen ohne Fehler",
+    "typeLesson": "Lektion",
+    "typeLibrary": "📚 Bibliothek",
+    "typeCustom": "Eigener Text",
+    "statCalmShort": "Ruhe"
   },
   "replay": {
     "title": "Rundenwiederholung",

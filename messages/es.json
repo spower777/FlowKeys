@@ -377,7 +377,14 @@
     }
   },
   "history": {
-    "title": "Historial de sesiones"
+    "title": "Historial de sesiones",
+    "subtitle": "Cada ronda deja una huella.",
+    "statTotal": "Sesiones totales",
+    "statBestWpm": "Mejor PPM",
+    "statAvgWpm": "PPM prom.",
+    "statAvgAcc": "Prec. prom.",
+    "statStreak": "{count, plural, one {día seguido} other {días seguidos}}",
+    "statTime": "Tiempo de práctica"
   },
   "badges": {
     "title": "Premios FlowKeys",
@@ -393,7 +400,33 @@
     "fingerErrors": "Errores por dedo",
     "commonMistakes": "Errores frecuentes",
     "trainingText": "Texto de entrenamiento",
-    "yourText": "Tu texto"
+    "yourText": "Tu texto",
+    "back": "← Volver al historial",
+    "playRound": "▶ Reproducir ronda",
+    "openInLibrary": "Abrir en biblioteca →",
+    "incomplete": "Ronda incompleta — las métricas cubren {chars} caracteres escritos",
+    "filterAll": "Todas",
+    "filterLessons": "Lecciones",
+    "filterLibrary": "Biblioteca",
+    "filterCustom": "Propios",
+    "sortRecent": "↓ Recientes",
+    "sortBest": "↓ Mejores",
+    "lessonLabel": "Lección {id}",
+    "libraryText": "Texto de biblioteca",
+    "statWpmDesc": "Palabras por minuto",
+    "statAccuracy": "Precisión",
+    "statAccuracyDesc": "Caracteres correctos",
+    "statCompletion": "Completado",
+    "statErrors": "Errores",
+    "statCalmIndex": "Índice de calma",
+    "statCalmDesc": "Precisión – Retroceso",
+    "statBackspaceDesc": "Correcciones",
+    "statBestStreak": "Mejor racha",
+    "statBestStreakDesc": "Caracteres sin error",
+    "typeLesson": "Lección",
+    "typeLibrary": "📚 Biblioteca",
+    "typeCustom": "Texto propio",
+    "statCalmShort": "calma"
   },
   "replay": {
     "title": "Repetición de ronda",

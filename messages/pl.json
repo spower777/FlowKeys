@@ -377,7 +377,14 @@
     }
   },
   "history": {
-    "title": "Historia sesji"
+    "title": "Historia sesji",
+    "subtitle": "Każda runda zostawia ślad.",
+    "statTotal": "Sesji łącznie",
+    "statBestWpm": "Najlepsze WPM",
+    "statAvgWpm": "Średnie WPM",
+    "statAvgAcc": "Śr. dokładność",
+    "statStreak": "{count, plural, one {Dzień z rzędu} other {Dni z rzędu}}",
+    "statTime": "Czas ćwiczeń"
   },
   "badges": {
     "title": "Nagrody FlowKeys",
@@ -393,7 +400,33 @@
     "fingerErrors": "Błędy wg palca",
     "commonMistakes": "Najczęstsze błędy",
     "trainingText": "Tekst treningowy",
-    "yourText": "Twój tekst"
+    "yourText": "Twój tekst",
+    "back": "← Wróć do historii",
+    "playRound": "▶ Odtwórz rundę",
+    "openInLibrary": "Otwórz w bibliotece →",
+    "incomplete": "Runda niedokończona — metryki dotyczą {chars} wpisanych znaków",
+    "filterAll": "Wszystkie",
+    "filterLessons": "Lekcje",
+    "filterLibrary": "Biblioteka",
+    "filterCustom": "Własne",
+    "sortRecent": "↓ Ostatnie",
+    "sortBest": "↓ Najlepsze",
+    "lessonLabel": "Lekcja {id}",
+    "libraryText": "Tekst z biblioteki",
+    "statWpmDesc": "Słowa na minutę",
+    "statAccuracy": "Dokładność",
+    "statAccuracyDesc": "Poprawnych znaków",
+    "statCompletion": "Ukończenie",
+    "statErrors": "Błędy",
+    "statCalmIndex": "Indeks spokoju",
+    "statCalmDesc": "Dokładność – Backspace",
+    "statBackspaceDesc": "Cofnięć",
+    "statBestStreak": "Najlepsza seria",
+    "statBestStreakDesc": "Znaków bez błędu",
+    "typeLesson": "Lekcja",
+    "typeLibrary": "📚 Biblioteka",
+    "typeCustom": "Własny tekst",
+    "statCalmShort": "spokój"
   },
   "replay": {
     "title": "Odtwarzanie rundy",

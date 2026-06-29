@@ -1,19 +1,16 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { useRouter } from '@/i18n/navigation'
 import { getSessions } from '@/lib/storage'
 import { getLibrary } from '@/lib/library'
 import { lessons } from '@/data/lessons'
-import type { TypingSessionRecord, TypingStats, TransformMode, TypingMode } from '@/lib/types'
+import type { TypingSessionRecord, TypingStats, TypingMode } from '@/lib/types'
 import { FINGER_LABELS, FINGER_COLORS } from '@/lib/fingerMap'
 import { getSessionDiagnosis } from '@/lib/coach'
 import ReplayModal from './ReplayModal'
 
-const MODE_LABEL: Record<TransformMode, string> = {
-  '1to1': '1:1', clean: 'Oczyść', story: 'Opowieść', exercise: 'Ćwiczenie', polish_chars: 'Trudne znaki',
-}
 const TYPING_LABEL: Record<TypingMode, string> = {
   normal: 'Normal', blind: 'Blind Flow', no_backspace: 'No Backspace',
 }
@@ -21,26 +18,12 @@ const TYPING_LABEL: Record<TypingMode, string> = {
 type SessionType = 'lesson' | 'library' | 'custom'
 type FilterValue = TypingMode | 'all' | 'lessons' | 'library' | 'custom'
 
-const TYPING_FILTERS: Array<{ label: string; value: FilterValue }> = [
-  { label: 'Wszystkie', value: 'all' },
-  { label: 'Lekcje', value: 'lessons' },
-  { label: 'Biblioteka', value: 'library' },
-  { label: 'Własne', value: 'custom' },
-  { label: 'Blind Flow', value: 'blind' },
-  { label: 'No Backspace', value: 'no_backspace' },
-]
+const FILTER_VALUES: FilterValue[] = ['all', 'lessons', 'library', 'custom', 'blind', 'no_backspace']
 
 const TYPE_BADGE: Record<SessionType, string> = {
   lesson:  'bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-500/25',
   library: 'bg-violet-100 dark:bg-violet-500/15 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-500/25',
   custom:  'bg-gray-100 dark:bg-[#1e1e1e] text-gray-500 dark:text-gray-500 border-gray-200 dark:border-[#2a2a2a]',
-}
-const TYPE_LABEL: Record<SessionType, string> = {
-  lesson: 'Lekcja', library: '📚 Biblioteka', custom: 'Własny tekst',
-}
-
-function fmtDate(iso: string) {
-  return new Date(iso).toLocaleDateString('pl', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 function accColor(acc: number) {
   return acc >= 95 ? 'text-green-600 dark:text-green-400' : acc >= 80 ? 'text-amber-600 dark:text-amber-400' : 'text-red-500 dark:text-red-400'
@@ -68,10 +51,21 @@ function StatCard({ value, label, desc, color }: StatCardProps) {
 
 export default function SessionHistory() {
   const router = useRouter()
+  const locale = useLocale()
   const tDiagnosis = useTranslations('diagnosis')
+  const t = useTranslations('sessionHistory')
   const diagText = (stats: TypingStats): string => {
     const dk = getSessionDiagnosis(stats)
     return tDiagnosis(dk.key as any, dk.params as any) as unknown as string
+  }
+  const fmtDate = (iso: string) =>
+    new Date(iso).toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+  const filterLabel: Record<FilterValue, string> = {
+    all: t('filterAll'), lessons: t('filterLessons'), library: t('filterLibrary'),
+    custom: t('filterCustom'), normal: 'Normal', blind: 'Blind Flow', no_backspace: 'No Backspace',
+  }
+  const typeLabel: Record<SessionType, string> = {
+    lesson: t('typeLesson'), library: t('typeLibrary'), custom: t('typeCustom'),
   }
   const [sessions, setSessions] = useState<TypingSessionRecord[]>([])
   const [libraryMap, setLibraryMap] = useState<Record<string, string>>({})
@@ -84,7 +78,7 @@ export default function SessionHistory() {
     setSessions(getSessions())
     const lib = getLibrary()
     const map: Record<string, string> = {}
-    for (const t of lib) map[t.id] = t.title
+    for (const entry of lib) map[entry.id] = entry.title
     setLibraryMap(map)
   }, [])
 
@@ -93,10 +87,10 @@ export default function SessionHistory() {
       const lesson = lessons.find(l => l.id === s.lessonId)
       return lesson
         ? `${String(s.lessonId).padStart(3, '0')} — ${lesson.title}`
-        : `Lekcja ${s.lessonId}`
+        : t('lessonLabel', { id: s.lessonId })
     }
     if (s.libraryTextId) {
-      return libraryMap[s.libraryTextId] ?? 'Tekst z biblioteki'
+      return libraryMap[s.libraryTextId] ?? t('libraryText')
     }
     return s.trainingText.slice(0, 60)
   }
@@ -113,8 +107,8 @@ export default function SessionHistory() {
     return (
       <div className="text-center py-20">
         <p className="text-4xl mb-4">⌨️</p>
-        <p className="text-gray-500 dark:text-gray-400 font-medium">Brak sesji</p>
-        <p className="text-gray-400 dark:text-gray-600 text-sm mt-1">Wróć na stronę główną i zacznij pierwszą rundę.</p>
+        <p className="text-gray-500 dark:text-gray-400 font-medium">{t('empty')}</p>
+        <p className="text-gray-400 dark:text-gray-600 text-sm mt-1">{t('emptyDesc')}</p>
       </div>
     )
   }
@@ -141,14 +135,14 @@ export default function SessionHistory() {
         <div className="space-y-5">
           <div className="flex items-center justify-between">
             <button onClick={() => setSelected(null)} className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition">
-              ← Wróć do historii
+              {t('back')}
             </button>
             {hasReplay && (
               <button
                 onClick={() => setReplaySession(selected)}
                 className="flex items-center gap-2 px-4 py-2 bg-[var(--accent-500)] hover:bg-[var(--accent-400)] text-white text-sm font-medium rounded-xl transition"
               >
-                ▶ Odtwórz rundę
+                {t('playRound')}
               </button>
             )}
           </div>
@@ -157,7 +151,7 @@ export default function SessionHistory() {
           <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-5 py-4 space-y-2">
             <div className="flex items-center gap-2 flex-wrap">
               <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full border ${TYPE_BADGE[type]}`}>
-                {TYPE_LABEL[type]}
+                {typeLabel[type]}
               </span>
               <span className="text-[10px] bg-gray-100 dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#2a2a2a] text-gray-500 px-2 py-0.5 rounded-full">
                 {TYPING_LABEL[selected.typingMode]}
@@ -167,30 +161,30 @@ export default function SessionHistory() {
                   onClick={() => router.push('/library')}
                   className="text-[10px] text-violet-500 dark:text-violet-400 hover:underline ml-auto"
                 >
-                  Otwórz w bibliotece →
+                  {t('openInLibrary')}
                 </button>
               )}
             </div>
             <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 leading-snug">{title}</p>
             <p className="text-xs text-gray-400 dark:text-gray-600">
-              {fmtDate(selected.createdAt)} · {MODE_LABEL[selected.mode]}
+              {fmtDate(selected.createdAt)}
             </p>
             {incomplete && (
               <p className="text-xs text-amber-600 dark:text-amber-400">
-                Runda niedokończona — metryki dotyczą {st.charsTyped} wpisanych znaków
+                {t('incomplete', { chars: st.charsTyped })}
               </p>
             )}
           </div>
 
           {/* Main stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <StatCard value={st.wpm} label="WPM" desc="Słowa na minutę" color="text-blue-600 dark:text-blue-400" />
-            <StatCard value={`${st.accuracy}%`} label="Dokładność" desc="Poprawnych znaków" color={accColor(st.accuracy)} />
-            <StatCard value={`${st.completionPercent}%`} label="Ukończenie" color={incomplete ? 'text-amber-600 dark:text-amber-400' : 'text-gray-700 dark:text-gray-300'} />
-            <StatCard value={st.mistakesCount} label="Błędy" color={st.mistakesCount > 0 ? 'text-red-500 dark:text-red-400' : 'text-green-600 dark:text-green-400'} />
+            <StatCard value={st.wpm} label="WPM" desc={t('statWpmDesc')} color="text-blue-600 dark:text-blue-400" />
+            <StatCard value={`${st.accuracy}%`} label={t('statAccuracy')} desc={t('statAccuracyDesc')} color={accColor(st.accuracy)} />
+            <StatCard value={`${st.completionPercent}%`} label={t('statCompletion')} color={incomplete ? 'text-amber-600 dark:text-amber-400' : 'text-gray-700 dark:text-gray-300'} />
+            <StatCard value={st.mistakesCount} label={t('statErrors')} color={st.mistakesCount > 0 ? 'text-red-500 dark:text-red-400' : 'text-green-600 dark:text-green-400'} />
           </div>
 
-          {/* Wniosek z rundy */}
+          {/* Coach insight */}
           <div className="bg-gray-50 dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-4 py-3 flex items-start gap-2.5">
             <span className="text-gray-400 dark:text-gray-600 shrink-0 mt-0.5 text-sm">◇</span>
             <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{diagText(st)}</p>
@@ -198,15 +192,15 @@ export default function SessionHistory() {
 
           {/* Secondary stats */}
           <div className="grid grid-cols-3 gap-3">
-            <StatCard value={st.calmScore ?? st.accuracy} label="Indeks spokoju" desc="Dokładność – Backspace" color={calmColor(st.calmScore ?? st.accuracy)} />
-            <StatCard value={st.backspaceCount ?? 0} label="Backspace" desc="Cofnięć" color="text-gray-700 dark:text-gray-300" />
-            <StatCard value={st.bestStreak ?? 0} label="Najlepsza seria" desc="Znaków bez błędu" color="text-gray-700 dark:text-gray-300" />
+            <StatCard value={st.calmScore ?? st.accuracy} label={t('statCalmIndex')} desc={t('statCalmDesc')} color={calmColor(st.calmScore ?? st.accuracy)} />
+            <StatCard value={st.backspaceCount ?? 0} label="Backspace" desc={t('statBackspaceDesc')} color="text-gray-700 dark:text-gray-300" />
+            <StatCard value={st.bestStreak ?? 0} label={t('statBestStreak')} desc={t('statBestStreakDesc')} color="text-gray-700 dark:text-gray-300" />
           </div>
 
           {/* Finger errors */}
           {Object.keys(fingerErrors).length > 0 && (
             <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-5 py-4">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">Błędy wg palca</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">{t('fingerErrors')}</p>
               <div className="flex flex-wrap gap-2">
                 {Object.entries(fingerErrors).sort((a, b) => b[1] - a[1]).map(([f, c]) => (
                   <span key={f} className={`text-xs px-3 py-1.5 rounded-xl font-medium ${FINGER_COLORS[f] ?? ''}`}>
@@ -220,7 +214,7 @@ export default function SessionHistory() {
           {/* Common mistakes */}
           {st.commonMistakes.length > 0 && (
             <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl overflow-hidden">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest px-5 py-3 border-b border-gray-100 dark:border-[#242424]">Najczęstsze błędy</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest px-5 py-3 border-b border-gray-100 dark:border-[#242424]">{t('commonMistakes')}</p>
               <div className="divide-y divide-gray-100 dark:divide-[#1e1e1e]">
                 {st.commonMistakes.slice(0, 5).map((m, i) => (
                   <div key={i} className="flex items-center gap-4 px-5 py-2">
@@ -238,11 +232,11 @@ export default function SessionHistory() {
           {/* Texts */}
           <div className="space-y-3">
             <div className="bg-gray-50 dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-xl px-4 py-3">
-              <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-2">Tekst treningowy</p>
+              <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-2">{t('trainingText')}</p>
               <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-wrap font-mono">{selected.trainingText}</p>
             </div>
             <div className="bg-gray-50 dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-xl px-4 py-3">
-              <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-2">Twój tekst</p>
+              <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-2">{t('yourText')}</p>
               <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-wrap font-mono">{selected.typedText}</p>
             </div>
           </div>
@@ -256,23 +250,23 @@ export default function SessionHistory() {
     <div className="space-y-4">
       {/* Filters + sort */}
       <div className="flex gap-2 flex-wrap items-center">
-        {TYPING_FILTERS.map(f => {
-          const count = f.value === 'all' ? null
-            : f.value === 'lessons' ? sessions.filter(s => s.lessonId !== undefined).length
-            : f.value === 'library' ? sessions.filter(s => !!s.libraryTextId).length
-            : f.value === 'custom' ? sessions.filter(s => !s.lessonId && !s.libraryTextId).length
-            : sessions.filter(s => s.typingMode === f.value).length
+        {FILTER_VALUES.map(value => {
+          const count = value === 'all' ? null
+            : value === 'lessons' ? sessions.filter(s => s.lessonId !== undefined).length
+            : value === 'library' ? sessions.filter(s => !!s.libraryTextId).length
+            : value === 'custom' ? sessions.filter(s => !s.lessonId && !s.libraryTextId).length
+            : sessions.filter(s => s.typingMode === value).length
           return (
             <button
-              key={f.value}
-              onClick={() => setFilter(f.value)}
+              key={value}
+              onClick={() => setFilter(value)}
               className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${
-                filter === f.value
+                filter === value
                   ? 'bg-[var(--accent-500)] text-white'
                   : 'bg-gray-100 dark:bg-[#1e1e1e] text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#2a2a2a] border border-gray-200 dark:border-[#2a2a2a]'
               }`}
             >
-              {f.label}
+              {filterLabel[value]}
               {count !== null && count > 0 && <span className="ml-1 opacity-60">{count}</span>}
             </button>
           )
@@ -285,12 +279,12 @@ export default function SessionHistory() {
               : 'bg-gray-100 dark:bg-[#1e1e1e] text-gray-500 dark:text-gray-500 border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-200 dark:hover:bg-[#2a2a2a]'
           }`}
         >
-          {sortBest ? '↓ Najlepsze' : '↓ Ostatnie'}
+          {sortBest ? t('sortBest') : t('sortRecent')}
         </button>
       </div>
 
       {filtered.length === 0 && (
-        <p className="text-sm text-gray-400 dark:text-gray-600 text-center py-8">Brak sesji dla tego filtra.</p>
+        <p className="text-sm text-gray-400 dark:text-gray-600 text-center py-8">{t('noResults')}</p>
       )}
 
       <div className="space-y-2">
@@ -313,7 +307,7 @@ export default function SessionHistory() {
                 <div className="flex items-center gap-2 mt-1 flex-wrap">
                   <span className="text-xs text-gray-400 dark:text-gray-600">{fmtDate(s.createdAt)}</span>
                   <span className={`text-[10px] px-2 py-0.5 rounded-full border ${TYPE_BADGE[type]}`}>
-                    {TYPE_LABEL[type]}
+                    {typeLabel[type]}
                   </span>
                   <span className="text-[10px] bg-gray-100 dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#2a2a2a] text-gray-500 px-2 py-0.5 rounded-full">
                     {TYPING_LABEL[s.typingMode]}
@@ -336,7 +330,7 @@ export default function SessionHistory() {
                 </div>
                 <div>
                   <p className={`text-sm font-bold ${calmColor(calm)}`}>{calm}</p>
-                  <p className="text-[10px] text-gray-400 dark:text-gray-600">spokój</p>
+                  <p className="text-[10px] text-gray-400 dark:text-gray-600">{t('statCalmShort')}</p>
                 </div>
                 <div>
                   <p className="text-sm font-bold text-gray-500 dark:text-gray-500">{bs}</p>
