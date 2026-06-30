@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import AudioControls from './AudioControls'
 import TextViewToggle from './TextViewToggle'
 import VirtualKeyboard from './VirtualKeyboard'
@@ -110,6 +111,7 @@ export default function TypingSession({
   blockPaste = true, calmMode = false, blindHint = true,
   voiceRate = 1, voiceMode = 'all', keyboardLayout = 'qwerty',
 }: Props) {
+  const t = useTranslations('typing')
   const [typed, setTyped] = useState('')
   const [startTime, setStartTime] = useState<number | null>(null)
   const [elapsed, setElapsed] = useState(0)
@@ -448,7 +450,7 @@ export default function TypingSession({
         disabled={cursorPos === 0}
         className="w-full py-3 bg-gray-100 dark:bg-[#1e1e1e] hover:bg-gray-200 dark:hover:bg-[#282828] disabled:opacity-30 border border-gray-200 dark:border-[#2e2e2e] text-gray-700 dark:text-gray-300 text-sm font-medium rounded-xl transition"
       >
-        Zakończ rundę
+        {t('finish')}
       </button>
     </div>
   )

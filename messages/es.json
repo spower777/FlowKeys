@@ -75,7 +75,8 @@
     "skip": "Omitir →",
     "chapter": "Cap. {chapterId} · {chapterTitle}",
     "fragment": "Fragmento {current} / {total}",
-    "clickToType": "Haz clic para escribir"
+    "clickToType": "Haz clic para escribir",
+    "finish": "Terminar ronda"
   },
   "results": {
     "wpmBadge": {
@@ -326,6 +327,17 @@
     "tile": {
       "next": "siguiente",
       "skip": "Omitir"
+    },
+    "packGroups": {
+      "keyboard": "Teclado",
+      "basics": "Básicos",
+      "zen": "Zen Flow",
+      "self": "Self Flow",
+      "story": "Historias",
+      "polish": "Caracteres",
+      "gaming": "Gaming",
+      "spirit": "Espiritualidad",
+      "ancient": "Textos Antiguos"
     }
   },
   "library": {

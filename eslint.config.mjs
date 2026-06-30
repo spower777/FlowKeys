@@ -13,6 +13,13 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    rules: {
+      // Valid SSR hydration pattern: reading localStorage in useEffect to avoid
+      // hydration mismatch. React Compiler flags this but it's intentional here.
+      'react-hooks/set-state-in-effect': 'warn',
+    },
+  },
 ]);
 
 export default eslintConfig;

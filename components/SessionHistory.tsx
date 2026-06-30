@@ -56,7 +56,7 @@ export default function SessionHistory() {
   const t = useTranslations('sessionHistory')
   const diagText = (stats: TypingStats): string => {
     const dk = getSessionDiagnosis(stats)
-    return tDiagnosis(dk.key as any, dk.params as any) as unknown as string
+    return String(tDiagnosis(dk.key as never, dk.params as never))
   }
   const fmtDate = (iso: string) =>
     new Date(iso).toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })

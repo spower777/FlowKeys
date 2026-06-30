@@ -75,7 +75,8 @@
     "skip": "Überspringen →",
     "chapter": "Kap. {chapterId} · {chapterTitle}",
     "fragment": "Fragment {current} / {total}",
-    "clickToType": "Zum Tippen klicken"
+    "clickToType": "Zum Tippen klicken",
+    "finish": "Runde beenden"
   },
   "results": {
     "wpmBadge": {
@@ -326,6 +327,17 @@
     "tile": {
       "next": "nächste",
       "skip": "Überspringen"
+    },
+    "packGroups": {
+      "keyboard": "Tastatur",
+      "basics": "Grundlagen",
+      "zen": "Zen Flow",
+      "self": "Self Flow",
+      "story": "Geschichten",
+      "polish": "Poln. Zeichen",
+      "gaming": "Gaming",
+      "spirit": "Spiritualität",
+      "ancient": "Alte Texte"
     }
   },
   "library": {

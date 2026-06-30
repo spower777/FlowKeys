@@ -14,7 +14,6 @@ import SettingsModal from '@/components/SettingsModal'
 import { analyzeTyping, computeCorrectedPositions } from '@/lib/analyzeTyping'
 import { saveSession, getSessions } from '@/lib/storage'
 import { getLibrary, saveCustomText, recordLibrarySession, splitIntoChunks } from '@/lib/library'
-import { EXAMPLE_TEXT } from '@/lib/transformPrompt'
 import { loadSettings, saveSettings, applySettingsToDOM, DEFAULTS } from '@/lib/settings'
 import { updateLessonProgress, checkAndUnlockBadges, lessonModeToTypingMode, calculateStars, getNextLesson, markLessonSkipped } from '@/lib/lessonProgress'
 import { generateCoachInsight, type CoachInsightKey } from '@/lib/coach'
@@ -107,7 +106,6 @@ export default function Home() {
       setCurrentLesson(lesson)
       setStep('typing')
     } catch {}
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -306,12 +304,6 @@ export default function Home() {
     setTypingMode(lastSession.typingMode)
     setCurrentLesson(null)
     setStep('typing')
-  }
-
-  function pickExample() {
-    setSourceText(EXAMPLE_TEXT)
-    setInputMethod('example')
-    setStep('transform')
   }
 
   const isFocus = step === 'typing'

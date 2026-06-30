@@ -10,7 +10,7 @@ import { PACK_GROUPS, DEFAULT_PACK_GROUPS, getPacksForGroups, type PackGroupId }
 import type { FlowLesson } from '@/data/lessons'
 import { getAllLessonProgress, getLessonStatus, calculateStreak, markLessonSkipped, getNextLesson } from '@/lib/lessonProgress'
 import { loadSettings, saveSettings } from '@/lib/settings'
-import { useLocale } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { getLocalizedLessonText } from '@/lib/lessonTexts'
 import type { LessonProgress, LessonStatus } from '@/lib/lessonProgress'
 import { getSessions } from '@/lib/storage'
@@ -20,15 +20,16 @@ import type { LessonPack } from '@/data/lessons'
 export default function LessonsPage() {
   const router = useRouter()
   const locale = useLocale()
+  const t = useTranslations('lessons')
+  const tData = useTranslations('data')
   const [progress, setProgress] = useState<Record<number, LessonProgress>>({})
   const [streak, setStreak] = useState(0)
   const [mounted, setMounted] = useState(false)
   const [activeGroups, setActiveGroups] = useState<PackGroupId[]>(DEFAULT_PACK_GROUPS)
-  const [sessionCounts, setSessionCounts] = useState({ blind: 0, noBackspace: 0 })
   const [searchQuery, setSearchQuery] = useState('')
   const [searchOpen, setSearchOpen] = useState(false)
   const [recommendation, setRecommendation] = useState<{
-    lesson: FlowLesson; mode?: TypingMode; label: string; desc: string
+    lesson: FlowLesson; mode?: TypingMode; type: 'blind' | 'noBackspace'
   } | null>(null)
 
   useEffect(() => {
@@ -38,10 +39,6 @@ export default function LessonsPage() {
     setProgress(prog)
     const sessions = getSessions()
     setStreak(calculateStreak(sessions))
-    setSessionCounts({
-      blind: sessions.filter(s => s.typingMode === 'blind' && s.stats.completionPercent >= 90).length,
-      noBackspace: sessions.filter(s => s.typingMode === 'no_backspace' && s.stats.completionPercent >= 90).length,
-    })
     // Polecane dziś — na podstawie ostatniej sesji
     const last = sessions[0]
     if (last?.lessonId) {
@@ -50,9 +47,9 @@ export default function LessonsPage() {
       const bs = last.stats.backspaceCount ?? 0
       const mode = last.typingMode
       if (mode === 'normal' && acc >= 88 && lastLsn) {
-        setRecommendation({ lesson: lastLsn, mode: 'blind', label: 'Spróbuj Blind Flow', desc: `„${lastLsn.title}" — pisz z pamięci` })
+        setRecommendation({ lesson: lastLsn, mode: 'blind', type: 'blind' })
       } else if (mode === 'normal' && bs > 12 && lastLsn) {
-        setRecommendation({ lesson: lastLsn, mode: 'no_backspace', label: 'No Backspace', desc: `„${lastLsn.title}" — bez cofania` })
+        setRecommendation({ lesson: lastLsn, mode: 'no_backspace', type: 'noBackspace' })
       }
     }
     setMounted(true)
@@ -125,17 +122,17 @@ export default function LessonsPage() {
     : null
 
   const PATH_DEFS: { id: string; icon: string; label: string; packs: LessonPack[]; modeOverride?: TypingMode; isCustom?: boolean }[] = [
-    { id: 'basics',  icon: '⌨️', label: 'Podstawy',      packs: ['homerow'] },
-    { id: 'numbers', icon: '🔢', label: 'Cyfry',          packs: ['numbers'] },
-    { id: 'symbols', icon: '.,', label: 'Symbole',        packs: ['symbols'] },
-    { id: 'start',   icon: '📘', label: 'Start',         packs: ['start'] },
-    { id: 'fluency', icon: '🌊', label: 'Płynność',      packs: ['mastery', 'motivation', 'mindfulness'] },
-    { id: 'polish',  icon: 'ą',  label: 'Polskie znaki', packs: ['polishSigns'] },
-    { id: 'no_bs',   icon: '⌫',  label: 'No Backspace',  packs: ['noBackspace'], modeOverride: 'no_backspace' },
-    { id: 'blind',   icon: '🙈', label: 'Blind Flow',    packs: ['blindFlow'],   modeOverride: 'blind' },
-    { id: 'jade',    icon: '🍃', label: 'Jade Path',     packs: ['jadePath'] },
-    { id: 'gaming',  icon: '🎮', label: 'Gaming',        packs: ['gaming'] },
-    { id: 'own',     icon: '✍️', label: 'Własne teksty', packs: [], isCustom: true },
+    { id: 'basics',  icon: '⌨️', label: t('paths.basics'),      packs: ['homerow'] },
+    { id: 'numbers', icon: '🔢', label: t('paths.numbers'),      packs: ['numbers'] },
+    { id: 'symbols', icon: '.,', label: t('paths.symbols'),      packs: ['symbols'] },
+    { id: 'start',   icon: '📘', label: t('paths.start'),        packs: ['start'] },
+    { id: 'fluency', icon: '🌊', label: t('paths.fluency'),      packs: ['mastery', 'motivation', 'mindfulness'] },
+    { id: 'polish',  icon: 'ą',  label: t('paths.polish'),       packs: ['polishSigns'] },
+    { id: 'no_bs',   icon: '⌫',  label: t('paths.noBackspace'),  packs: ['noBackspace'], modeOverride: 'no_backspace' },
+    { id: 'blind',   icon: '🙈', label: t('paths.blind'),        packs: ['blindFlow'],   modeOverride: 'blind' },
+    { id: 'jade',    icon: '🍃', label: t('paths.jade'),         packs: ['jadePath'] },
+    { id: 'gaming',  icon: '🎮', label: t('paths.gaming'),       packs: ['gaming'] },
+    { id: 'own',     icon: '✍️', label: t('paths.own'),          packs: [], isCustom: true },
   ]
 
   const pathData = PATH_DEFS.map(def => {
@@ -154,11 +151,11 @@ export default function LessonsPage() {
         {/* Hero */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-2xl font-bold flex-1">Lekcje</h1>
+            <h1 className="text-2xl font-bold flex-1">{t('title')}</h1>
             <button
               onClick={() => { setSearchOpen(o => !o); setSearchQuery('') }}
               className="p-2 rounded-xl text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#222] transition-colors"
-              aria-label="Szukaj lekcji"
+              aria-label={t('searchLabel')}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
@@ -174,17 +171,16 @@ export default function LessonsPage() {
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Szukaj lekcji po nazwie…"
+                placeholder={t('searchPlaceholder')}
                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-[#2a2a2a] bg-white dark:bg-[#161616] text-sm text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 outline-none focus:border-[var(--accent-400)] dark:focus:border-[var(--accent-500)] transition-colors"
               />
               {q.length >= 2 && (
                 <div className="mt-2 space-y-1">
                   {searchResults.length === 0 && (
-                    <p className="text-xs text-gray-400 dark:text-gray-600 px-1 py-2">Brak wyników dla „{q}"</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-600 px-1 py-2">{t('searchNoResults', { query: q })}</p>
                   )}
                   {searchResults.map(lesson => {
                     const p = progress[lesson.id]
-                    const chapter = chapters.find(c => c.id === lesson.chapterId)
                     return (
                       <button
                         key={lesson.id}
@@ -196,7 +192,7 @@ export default function LessonsPage() {
                           <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{lesson.title}</p>
                           {lesson.subtitle && <p className="text-[11px] text-gray-400 dark:text-gray-600 truncate">{lesson.subtitle}</p>}
                         </div>
-                        <span className="text-[10px] text-gray-400 dark:text-gray-600 shrink-0">{chapter?.title ?? `Rozdz. ${lesson.chapterId}`}</span>
+                        <span className="text-[10px] text-gray-400 dark:text-gray-600 shrink-0">{tData(`chapters.${lesson.chapterId}.title` as never)}</span>
                         {p?.completed && <span className="text-teal-500 text-xs shrink-0">✓</span>}
                       </button>
                     )
@@ -207,7 +203,7 @@ export default function LessonsPage() {
           )}
 
           <p className="text-sm text-gray-500 dark:text-gray-500 mb-6">
-            Każda lekcja to jeden krok. Nie ścigaj się — rytm.
+            {t('subtitle')}
           </p>
 
           {/* Dashboard: Kontynuuj + Polecane dziś */}
@@ -216,7 +212,7 @@ export default function LessonsPage() {
               {nextLesson && (
                 <div className="bg-[var(--accent-500)] text-white rounded-2xl px-5 py-4 flex items-center gap-4">
                   <div className="flex-1 min-w-0">
-                    <p className="text-[10px] font-bold uppercase tracking-widest opacity-65 mb-0.5">Kontynuuj ścieżkę</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest opacity-65 mb-0.5">{t('continueTrack')}</p>
                     <p className="text-sm font-bold truncate">{nextLesson.title}</p>
                     <p className="text-xs opacity-60 mt-0.5 font-mono">{String(nextLesson.id).padStart(3,'0')}</p>
                   </div>
@@ -224,22 +220,28 @@ export default function LessonsPage() {
                     onClick={() => startLesson(nextLesson.id)}
                     className="shrink-0 bg-white/20 hover:bg-white/30 text-white text-xs font-bold px-4 py-2 rounded-xl transition active:scale-95"
                   >
-                    Start →
+                    {t('start')}
                   </button>
                 </div>
               )}
               {recommendation && (
                 <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-5 py-4 flex items-center gap-4">
                   <div className="flex-1 min-w-0">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-600 mb-0.5">Polecane dziś</p>
-                    <p className="text-sm font-bold text-gray-800 dark:text-gray-200 truncate">{recommendation.label}</p>
-                    <p className="text-xs text-gray-500 mt-0.5 truncate">{recommendation.desc}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-600 mb-0.5">{t('recommended')}</p>
+                    <p className="text-sm font-bold text-gray-800 dark:text-gray-200 truncate">
+                      {recommendation.type === 'blind' ? t('recommendBlind') : t('recommendNoBackspace')}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-0.5 truncate">
+                      {recommendation.type === 'blind'
+                        ? t('recommendBlindDesc', { title: recommendation.lesson.title })
+                        : t('recommendNoBackspaceDesc', { title: recommendation.lesson.title })}
+                    </p>
                   </div>
                   <button
                     onClick={() => startLesson(recommendation.lesson.id, recommendation.mode)}
                     className="shrink-0 bg-gray-900 dark:bg-white hover:bg-gray-700 dark:hover:bg-gray-200 text-white dark:text-gray-900 text-xs font-bold px-4 py-2 rounded-xl transition active:scale-95"
                   >
-                    Zacznij →
+                    {t('go')}
                   </button>
                 </div>
               )}
@@ -248,7 +250,7 @@ export default function LessonsPage() {
 
           {/* 8 ścieżek treningowych */}
           <div className="mb-2">
-            <p className="text-[10px] text-gray-400 dark:text-gray-600 uppercase tracking-widest mb-3">Ścieżki treningowe</p>
+            <p className="text-[10px] text-gray-400 dark:text-gray-600 uppercase tracking-widest mb-3">{t('trainingPaths')}</p>
           </div>
           <div className="flex gap-2.5 overflow-x-auto pb-2 -mx-4 px-4 mb-6 snap-x">
             {pathData.map(path => (
@@ -261,7 +263,7 @@ export default function LessonsPage() {
                   <span className="text-[11px] font-bold leading-tight text-gray-700 dark:text-gray-300">{path.label}</span>
                 </div>
                 <p className="text-[10px] text-gray-400 dark:text-gray-600 leading-tight flex-1">
-                  {path.isCustom ? 'Własny tekst' : mounted ? `${path.done} / ${path.total}` : '—'}
+                  {path.isCustom ? t('ownText') : mounted ? `${path.done} / ${path.total}` : '—'}
                 </p>
                 <button
                   onClick={() => {
@@ -275,7 +277,7 @@ export default function LessonsPage() {
                       : 'bg-gray-100 dark:bg-[#222] text-gray-400 dark:text-gray-600 cursor-not-allowed'
                   }`}
                 >
-                  {path.isCustom ? 'Wklej →' : path.next ? 'Start →' : 'Gotowe ✓'}
+                  {path.isCustom ? t('paste') : path.next ? t('start') : t('done')}
                 </button>
               </div>
             ))}
@@ -284,10 +286,10 @@ export default function LessonsPage() {
           {/* Stats grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
             {[
-              { value: `${completedCount} / ${visibleTotal}`, label: 'Ukończone', color: 'text-teal-600 dark:text-teal-400' },
-              { value: masteredCount, label: 'Opanowane', color: 'text-amber-600 dark:text-amber-400' },
-              { value: streak, label: streak === 1 ? 'Dzień z rzędu' : 'Dni z rzędu', color: 'text-[var(--accent-600)] dark:text-[var(--accent-400)]' },
-              { value: visibleTotal, label: 'Dostępnych', color: 'text-gray-500 dark:text-gray-500' },
+              { value: `${completedCount} / ${visibleTotal}`, label: t('stats.completed'), color: 'text-teal-600 dark:text-teal-400' },
+              { value: masteredCount, label: t('stats.mastered'), color: 'text-amber-600 dark:text-amber-400' },
+              { value: streak, label: t('stats.dayStreak', { count: streak }), color: 'text-[var(--accent-600)] dark:text-[var(--accent-400)]' },
+              { value: visibleTotal, label: t('stats.available'), color: 'text-gray-500 dark:text-gray-500' },
             ].map(({ value, label, color }) => (
               <div key={label} className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-4 py-4 text-center">
                 <p className={`text-2xl font-black ${color}`}>{mounted ? value : '—'}</p>
@@ -299,11 +301,11 @@ export default function LessonsPage() {
           {/* Ostatnio ćwiczone (jeśli inne niż następna) */}
           {mounted && lastLesson && lastLesson.id !== nextLesson?.id && (
             <div className="mt-3 flex items-center gap-3 px-4 py-2.5 bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-xl">
-              <span className="text-[10px] text-gray-400 dark:text-gray-600">Ostatnio</span>
+              <span className="text-[10px] text-gray-400 dark:text-gray-600">{t('lastPracticed')}</span>
               <span className="font-mono text-xs text-gray-400 dark:text-gray-600">{String(lastLesson.id).padStart(3, '0')}</span>
               <span className="text-xs font-medium text-gray-600 dark:text-gray-400 flex-1 truncate">{lastLesson.title}</span>
               <button onClick={() => startLesson(lastLesson.id)} className="text-xs text-[var(--accent-600)] dark:text-[var(--accent-400)] hover:underline shrink-0">
-                Powtórz
+                {t('repeat')}
               </button>
             </div>
           )}
@@ -311,7 +313,7 @@ export default function LessonsPage() {
 
         {/* Pack group filter chips */}
         <div className="mb-8">
-          <p className="text-[10px] text-gray-400 dark:text-gray-600 uppercase tracking-widest mb-3">Klimat tekstów</p>
+          <p className="text-[10px] text-gray-400 dark:text-gray-600 uppercase tracking-widest mb-3">{t('textMood')}</p>
           <div className="flex flex-wrap gap-2">
             {PACK_GROUPS.map(group => {
               const isActive = activeGroups.includes(group.id)
@@ -326,7 +328,7 @@ export default function LessonsPage() {
                   }`}
                 >
                   <span>{group.icon}</span>
-                  <span>{group.label}</span>
+                  <span>{t(`packGroups.${group.id}` as never)}</span>
                 </button>
               )
             })}
@@ -347,9 +349,9 @@ export default function LessonsPage() {
                 <div className="mb-3">
                   <div className="flex items-baseline gap-3 mb-1.5">
                     <h2 className="text-sm font-bold text-gray-700 dark:text-gray-300">
-                      Rozdział {chapterId} — {chapter.title}
+                      {t('chapter', { id: chapterId, title: tData(`chapters.${chapterId}.title` as never) })}
                     </h2>
-                    <span className="text-[10px] text-gray-400 dark:text-gray-600">{chapter.description}</span>
+                    <span className="text-[10px] text-gray-400 dark:text-gray-600">{tData(`chapters.${chapterId}.desc` as never)}</span>
                     {mounted && (
                       <span className="ml-auto text-[10px] text-gray-400 dark:text-gray-600 tabular-nums shrink-0">
                         {completedInChapter}/{chapterLessons.length}
@@ -393,8 +395,8 @@ export default function LessonsPage() {
 
           {activeChapterIds.length === 0 && mounted && (
             <div className="text-center py-16 text-gray-400 dark:text-gray-600">
-              <p className="text-sm">Brak lekcji dla wybranych filtrów.</p>
-              <p className="text-xs mt-1">Wybierz przynajmniej jeden klimat tekstów powyżej.</p>
+              <p className="text-sm">{t('noLessons')}</p>
+              <p className="text-xs mt-1">{t('noLessonsHint')}</p>
             </div>
           )}
         </div>

@@ -2,8 +2,6 @@
 
 import { POLISH_BASE, FINGER_COLORS, FINGER_LABELS } from '@/lib/fingerMap'
 import { LAYOUTS, type KeyboardLayout } from '@/lib/keyboardLayouts'
-import HandsDisplay from './HandsDisplay'
-
 // ── Row definitions ───────────────────────────────────────────────────────────
 
 type SpecialKey = { id: string; label: string; w: string }

@@ -224,7 +224,7 @@ export default function AudioControls({ text, initialRate = 1.0, voiceMode = 'al
       {/* Current sentence preview */}
       {sentences[current] && (
         <p className="text-xs text-gray-500 dark:text-gray-500 italic leading-relaxed line-clamp-2">
-          „{sentences[current]}"
+          „{sentences[current]}&rdquo;
         </p>
       )}
     </div>

@@ -75,7 +75,8 @@
     "skip": "Pomiń →",
     "chapter": "Rozdz. {chapterId} · {chapterTitle}",
     "fragment": "Fragment {current} / {total}",
-    "clickToType": "Kliknij, żeby pisać"
+    "clickToType": "Kliknij, żeby pisać",
+    "finish": "Zakończ rundę"
   },
   "results": {
     "wpmBadge": {
@@ -326,6 +327,17 @@
     "tile": {
       "next": "następna",
       "skip": "Pomiń"
+    },
+    "packGroups": {
+      "keyboard": "Klawiatura",
+      "basics": "Podstawy",
+      "zen": "Zen Flow",
+      "self": "Self Flow",
+      "story": "Opowieści",
+      "polish": "Polskie znaki",
+      "gaming": "Gaming",
+      "spirit": "Duchowość",
+      "ancient": "Teksty Starożytne"
     }
   },
   "library": {

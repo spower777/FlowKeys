@@ -363,7 +363,7 @@ export default function ResultsPanel({
         )}
 
         <p className={`text-sm ${heroText} leading-relaxed text-center bg-black/5 dark:bg-white/5 rounded-2xl px-5 py-3`}>
-          {String(tDiagnosis(diagKey.key as any, diagKey.params as any))}
+          {String(tDiagnosis(diagKey.key as never, diagKey.params as never))}
         </p>
 
         <div className="flex justify-center gap-2 flex-wrap mt-4">
@@ -434,7 +434,7 @@ export default function ResultsPanel({
               : coachInsight.tone === 'constructive'
               ? 'text-amber-800 dark:text-amber-300'
               : 'text-gray-700 dark:text-gray-300'
-          }`}>{String(tCoach(coachInsight.key as any, coachInsight.params as any))}</p>
+          }`}>{String(tCoach(coachInsight.key as never, coachInsight.params as never))}</p>
         </div>
       )}
 

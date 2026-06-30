@@ -13,8 +13,6 @@ export async function generateMetadata(
   { params }: { params: Promise<{ locale: string }> }
 ): Promise<Metadata> {
   const { locale } = await params
-  const messages = await getMessages({ locale })
-  const t = (messages as Record<string, Record<string, string>>)
 
   const descriptions: Record<string, string> = {
     pl: 'Ucz się pisać na klawiaturze, przepisując własne historie.',
