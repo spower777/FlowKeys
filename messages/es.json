@@ -297,7 +297,9 @@
     "paste": "Pegar →",
     "stats": {
       "completed": "Completadas",
+      "completedTooltip": "Número de lecciones completadas al menos una vez",
       "mastered": "Dominadas",
+      "masteredTooltip": "Completada con ≥98% precisión y calma ≥90 — 5 estrellas",
       "dayStreak": "{count, plural, one {día seguido} other {días seguidos}}",
       "available": "Disponibles"
     },
@@ -326,7 +328,8 @@
     "recommendNoBackspaceDesc": "\"{title}\" — sin correcciones",
     "tile": {
       "next": "siguiente",
-      "skip": "Omitir"
+      "skip": "Omitir",
+      "starsTooltip": "Tu nivel de dominio de esta lección"
     },
     "packGroups": {
       "keyboard": "Teclado",

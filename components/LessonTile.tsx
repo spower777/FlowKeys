@@ -56,7 +56,7 @@ export default function LessonTile({ lesson, status, stars, isNext, onClick, onS
         }`}>
           {String(lesson.id).padStart(3, '0')}
         </span>
-        <Stars count={stars} status={status} />
+        <Stars count={stars} status={status} tooltip={t('tile.starsTooltip')} />
       </div>
 
       {/* Title */}
@@ -119,11 +119,11 @@ export default function LessonTile({ lesson, status, stars, isNext, onClick, onS
   )
 }
 
-function Stars({ count, status }: { count: number; status: LessonStatus }) {
+function Stars({ count, status, tooltip }: { count: number; status: LessonStatus; tooltip?: string }) {
   if (status === 'locked' || status === 'available') return null
   const color = status === 'mastered' ? 'text-amber-400' : 'text-teal-400'
   return (
-    <div className="flex gap-px">
+    <div className="flex gap-px" title={tooltip}>
       {[1, 2, 3, 4, 5].map(i => (
         <span key={i} className={`text-xs leading-none ${i <= count ? color : 'text-gray-200 dark:text-gray-700'}`}>★</span>
       ))}

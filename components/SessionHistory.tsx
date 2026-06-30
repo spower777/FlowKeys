@@ -320,19 +320,19 @@ export default function SessionHistory() {
                 </div>
               </div>
               <div className="flex items-center gap-4 shrink-0 text-right">
-                <div>
+                <div title={t('statWpmDesc')}>
                   <p className="text-sm font-bold text-blue-600 dark:text-blue-400">{s.stats.wpm}</p>
                   <p className="text-[10px] text-gray-400 dark:text-gray-600">wpm</p>
                 </div>
-                <div>
+                <div title={t('statAccuracyDesc')}>
                   <p className={`text-sm font-bold ${accColor(s.stats.accuracy)}`}>{s.stats.accuracy}%</p>
                   <p className="text-[10px] text-gray-400 dark:text-gray-600">acc</p>
                 </div>
-                <div>
+                <div title={t('statCalmDesc')}>
                   <p className={`text-sm font-bold ${calmColor(calm)}`}>{calm}</p>
                   <p className="text-[10px] text-gray-400 dark:text-gray-600">{t('statCalmShort')}</p>
                 </div>
-                <div>
+                <div title={t('statBackspaceDesc')}>
                   <p className="text-sm font-bold text-gray-500 dark:text-gray-500">{bs}</p>
                   <p className="text-[10px] text-gray-400 dark:text-gray-600">bs</p>
                 </div>

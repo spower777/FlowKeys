@@ -286,12 +286,12 @@ export default function LessonsPage() {
           {/* Stats grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
             {[
-              { value: `${completedCount} / ${visibleTotal}`, label: t('stats.completed'), color: 'text-teal-600 dark:text-teal-400' },
-              { value: masteredCount, label: t('stats.mastered'), color: 'text-amber-600 dark:text-amber-400' },
-              { value: streak, label: t('stats.dayStreak', { count: streak }), color: 'text-[var(--accent-600)] dark:text-[var(--accent-400)]' },
-              { value: visibleTotal, label: t('stats.available'), color: 'text-gray-500 dark:text-gray-500' },
-            ].map(({ value, label, color }) => (
-              <div key={label} className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-4 py-4 text-center">
+              { value: completedCount, label: t('stats.completed'), color: 'text-teal-600 dark:text-teal-400', tooltip: t('stats.completedTooltip') },
+              { value: masteredCount, label: t('stats.mastered'), color: 'text-amber-600 dark:text-amber-400', tooltip: t('stats.masteredTooltip') },
+              { value: streak, label: t('stats.dayStreak', { count: streak }), color: 'text-[var(--accent-600)] dark:text-[var(--accent-400)]', tooltip: undefined },
+              { value: visibleTotal, label: t('stats.available'), color: 'text-gray-500 dark:text-gray-500', tooltip: undefined },
+            ].map(({ value, label, color, tooltip }) => (
+              <div key={label} title={tooltip} className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-4 py-4 text-center">
                 <p className={`text-2xl font-black ${color}`}>{mounted ? value : '—'}</p>
                 <p className="text-[10px] text-gray-500 dark:text-gray-500 mt-1">{label}</p>
               </div>

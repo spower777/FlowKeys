@@ -297,7 +297,9 @@
     "paste": "Einfügen →",
     "stats": {
       "completed": "Abgeschlossen",
+      "completedTooltip": "Anzahl mindestens einmal abgeschlossener Lektionen",
       "mastered": "Gemeistert",
+      "masteredTooltip": "Abgeschlossen mit ≥98% Genauigkeit und Ruhe ≥90 — 5 Sterne",
       "dayStreak": "{count, plural, one {Tag in Folge} other {Tage in Folge}}",
       "available": "Verfügbar"
     },
@@ -326,7 +328,8 @@
     "recommendNoBackspaceDesc": "\"{title}\" — keine Korrekturen",
     "tile": {
       "next": "nächste",
-      "skip": "Überspringen"
+      "skip": "Überspringen",
+      "starsTooltip": "Dein Beherrschungsniveau dieser Lektion"
     },
     "packGroups": {
       "keyboard": "Tastatur",

@@ -297,7 +297,9 @@
     "paste": "Paste →",
     "stats": {
       "completed": "Completed",
+      "completedTooltip": "Number of lessons completed at least once",
       "mastered": "Mastered",
+      "masteredTooltip": "Finished with ≥98% accuracy and calm ≥90 — 5 stars",
       "dayStreak": "{count, plural, one {Day streak} other {Day streak}}",
       "available": "Available"
     },
@@ -326,7 +328,8 @@
     "recommendNoBackspaceDesc": "\"{title}\" — no corrections",
     "tile": {
       "next": "next",
-      "skip": "Skip"
+      "skip": "Skip",
+      "starsTooltip": "Your mastery level for this lesson"
     },
     "packGroups": {
       "keyboard": "Keyboard",

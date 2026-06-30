@@ -297,7 +297,9 @@
     "paste": "Wklej →",
     "stats": {
       "completed": "Ukończone",
+      "completedTooltip": "Liczba lekcji ukończonych co najmniej raz",
       "mastered": "Opanowane",
+      "masteredTooltip": "Ukończona z ≥98% dokładności i spokoju ≥90 — 5 gwiazdek",
       "dayStreak": "{count, plural, one {Dzień z rzędu} other {Dni z rzędu}}",
       "available": "Dostępnych"
     },
@@ -326,7 +328,8 @@
     "recommendNoBackspaceDesc": "„{title}” — bez cofania",
     "tile": {
       "next": "następna",
-      "skip": "Pomiń"
+      "skip": "Pomiń",
+      "starsTooltip": "Twój poziom opanowania tej lekcji"
     },
     "packGroups": {
       "keyboard": "Klawiatura",
