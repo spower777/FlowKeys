@@ -291,8 +291,8 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
                       }}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
                         isActive
-                          ? 'bg-[var(--accent-500)] border-[var(--accent-500)] text-white'
-                          : 'bg-gray-100 dark:bg-[#1e1e1e] border-gray-200 dark:border-[#2a2a2a] text-gray-500 dark:text-gray-500'
+                          ? 'bg-[var(--accent-50)] dark:bg-[var(--accent-500)]/10 border-[var(--accent-200)] dark:border-[var(--accent-500)]/30 text-[var(--accent-600)] dark:text-[var(--accent-400)]'
+                          : 'bg-gray-100 dark:bg-[#1e1e1e] border-gray-200 dark:border-[#2a2a2a] text-gray-500 dark:text-gray-500 hover:border-gray-300 dark:hover:border-[#3a3a3a]'
                       }`}
                     >
                       <span>{group.icon}</span>

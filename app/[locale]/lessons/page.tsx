@@ -121,15 +121,15 @@ export default function LessonsPage() {
       })()
     : null
 
-  const PATH_DEFS: { id: string; icon: string; label: string; packs: LessonPack[]; modeOverride?: TypingMode; isCustom?: boolean }[] = [
+  const PATH_DEFS: { id: string; icon: string; label: string; packs: LessonPack[]; modeOverride?: TypingMode; isCustom?: boolean; desc?: string }[] = [
     { id: 'basics',  icon: '⌨️', label: t('paths.basics'),      packs: ['homerow'] },
     { id: 'numbers', icon: '🔢', label: t('paths.numbers'),      packs: ['numbers'] },
     { id: 'symbols', icon: '.,', label: t('paths.symbols'),      packs: ['symbols'] },
     { id: 'start',   icon: '📘', label: t('paths.start'),        packs: ['start'] },
     { id: 'fluency', icon: '🌊', label: t('paths.fluency'),      packs: ['mastery', 'motivation', 'mindfulness'] },
     { id: 'polish',  icon: 'ą',  label: t('paths.polish'),       packs: ['polishSigns'] },
-    { id: 'no_bs',   icon: '⌫',  label: t('paths.noBackspace'),  packs: ['noBackspace'], modeOverride: 'no_backspace' },
-    { id: 'blind',   icon: '🙈', label: t('paths.blind'),        packs: ['blindFlow'],   modeOverride: 'blind' },
+    { id: 'no_bs',   icon: '⌫',  label: t('paths.noBackspace'),  packs: ['noBackspace'], modeOverride: 'no_backspace', desc: 'Bez cofania' },
+    { id: 'blind',   icon: '🙈', label: t('paths.blind'),        packs: ['blindFlow'],   modeOverride: 'blind',        desc: 'Z pamięci' },
     { id: 'jade',    icon: '🍃', label: t('paths.jade'),         packs: ['jadePath'] },
     { id: 'gaming',  icon: '🎮', label: t('paths.gaming'),       packs: ['gaming'] },
     { id: 'own',     icon: '✍️', label: t('paths.own'),          packs: [], isCustom: true },
@@ -262,9 +262,14 @@ export default function LessonsPage() {
                   <span className="text-base leading-none">{path.icon}</span>
                   <span className="text-[11px] font-bold leading-tight text-gray-700 dark:text-gray-300">{path.label}</span>
                 </div>
-                <p className="text-[10px] text-gray-400 dark:text-gray-600 leading-tight flex-1">
-                  {path.isCustom ? t('ownText') : mounted ? `${path.done} / ${path.total}` : '—'}
-                </p>
+                <div className="flex-1">
+                  {path.desc && (
+                    <p className="text-[9px] text-[var(--accent-500)] dark:text-[var(--accent-400)] italic leading-tight mb-0.5">{path.desc}</p>
+                  )}
+                  <p className="text-[10px] text-gray-400 dark:text-gray-600 leading-tight">
+                    {path.isCustom ? t('ownText') : mounted ? `${path.done} / ${path.total}` : '—'}
+                  </p>
+                </div>
                 <button
                   onClick={() => {
                     if (path.isCustom) { router.push('/') }
@@ -323,7 +328,7 @@ export default function LessonsPage() {
                   onClick={() => toggleGroup(group.id)}
                   className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all ${
                     isActive
-                      ? 'bg-[var(--accent-500)] border-[var(--accent-500)] text-white shadow-sm'
+                      ? 'bg-[var(--accent-50)] dark:bg-[var(--accent-500)]/10 border-[var(--accent-200)] dark:border-[var(--accent-500)]/30 text-[var(--accent-600)] dark:text-[var(--accent-400)]'
                       : 'bg-white dark:bg-[#161616] border-gray-200 dark:border-[#2a2a2a] text-gray-500 dark:text-gray-500 hover:border-gray-300 dark:hover:border-[#3a3a3a]'
                   }`}
                 >

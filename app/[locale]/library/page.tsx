@@ -565,8 +565,8 @@ export default function LibraryPage() {
                     onClick={() => setDateFilter(f)}
                     className={`text-[10px] px-2.5 py-1 rounded-full border whitespace-nowrap transition ${
                       dateFilter === f
-                        ? 'bg-[var(--accent-500)] text-white border-[var(--accent-600)]'
-                        : 'bg-white dark:bg-[#161616] text-gray-500 dark:text-gray-500 border-gray-200 dark:border-[#2a2a2a] hover:border-[var(--accent-400)]'
+                        ? 'bg-[var(--accent-50)] dark:bg-[var(--accent-500)]/10 text-[var(--accent-600)] dark:text-[var(--accent-400)] border-[var(--accent-200)] dark:border-[var(--accent-500)]/30'
+                        : 'bg-white dark:bg-[#161616] text-gray-500 dark:text-gray-500 border-gray-200 dark:border-[#2a2a2a] hover:border-gray-300 dark:hover:border-[#3a3a3a]'
                     }`}
                   >
                     {DATE_FILTER_LABELS[f]}

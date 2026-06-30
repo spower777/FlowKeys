@@ -169,10 +169,10 @@ export default function BadgesPage() {
             <button
               key={cat}
               onClick={() => setFilter(cat)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition border ${
                 filter === cat
-                  ? 'bg-[var(--accent-500)] text-white'
-                  : 'bg-gray-100 dark:bg-[#1e1e1e] text-gray-500 dark:text-gray-500 hover:bg-gray-200 dark:hover:bg-[#2a2a2a] border border-gray-200 dark:border-[#2a2a2a]'
+                  ? 'bg-[var(--accent-50)] dark:bg-[var(--accent-500)]/10 text-[var(--accent-600)] dark:text-[var(--accent-400)] border-[var(--accent-200)] dark:border-[var(--accent-500)]/30'
+                  : 'bg-white dark:bg-[#1e1e1e] text-gray-500 dark:text-gray-500 border-gray-200 dark:border-[#2a2a2a] hover:border-gray-300 dark:hover:border-[#3a3a3a]'
               }`}
             >
               {CATEGORY_LABELS[cat]}

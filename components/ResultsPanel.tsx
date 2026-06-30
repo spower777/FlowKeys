@@ -326,27 +326,26 @@ export default function ResultsPanel({
           </div>
         )}
 
-        <div className="text-center mb-5">
-          <p className={`text-9xl font-black leading-none ${heroText}`}>{stats.wpm}</p>
-          <p className="text-sm text-gray-500 dark:text-gray-500 mt-2 font-medium">
-            WPM · {t(`wpmBadge.${wpmBadgeKey}`)}
-          </p>
-        </div>
-
-        <div className="flex justify-center gap-12 mb-5">
+        <div className="flex items-end justify-center gap-6 mb-5">
           <div className="text-center">
-            <p className={`text-4xl font-bold leading-none ${accColor}`}>{acc}%</p>
+            <p className={`text-6xl font-black leading-none ${accColor}`}>{acc}%</p>
             <p className="text-xs text-gray-500 dark:text-gray-500 mt-1.5">
               {t('label.accuracy', { badge: t(`accBadge.${accBadgeKey}`) })}
             </p>
           </div>
           <div className="text-center">
-            <p className={`text-4xl font-bold leading-none ${calmColor}`}>{calm}</p>
+            <p className={`text-6xl font-black leading-none ${calmColor}`}>{calm}</p>
             <p
               className="text-xs text-gray-500 dark:text-gray-500 mt-1.5 cursor-help border-b border-dashed border-gray-300 dark:border-gray-700 inline-block pb-px"
               title={t('label.calmTooltip')}
             >
               {t('label.calm', { badge: t(`calmBadge.${calmBadgeKey}`) })}
+            </p>
+          </div>
+          <div className="text-center opacity-70">
+            <p className={`text-3xl font-bold leading-none ${heroText}`}>{stats.wpm}</p>
+            <p className="text-xs text-gray-400 dark:text-gray-600 mt-1.5">
+              {t(`wpmBadge.${wpmBadgeKey}`)} wpm
             </p>
           </div>
         </div>

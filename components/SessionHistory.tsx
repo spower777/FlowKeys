@@ -299,10 +299,10 @@ export default function SessionHistory() {
             <button
               key={value}
               onClick={() => setFilter(value)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition border ${
                 filter === value
-                  ? 'bg-[var(--accent-500)] text-white'
-                  : 'bg-gray-100 dark:bg-[#1e1e1e] text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#2a2a2a] border border-gray-200 dark:border-[#2a2a2a]'
+                  ? 'bg-[var(--accent-50)] dark:bg-[var(--accent-500)]/10 text-[var(--accent-600)] dark:text-[var(--accent-400)] border-[var(--accent-200)] dark:border-[var(--accent-500)]/30'
+                  : 'bg-white dark:bg-[#1e1e1e] text-gray-500 dark:text-gray-400 border-gray-200 dark:border-[#2a2a2a] hover:border-gray-300 dark:hover:border-[#3a3a3a]'
               }`}
             >
               {filterLabel[value]}
@@ -314,8 +314,8 @@ export default function SessionHistory() {
           onClick={() => setSortBest(v => !v)}
           className={`ml-auto px-3 py-1.5 rounded-full text-xs font-medium transition border ${
             sortBest
-              ? 'bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-500/25'
-              : 'bg-gray-100 dark:bg-[#1e1e1e] text-gray-500 dark:text-gray-500 border-gray-200 dark:border-[#2a2a2a] hover:bg-gray-200 dark:hover:bg-[#2a2a2a]'
+              ? 'bg-[var(--accent-50)] dark:bg-[var(--accent-500)]/10 text-[var(--accent-600)] dark:text-[var(--accent-400)] border-[var(--accent-200)] dark:border-[var(--accent-500)]/30'
+              : 'bg-white dark:bg-[#1e1e1e] text-gray-500 dark:text-gray-500 border-gray-200 dark:border-[#2a2a2a] hover:border-gray-300 dark:hover:border-[#3a3a3a]'
           }`}
         >
           {sortBest ? t('sortBest') : t('sortRecent')}
