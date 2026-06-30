@@ -20,6 +20,25 @@ type FilterValue = TypingMode | 'all' | 'lessons' | 'library' | 'custom'
 
 const FILTER_VALUES: FilterValue[] = ['all', 'lessons', 'library', 'custom', 'blind', 'no_backspace']
 
+function computeLongestStreak(sessions: TypingSessionRecord[]): number {
+  const days = [...new Set(sessions.map(s => s.createdAt.slice(0, 10)))].sort()
+  if (days.length === 0) return 0
+  let best = 1, cur = 1
+  for (let i = 1; i < days.length; i++) {
+    const prev = new Date(days[i - 1]), curr = new Date(days[i])
+    const diff = (curr.getTime() - prev.getTime()) / 86400000
+    cur = diff === 1 ? cur + 1 : 1
+    if (cur > best) best = cur
+  }
+  return best
+}
+
+function fmtMinutes(min: number): string {
+  if (min < 60) return `${min} min`
+  const h = Math.floor(min / 60), m = min % 60
+  return m > 0 ? `${h}h ${m}m` : `${h}h`
+}
+
 const TYPE_BADGE: Record<SessionType, string> = {
   lesson:  'bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-500/25',
   library: 'bg-violet-100 dark:bg-violet-500/15 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-500/25',
@@ -246,8 +265,28 @@ export default function SessionHistory() {
   }
 
   // ── List view ────────────────────────────────────────────────────────────────
+  const totalChars   = sessions.reduce((s, r) => s + r.stats.charsTyped, 0)
+  const totalWords   = sessions.reduce((s, r) => s + r.stats.wordsTyped, 0)
+  const estMinutes   = Math.round(sessions.reduce((s, r) => r.stats.wpm > 0 ? s + r.stats.wordsTyped / r.stats.wpm : s, 0))
+  const longestStreak = computeLongestStreak(sessions)
+
   return (
     <div className="space-y-4">
+      {/* Aggregate stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        {[
+          { value: totalChars.toLocaleString('pl-PL'), label: 'Znaków łącznie' },
+          { value: totalWords.toLocaleString('pl-PL'), label: 'Słów łącznie' },
+          { value: `${longestStreak} ${longestStreak === 1 ? 'dzień' : longestStreak < 5 ? 'dni' : 'dni'}`, label: 'Najdłuższa seria' },
+          { value: fmtMinutes(estMinutes), label: '~Czas ćwiczeń' },
+        ].map(({ value, label }) => (
+          <div key={label} className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-xl px-3 py-3 text-center">
+            <p className="text-lg font-black text-gray-800 dark:text-gray-200 tabular-nums">{value}</p>
+            <p className="text-[10px] text-gray-400 dark:text-gray-600 mt-0.5">{label}</p>
+          </div>
+        ))}
+      </div>
+
       {/* Filters + sort */}
       <div className="flex gap-2 flex-wrap items-center">
         {FILTER_VALUES.map(value => {

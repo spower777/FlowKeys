@@ -230,10 +230,7 @@ function TextCard({
 
       {/* Stats */}
       <div className="flex items-center gap-3 text-[10px] text-gray-400 dark:text-gray-600 mb-3">
-        <span>{text.practiceCount} {plural(text.practiceCount, 'runda', 'rundy', 'rund')}</span>
-        {text.bestWpm != null && (
-          <span className="text-[var(--accent-600)] dark:text-[var(--accent-400)] font-semibold">{text.bestWpm} WPM best</span>
-        )}
+        <span>wracano {text.practiceCount} {plural(text.practiceCount, 'raz', 'razy', 'razy')}</span>
         {chunks && (
           <span className="ml-auto text-[var(--accent-500)] dark:text-[var(--accent-400)] font-medium">
             {allDone ? `✓ ${chunks.length} fragmentów` : `${nextChunk}/${chunks.length} fragmentów`}
@@ -241,6 +238,9 @@ function TextCard({
         )}
         {!chunks && text.lastPracticedAt && (
           <span className="ml-auto">{formatDate(text.lastPracticedAt)}</span>
+        )}
+        {text.bestWpm != null && (
+          <span className="opacity-60">{text.bestWpm} wpm</span>
         )}
       </div>
 
@@ -277,13 +277,11 @@ function TextRow({
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{text.title}</p>
         <div className="flex items-center gap-2 mt-0.5 text-[10px] text-gray-400 dark:text-gray-600">
-          <span>{text.practiceCount} {plural(text.practiceCount, 'runda', 'rundy', 'rund')}</span>
-          {text.bestWpm != null && (
-            <span className="text-[var(--accent-600)] dark:text-[var(--accent-400)] font-medium">{text.bestWpm} WPM</span>
-          )}
+          <span>wracano {text.practiceCount} {plural(text.practiceCount, 'raz', 'razy', 'razy')}</span>
           {chunks && (
             <span>{allDone ? `✓ ${chunks.length} fr.` : `${nextChunk + 1}/${chunks.length} fr.`}</span>
           )}
+          {text.bestWpm != null && <span className="opacity-60">{text.bestWpm} wpm</span>}
           {text.lastPracticedAt && <span className="ml-auto">{formatDate(text.lastPracticedAt)}</span>}
         </div>
       </div>
@@ -482,8 +480,7 @@ export default function LibraryPage() {
               {texts.length > 0 ? (
                 <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
                   {texts.length} {plural(texts.length, 'tekst', 'teksty', 'tekstów')}
-                  {totalSessions > 0 ? ` · ${totalSessions} ${plural(totalSessions, 'runda', 'rundy', 'rund')}` : ''}
-                  {bestWpm > 0 ? ` · ${bestWpm} WPM best` : ''}
+                  {totalSessions > 0 ? ` · wracano ${totalSessions} ${plural(totalSessions, 'raz', 'razy', 'razy')}` : ''}
                 </p>
               ) : (
                 <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">Teksty, do których warto wracać.</p>
@@ -519,8 +516,7 @@ export default function LibraryPage() {
                 <p className="text-[10px] font-bold uppercase tracking-widest opacity-65 mb-0.5">Kontynuuj</p>
                 <p className="text-base font-bold leading-tight truncate">{continueText.title}</p>
                 <p className="text-xs opacity-60 mt-0.5">
-                  {continueText.lastWpm != null ? `${continueText.lastWpm} WPM · ` : ''}
-                  {continueText.practiceCount} {plural(continueText.practiceCount, 'runda', 'rundy', 'rund')}
+                  wracano {continueText.practiceCount} {plural(continueText.practiceCount, 'raz', 'razy', 'razy')}
                   {(() => {
                     if (continueText.text.length > CHUNK_THRESHOLD) {
                       const ch = splitIntoChunks(continueText.text)

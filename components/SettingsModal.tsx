@@ -134,6 +134,7 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
   const [confirmClear, setConfirmClear] = useState(false)
   const [confirmReset, setConfirmReset] = useState(false)
   const [cleared, setCleared] = useState(false)
+  const [advancedOpen, setAdvancedOpen] = useState(false)
 
   useEffect(() => {
     setBrowser(getBrowser())
@@ -201,10 +202,8 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
 
         <div className="px-5 py-5 space-y-6">
 
-          {/* ── A. Wygląd ── */}
-          <Section title="A. Wygląd" icon="🎨">
-
-            {/* Motyw */}
+          {/* ── Wygląd ── */}
+          <Section title="Wygląd" icon="🎨">
             <div className="px-4 pt-3.5 pb-4">
               <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2.5">Motyw</p>
               <div className="grid grid-cols-5 gap-2">
@@ -226,15 +225,14 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
               </div>
             </div>
 
-            {/* Dark / light override */}
             <Row label="Jasność">
               <Pills<Theme>
                 value={settings.theme}
                 onChange={v => set('theme', v)}
                 options={[
-                  { value: 'light', label: '☀️ Jasny' },
-                  { value: 'system', label: '⚙️ Auto' },
-                  { value: 'dark', label: '🌙 Ciemny' },
+                  { value: 'light', label: '☀️' },
+                  { value: 'system', label: 'Auto' },
+                  { value: 'dark', label: '🌙' },
                 ]}
               />
             </Row>
@@ -251,8 +249,8 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
             </Row>
           </Section>
 
-          {/* ── B. Pisanie ── */}
-          <Section title="B. Pisanie" icon="⌨️">
+          {/* ── Pisanie ── */}
+          <Section title="Pisanie" icon="⌨️">
             <Row label="Widok tekstu">
               <Pills<TextViewMode>
                 value={settings.textViewMode}
@@ -264,177 +262,19 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
                 ]}
               />
             </Row>
-
-            <Row label="Układ klawiatury" sub="Zmienia wizualny układ klawiszy i przypisanie palców">
-              <Pills<KeyboardLayout>
-                value={settings.keyboardLayout}
-                onChange={v => set('keyboardLayout', v)}
-                options={(Object.keys(LAYOUTS) as KeyboardLayout[]).map(id => ({ value: id, label: LAYOUTS[id].label }))}
-              />
-            </Row>
-
             <Row label="Pokaż klawiaturę" sub="Podświetla następny klawisz">
               <Toggle value={settings.showKeyboard} onChange={v => set('showKeyboard', v)} />
             </Row>
             <Row label="Strefy palców" sub="Koloruje klawisze wg palca">
               <Toggle value={settings.showFingers} onChange={v => set('showFingers', v)} />
             </Row>
-            <Row label="Dźwięki klawiatury" sub="Styl brzmienia przy każdym naciśnięciu">
-              <Pills<SoundProfile>
-                value={settings.soundProfile}
-                onChange={v => set('soundProfile', v)}
-                options={[
-                  { value: 'off', label: 'Wył.' },
-                  { value: 'mechanical', label: 'Mech.' },
-                  { value: 'soft', label: 'Cichy' },
-                  { value: 'typewriter', label: 'Retro' },
-                  { value: 'deep', label: 'Głęboki' },
-                ]}
-              />
-            </Row>
-            <Row label="Blokuj wklejanie" sub="Zapobiega nabijaniu wyników">
-              <Toggle value={settings.blockPaste} onChange={v => set('blockPaste', v)} />
-            </Row>
-            <Row label="Tryb spokojny" sub="Łagodniejsze kolory błędów, mniej dominujące WPM">
-              <Toggle value={settings.calmMode} onChange={v => set('calmMode', v)} />
-            </Row>
-          </Section>
-
-          {/* ── C. Audio / Blind Flow ── */}
-          <Section title="C. Audio / Blind Flow" icon="🔊">
-            <Row label="Prędkość lektora">
-              <Pills<VoiceRate>
-                value={settings.voiceRate}
-                onChange={v => set('voiceRate', v)}
-                options={[
-                  { value: 0.75, label: '0.75×' },
-                  { value: 1, label: '1×' },
-                  { value: 1.25, label: '1.25×' },
-                  { value: 1.5, label: '1.5×' },
-                ]}
-              />
-            </Row>
-            <Row label="Tryb lektora">
-              <Pills<VoiceMode>
-                value={settings.voiceMode}
-                onChange={v => set('voiceMode', v)}
-                options={[
-                  { value: 'all', label: 'Cały tekst' },
-                  { value: 'sentence', label: 'Zdanie' },
-                ]}
-              />
-            </Row>
-            <Row label="Podpowiedź zdania w Blind Flow" sub="Pokazuje pierwsze słowa aktualnego zdania">
-              <Toggle value={settings.blindHint} onChange={v => set('blindHint', v)} />
-            </Row>
-          </Section>
-
-          {/* ── D. Nagrywanie ── */}
-          <Section title="D. Nagrywanie" icon="🎙️">
-            <div className="px-4 py-3 space-y-3">
-              <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
-                <span className="text-gray-400 dark:text-gray-600">Web Speech API</span>
-                <span className={speechSupported ? 'text-green-600 dark:text-green-400' : 'text-red-500'}>
-                  {speechSupported ? 'Dostępne' : 'Niedostępne'}
-                </span>
-
-                <span className="text-gray-400 dark:text-gray-600">Przeglądarka</span>
-                <span className={`${browser === 'brave' || browser === 'firefox' ? 'text-amber-600 dark:text-amber-400' : 'text-gray-700 dark:text-gray-300'}`}>
-                  {BROWSER_LABELS[browser]}
-                  {browser === 'brave' && ' ⚠️'}
-                  {browser === 'firefox' && ' ⚠️'}
-                </span>
-
-                {micPerm && (
-                  <>
-                    <span className="text-gray-400 dark:text-gray-600">Mikrofon</span>
-                    <span className={micPerm === 'granted' ? 'text-green-600 dark:text-green-400' : micPerm === 'denied' ? 'text-red-500' : 'text-gray-500'}>
-                      {micLabel[micPerm]}
-                    </span>
-                  </>
-                )}
-              </div>
-
-              {(browser === 'brave' || browser === 'firefox') && (
-                <p className="text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-400/10 border border-amber-200 dark:border-amber-400/20 rounded-lg px-3 py-2 leading-relaxed">
-                  {browser === 'brave'
-                    ? 'Brave blokuje Google Speech API nawet po wyłączeniu Shields. Użyj Chrome dla nagrywania głosem.'
-                    : 'Firefox nie obsługuje Web Speech API. Użyj Chrome.'}
-                </p>
-              )}
-
-              <p className="text-xs text-gray-400 dark:text-gray-600 leading-relaxed">
-                Nagrywanie głosem zależy od Google Speech API w przeglądarce. Docelowo FlowKeys może używać transkrypcji po stronie serwera, niezależnej od przeglądarki.
-              </p>
-            </div>
-          </Section>
-
-          {/* ── E. Dane ── */}
-          <Section title="E. Dane" icon="🗄️">
-            <div className="px-4 py-3 space-y-3">
-              {cleared ? (
-                <p className="text-xs text-green-600 dark:text-green-400">Historia sesji wyczyszczona.</p>
-              ) : confirmClear ? (
-                <div className="space-y-2">
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Usunąć całą historię sesji? Nie można cofnąć.</p>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={handleClearHistory}
-                      className="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-medium rounded-lg transition"
-                    >
-                      Tak, usuń
-                    </button>
-                    <button
-                      onClick={() => setConfirmClear(false)}
-                      className="flex-1 py-2 bg-gray-100 dark:bg-[#222] hover:bg-gray-200 dark:hover:bg-[#2e2e2e] text-gray-700 dark:text-gray-300 text-xs font-medium rounded-lg transition"
-                    >
-                      Anuluj
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setConfirmClear(true)}
-                  className="w-full py-2.5 bg-gray-100 dark:bg-[#222] hover:bg-gray-200 dark:hover:bg-[#2e2e2e] border border-gray-200 dark:border-[#333] text-gray-700 dark:text-gray-300 text-sm font-medium rounded-xl transition"
-                >
-                  Wyczyść historię sesji
-                </button>
-              )}
-
-              {confirmReset ? (
-                <div className="space-y-2">
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Przywrócić ustawienia domyślne?</p>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={handleResetSettings}
-                      className="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-medium rounded-lg transition"
-                    >
-                      Tak, resetuj
-                    </button>
-                    <button
-                      onClick={() => setConfirmReset(false)}
-                      className="flex-1 py-2 bg-gray-100 dark:bg-[#222] hover:bg-gray-200 dark:hover:bg-[#2e2e2e] text-gray-700 dark:text-gray-300 text-xs font-medium rounded-lg transition"
-                    >
-                      Anuluj
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setConfirmReset(true)}
-                  className="w-full py-2.5 bg-gray-100 dark:bg-[#222] hover:bg-gray-200 dark:hover:bg-[#2e2e2e] border border-gray-200 dark:border-[#333] text-gray-600 dark:text-gray-400 text-sm font-medium rounded-xl transition"
-                >
-                  Resetuj ustawienia
-                </button>
-              )}
-            </div>
           </Section>
 
           {/* ── Klimat tekstów ── */}
-          <Section title="F. Klimat tekstów" icon="📚">
+          <Section title="Klimat tekstów" icon="📚">
             <div className="px-4 py-3">
               <p className="text-[11px] text-gray-400 dark:text-gray-600 mb-3">
-                Wybierz styl lekcji. Domyślny widok na mapie lekcji.
+                Domyślny widok na mapie lekcji.
               </p>
               <div className="flex flex-wrap gap-2">
                 {PACK_GROUPS.map(group => {
@@ -463,6 +303,182 @@ export default function SettingsModal({ settings, onClose, onChange }: Props) {
               </div>
             </div>
           </Section>
+
+          {/* ── Zaawansowane toggle ── */}
+          <button
+            onClick={() => setAdvancedOpen(v => !v)}
+            className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] text-xs font-medium text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-[#3a3a3a] transition-all"
+          >
+            <span>Zaawansowane</span>
+            <span className="text-gray-400 dark:text-gray-600 transition-transform duration-200" style={{ display: 'inline-block', transform: advancedOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>▾</span>
+          </button>
+
+          {/* ── Advanced content ── */}
+          {advancedOpen && (
+            <div className="space-y-6">
+
+              {/* Układ i dźwięki */}
+              <Section title="Układ i dźwięki">
+                <Row label="Układ klawiatury" sub="Wizualny układ klawiszy i przypisanie palców">
+                  <Pills<KeyboardLayout>
+                    value={settings.keyboardLayout}
+                    onChange={v => set('keyboardLayout', v)}
+                    options={(Object.keys(LAYOUTS) as KeyboardLayout[]).map(id => ({ value: id, label: LAYOUTS[id].label }))}
+                  />
+                </Row>
+                <Row label="Dźwięki klawiatury">
+                  <Pills<SoundProfile>
+                    value={settings.soundProfile}
+                    onChange={v => set('soundProfile', v)}
+                    options={[
+                      { value: 'off', label: 'Wył.' },
+                      { value: 'mechanical', label: 'Mech.' },
+                      { value: 'soft', label: 'Cichy' },
+                      { value: 'typewriter', label: 'Retro' },
+                      { value: 'deep', label: 'Głęboki' },
+                    ]}
+                  />
+                </Row>
+                <Row label="Blokuj wklejanie" sub="Zapobiega nabijaniu wyników">
+                  <Toggle value={settings.blockPaste} onChange={v => set('blockPaste', v)} />
+                </Row>
+                <Row label="Tryb spokojny" sub="Łagodniejsze kolory błędów, mniej dominujące WPM">
+                  <Toggle value={settings.calmMode} onChange={v => set('calmMode', v)} />
+                </Row>
+              </Section>
+
+              {/* Audio / Blind Flow */}
+              <Section title="Audio / Blind Flow" icon="🔊">
+                <Row label="Prędkość lektora">
+                  <Pills<VoiceRate>
+                    value={settings.voiceRate}
+                    onChange={v => set('voiceRate', v)}
+                    options={[
+                      { value: 0.75, label: '0.75×' },
+                      { value: 1, label: '1×' },
+                      { value: 1.25, label: '1.25×' },
+                      { value: 1.5, label: '1.5×' },
+                    ]}
+                  />
+                </Row>
+                <Row label="Tryb lektora">
+                  <Pills<VoiceMode>
+                    value={settings.voiceMode}
+                    onChange={v => set('voiceMode', v)}
+                    options={[
+                      { value: 'all', label: 'Cały tekst' },
+                      { value: 'sentence', label: 'Zdanie' },
+                    ]}
+                  />
+                </Row>
+                <Row label="Podpowiedź zdania w Blind Flow" sub="Pokazuje pierwsze słowa aktualnego zdania">
+                  <Toggle value={settings.blindHint} onChange={v => set('blindHint', v)} />
+                </Row>
+              </Section>
+
+              {/* Nagrywanie */}
+              <Section title="Nagrywanie głosem" icon="🎙️">
+                <div className="px-4 py-3 space-y-3">
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+                    <span className="text-gray-400 dark:text-gray-600">Web Speech API</span>
+                    <span className={speechSupported ? 'text-green-600 dark:text-green-400' : 'text-red-500'}>
+                      {speechSupported ? 'Dostępne' : 'Niedostępne'}
+                    </span>
+
+                    <span className="text-gray-400 dark:text-gray-600">Przeglądarka</span>
+                    <span className={`${browser === 'brave' || browser === 'firefox' ? 'text-amber-600 dark:text-amber-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                      {BROWSER_LABELS[browser]}
+                      {browser === 'brave' && ' ⚠️'}
+                      {browser === 'firefox' && ' ⚠️'}
+                    </span>
+
+                    {micPerm && (
+                      <>
+                        <span className="text-gray-400 dark:text-gray-600">Mikrofon</span>
+                        <span className={micPerm === 'granted' ? 'text-green-600 dark:text-green-400' : micPerm === 'denied' ? 'text-red-500' : 'text-gray-500'}>
+                          {micLabel[micPerm]}
+                        </span>
+                      </>
+                    )}
+                  </div>
+
+                  {(browser === 'brave' || browser === 'firefox') && (
+                    <p className="text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-400/10 border border-amber-200 dark:border-amber-400/20 rounded-lg px-3 py-2 leading-relaxed">
+                      {browser === 'brave'
+                        ? 'Brave blokuje Google Speech API nawet po wyłączeniu Shields. Użyj Chrome dla nagrywania głosem.'
+                        : 'Firefox nie obsługuje Web Speech API. Użyj Chrome.'}
+                    </p>
+                  )}
+
+                  <p className="text-xs text-gray-400 dark:text-gray-600 leading-relaxed">
+                    Nagrywanie głosem zależy od Google Speech API w przeglądarce.
+                  </p>
+                </div>
+              </Section>
+
+              {/* Dane */}
+              <Section title="Dane" icon="🗄️">
+                <div className="px-4 py-3 space-y-3">
+                  {cleared ? (
+                    <p className="text-xs text-green-600 dark:text-green-400">Historia sesji wyczyszczona.</p>
+                  ) : confirmClear ? (
+                    <div className="space-y-2">
+                      <p className="text-xs text-gray-600 dark:text-gray-400">Usunąć całą historię sesji? Nie można cofnąć.</p>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleClearHistory}
+                          className="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-medium rounded-lg transition"
+                        >
+                          Tak, usuń
+                        </button>
+                        <button
+                          onClick={() => setConfirmClear(false)}
+                          className="flex-1 py-2 bg-gray-100 dark:bg-[#222] hover:bg-gray-200 dark:hover:bg-[#2e2e2e] text-gray-700 dark:text-gray-300 text-xs font-medium rounded-lg transition"
+                        >
+                          Anuluj
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setConfirmClear(true)}
+                      className="w-full py-2.5 bg-gray-100 dark:bg-[#222] hover:bg-gray-200 dark:hover:bg-[#2e2e2e] border border-gray-200 dark:border-[#333] text-gray-700 dark:text-gray-300 text-sm font-medium rounded-xl transition"
+                    >
+                      Wyczyść historię sesji
+                    </button>
+                  )}
+
+                  {confirmReset ? (
+                    <div className="space-y-2">
+                      <p className="text-xs text-gray-600 dark:text-gray-400">Przywrócić ustawienia domyślne?</p>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleResetSettings}
+                          className="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-medium rounded-lg transition"
+                        >
+                          Tak, resetuj
+                        </button>
+                        <button
+                          onClick={() => setConfirmReset(false)}
+                          className="flex-1 py-2 bg-gray-100 dark:bg-[#222] hover:bg-gray-200 dark:hover:bg-[#2e2e2e] text-gray-700 dark:text-gray-300 text-xs font-medium rounded-lg transition"
+                        >
+                          Anuluj
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setConfirmReset(true)}
+                      className="w-full py-2.5 bg-gray-100 dark:bg-[#222] hover:bg-gray-200 dark:hover:bg-[#2e2e2e] border border-gray-200 dark:border-[#333] text-gray-600 dark:text-gray-400 text-sm font-medium rounded-xl transition"
+                    >
+                      Resetuj ustawienia
+                    </button>
+                  )}
+                </div>
+              </Section>
+
+            </div>
+          )}
 
         </div>
       </div>
