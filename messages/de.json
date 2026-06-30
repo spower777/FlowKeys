@@ -721,5 +721,19 @@
         "desc": "Meistere 100 Lektionen mit 3 Sternen."
       }
     }
+  },
+  "marquee": {
+    "items": [
+      "✦ Schreibe mit deiner eigenen Stimme",
+      "✦ 317 Lektionen · von Grundlagen bis Meisterschaft",
+      "✦ Blind Flow — tippe aus dem Gedächtnis",
+      "✦ No Backspace · null Korrekturen",
+      "✦ WPM · Genauigkeit · Ruheindex",
+      "✦ Deine eigenen Texte als Training",
+      "✦ Die Tastatur hat ihren eigenen Rhythmus",
+      "✦ Eine Bibliothek deiner Geschichten",
+      "✦ Polnische Zeichen · ą ę ć ł ń ó ś ź ż",
+      "✦ Jede Runde hinterlässt eine Spur"
+    ]
   }
 }

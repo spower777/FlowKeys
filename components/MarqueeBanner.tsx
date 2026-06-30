@@ -1,20 +1,11 @@
 'use client'
 
-const ITEMS = [
-  '✦ Pisz własnym głosem',
-  '✦ 272 lekcje · od podstaw do mistrzostwa',
-  '✦ Blind Flow — pisz z pamięci',
-  '✦ No Backspace · zero poprawek',
-  '✦ WPM · Dokładność · Indeks spokoju',
-  '✦ Twoje teksty jako trening',
-  '✦ Klawiatura ma swój rytm',
-  '✦ Biblioteka Twoich historii',
-  '✦ Polskie znaki · ą ę ć ł ń ó ś ź ż',
-  '✦ Każda runda zostawia ślad',
-]
+import { useTranslations } from 'next-intl'
 
 export default function MarqueeBanner() {
-  const text = ITEMS.join('   ')
+  const t = useTranslations('marquee')
+  const items = t.raw('items') as string[]
+  const text = items.join('   ')
   const doubled = `${text}   ${text}   `
 
   return (

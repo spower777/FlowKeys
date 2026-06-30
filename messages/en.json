@@ -721,5 +721,19 @@
         "desc": "Master 100 lessons with 3 stars."
       }
     }
+  },
+  "marquee": {
+    "items": [
+      "✦ Type in your own voice",
+      "✦ 317 lessons · from basics to mastery",
+      "✦ Blind Flow — type from memory",
+      "✦ No Backspace · zero corrections",
+      "✦ WPM · Accuracy · Calm Index",
+      "✦ Your own texts as training",
+      "✦ The keyboard has its own rhythm",
+      "✦ A library of your stories",
+      "✦ Polish signs · ą ę ć ł ń ó ś ź ż",
+      "✦ Every round leaves a trace"
+    ]
   }
 }

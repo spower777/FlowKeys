@@ -721,5 +721,19 @@
         "desc": "Domina 100 lecciones con 3 estrellas."
       }
     }
+  },
+  "marquee": {
+    "items": [
+      "✦ Escribe con tu propia voz",
+      "✦ 317 lecciones · de básico a maestría",
+      "✦ Blind Flow — escribe de memoria",
+      "✦ No Backspace · cero correcciones",
+      "✦ WPM · Precisión · Índice de calma",
+      "✦ Tus propios textos como entrenamiento",
+      "✦ El teclado tiene su propio ritmo",
+      "✦ Una biblioteca de tus historias",
+      "✦ Signos polacos · ą ę ć ł ń ó ś ź ż",
+      "✦ Cada ronda deja una huella"
+    ]
   }
 }

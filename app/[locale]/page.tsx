@@ -19,7 +19,6 @@ import { updateLessonProgress, checkAndUnlockBadges, lessonModeToTypingMode, cal
 import { generateCoachInsight, type CoachInsightKey } from '@/lib/coach'
 import { badges } from '@/data/badges'
 import { lessons } from '@/data/lessons'
-import { chapters } from '@/data/chapters'
 import type { TransformMode, TypingMode, TypingStats, ReplayEvent, TypingSessionRecord } from '@/lib/types'
 import type { Settings } from '@/lib/settings'
 import type { FlowLesson, LessonMode } from '@/data/lessons'
@@ -38,6 +37,7 @@ export default function Home() {
   const tPreview = useTranslations('preview')
   const tTyping = useTranslations('typing')
   const tNav = useTranslations('nav')
+  const tData = useTranslations('data')
   const [step, setStep] = useState<Step>('home')
   const [inputMethod, setInputMethod] = useState<InputMethod>('paste')
   const [sourceText, setSourceText] = useState('')
@@ -577,7 +577,7 @@ export default function Home() {
 
             {/* Lesson info — pure info, no controls */}
             {currentLesson && (() => {
-              const chapterTitle = chapters.find(c => c.id === currentLesson.chapterId)?.title ?? ''
+              const chapterTitle = String(tData(`chapters.${currentLesson.chapterId}.title` as never))
               return (
                 <div className="bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#242424] rounded-2xl px-5 py-3.5">
                   <div className="flex items-center gap-3 min-w-0">

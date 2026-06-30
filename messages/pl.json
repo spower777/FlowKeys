@@ -721,5 +721,19 @@
         "desc": "Opanuj 100 lekcji na 3 gwiazdki."
       }
     }
+  },
+  "marquee": {
+    "items": [
+      "✦ Pisz własnym głosem",
+      "✦ 317 lekcji · od podstaw do mistrzostwa",
+      "✦ Blind Flow — pisz z pamięci",
+      "✦ No Backspace · zero poprawek",
+      "✦ WPM · Dokładność · Indeks spokoju",
+      "✦ Twoje teksty jako trening",
+      "✦ Klawiatura ma swój rytm",
+      "✦ Biblioteka Twoich historii",
+      "✦ Polskie znaki · ą ę ć ł ń ó ś ź ż",
+      "✦ Każda runda zostawia ślad"
+    ]
   }
 }
